@@ -6,15 +6,14 @@
 </head>
 <body>
 <h1>login</h1>
-<form action="/login" method="post">
-    <input type="text" placeholder="write name" name="username">
-    <input type="password" placeholder="write password" name="password">
-    <input type="submit" value="login">
-    <br>
-    <label for="remember-me">
-        remember me
-    </label>
-    <input type="checkbox" placeholder="remember me" id="remember-me" name="remember-me">
+<form th:action="@{/login}" th:method="post">
+    <lable>Username</lable>
+    <input type="text" id="username" name="username">
+
+    <lable>Password</lable>
+    <input type="password" id="password" name="password">
+
+    <input type="submit">
 </form>
 </body>
 </html>

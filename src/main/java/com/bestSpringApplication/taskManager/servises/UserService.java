@@ -23,10 +23,18 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String str) throws UsernameNotFoundException {
         final Optional<UserModel> user = userRepo.findByMail(str);
-        if (user.isPresent()){
-            return user.get();
-        }else {
-            throw new UsernameNotFoundException("NOT FOUND");
+        return user.orElseThrow(()-> new UsernameNotFoundException("USER NOT FOUND"));
+    }
+
+    public boolean containsMail(String mail){
+        try {
+            loadUserByUsername(mail);
+            return true;
+        }catch (UsernameNotFoundException ex){
+            return false;
         }
+    }
+    public void saveUser(UserModel userModel){
+        userRepo.save(userModel);
     }
 }
