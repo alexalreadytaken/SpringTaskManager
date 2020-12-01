@@ -13,7 +13,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.concurrent.TimeUnit;
 
-import static com.bestSpringApplication.taskManager.model.user.UserRole.ADMIN;
+import static com.bestSpringApplication.taskManager.model.task.enums.UserRole.ADMIN;
 
 @Configuration
 @EnableWebSecurity
