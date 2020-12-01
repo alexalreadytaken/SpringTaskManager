@@ -244,6 +244,7 @@
     <cost-resource-list/>
   </resource-list>
   <client-list/>
+
   <task>
     <project>true</project>
     <pattern>
@@ -670,6 +671,7 @@
       </task>
     </task-list>
   </task>
+
   <company-current-project>1</company-current-project>
   <task-dependency-list>
     <task-dependency>
