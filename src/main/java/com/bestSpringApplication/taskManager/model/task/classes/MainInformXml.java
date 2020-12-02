@@ -15,24 +15,23 @@ public class MainInformXml {
     private String version;
     private String type;
     private Task task;
-
     private List<Field> taskFieldList;
-    private List<Field> resourceFieldList;
-    private List<Field> clientFieldList;
+    private List<Field> resourceFieldList; //non
+    private List<Field> clientFieldList; //non
     private List<Calendar> calendarList;
     private List<Resource> resourceList;
     private List<Client> clientList;
-    private List<Dependency> taskDependencyList;
+    private List<TaskDependency> taskDependencyList;
     private List<Conflict> conflictList;
     private List<Assigment> assigmentList;
 
-    MainInformXml(){}
+    MainInformXml(){ }
 
     public static MainXmlBuilder newXML(){
         return new MainInformXml().new MainXmlBuilder();
     }
 
-    public List<Dependency> getTaskDependencyList() { return taskDependencyList; }
+    public List<TaskDependency> getTaskDependencyList() { return taskDependencyList; }
     public String getCompanyCurrentProject() { return companyCurrentProject; }
     public List<Field> getResourceFieldList() { return resourceFieldList; }
     public List<Field> getClientFieldList() { return clientFieldList; }
@@ -118,7 +117,7 @@ public class MainInformXml {
             MainInformXml.this.companyCurrentProject=currentProject;
             return this;
         }
-        public MainXmlBuilder setTaskDependencyList(List<Dependency> dependencies){
+        public MainXmlBuilder setTaskDependencyList(List<TaskDependency> dependencies){
             MainInformXml.this.taskDependencyList=dependencies;
             return this;
         }
