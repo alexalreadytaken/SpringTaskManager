@@ -5,15 +5,24 @@
     <title>Admin</title>
 </head>
 <body>
+<p>ADMIN PAGE</p>
 <div id="UsersList"></div>
-<p>ADMIN</p>
 </body>
 <script>
     fetch("/admin/users").then(response => response.json()).then(response => {
-        let elementById = document.getElementById("UsersList");
+        let userList = document.getElementById("UsersList");
         response.forEach(element => {
-            let div = Object.entries(element);
-            elementById.append(div)
+            let user ='<div style="border: 1px solid black">';
+            let hrefToUser;
+            Object.entries(element).reverse().forEach(el=>{
+                user+='<h4>'+el[0]+':'+el[1]+'</h4>'
+                if (el[0]==='id'){
+                    hrefToUser='<a href="/admin/users/'+el[1]+'">more info</a>'
+                }
+            })
+            user+=hrefToUser
+            user+='</div>'
+            userList.innerHTML+=user
         })
     })
 </script>

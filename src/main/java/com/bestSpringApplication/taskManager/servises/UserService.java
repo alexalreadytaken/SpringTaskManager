@@ -46,4 +46,7 @@ public class UserService implements UserDetailsService {
     public List<UserModel> getAllUsers(){
         return userRepo.findAll();
     }
+    public Optional<UserModel> getUserById(Long id){
+        return userRepo.findById(id);
+    }
 }
