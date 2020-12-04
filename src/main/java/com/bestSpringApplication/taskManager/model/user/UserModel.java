@@ -1,14 +1,10 @@
 package com.bestSpringApplication.taskManager.model.user;
 
-import com.bestSpringApplication.taskManager.model.task.enums.UserRole;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -16,21 +12,17 @@ import java.util.Collections;
 public class UserModel implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+     private Long id;
     private String mail;
     private String name;
     private String password;
-    private final UserRole userRole = UserRole.STUDENT;//todo
-    private Boolean locked = false;
-    private Boolean enabled = false;
+    private String userRole;
 
-    public UserModel(Long id, String mail, String name, String password, Boolean locked, Boolean enabled) {
-        this.id = id;
+    public UserModel(String mail, String name, String password, String userRole) {
         this.mail = mail;
         this.name = name;
         this.password = password;
-        this.locked = locked;
-        this.enabled = enabled;
+        this.userRole = userRole;
     }
 
     public UserModel() {
@@ -62,26 +54,17 @@ public class UserModel implements UserDetails {
         this.password = password;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public void setUserRole(String userRole) {
+        this.userRole = userRole;
     }
 
-    public Boolean getLocked() {
-        return locked;
-    }
-    public void setLocked(Boolean locked) {
-        this.locked = locked;
-    }
-    public Boolean getEnabled() {
-        return enabled;
-    }
-    public void setEnabled(Boolean enabled) {
-        this.enabled = enabled;
+    public String getUserRole() {
+        return userRole;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        final SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(userRole.name());
+        final SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(userRole);
         return Collections.singletonList(simpleGrantedAuthority);
     }
 
@@ -102,7 +85,7 @@ public class UserModel implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return !locked;
+        return true;
     }
 
     @Override
@@ -112,7 +95,7 @@ public class UserModel implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return true;
     }
 
 }

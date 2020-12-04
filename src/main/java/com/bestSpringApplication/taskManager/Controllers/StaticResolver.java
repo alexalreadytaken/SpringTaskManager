@@ -11,12 +11,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class StaticResolver implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/").setViewName("home");
-        registry.addViewController("/home").setViewName("home");
-        registry.addViewController("/login").setViewName("login");
         registry.addViewController("/register").setViewName("register");
+        registry.addViewController("/").setViewName("redirect:/home");
+        registry.addViewController("/login").setViewName("login");
+        registry.addViewController("/admin").setViewName("admin");
+        registry.addViewController("/home").setViewName("home");
+        registry.addViewController("/study").setViewName("study");
     }
-
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/js/**")

@@ -1,16 +1,36 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
 </head>
 <body>
 <h1>register</h1>
-<!--<form th:action="@{/register}" th:method="post" th:object="${UserModel}">
-    <input type="text" id="name" name="name" th:field="*{name}">
-    <input type="text" id="email" name="mail" th:field="*{mail}">
-    <input type="password" id="password" name="password" th:field="*{password}">
-    <input type="submit">
-</form>-->
+<form id="formElem">
+    <input type="text" id="name" name="name" minlength="5" required>
+    <input type="text" id="email" name="mail" minlength="5" required>
+    <input type="password" id="password" name="password" minlength="5" required>
+    <button type="submit">register</button>
+</form>
 </body>
+<script>
+    formElem.onsubmit =(e) => {
+        e.preventDefault();
+        let object = {};
+        new FormData(formElem).forEach((value, key) => object[key] = value);
+        let json = JSON.stringify(object);
+        fetch('/reg', {
+            method: 'POST',
+            body: json,
+            headers:{'content-type': 'application/json'}
+        }).then(response=>response.json())
+            .then(response=>console.log(response))
+    };
+</script>
 </html>
+
+
+
+
+
+

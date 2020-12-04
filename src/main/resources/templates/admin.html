@@ -5,6 +5,16 @@
     <title>Admin</title>
 </head>
 <body>
+<div id="UsersList"></div>
 <p>ADMIN</p>
 </body>
+<script>
+    fetch("/admin/users").then(response => response.json()).then(response => {
+        let elementById = document.getElementById("UsersList");
+        response.forEach(element => {
+            let div = Object.entries(element);
+            elementById.append(div)
+        })
+    })
+</script>
 </html>
