@@ -1,17 +1,14 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 
+import com.bestSpringApplication.taskManager.exceptions.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.model.user.UserModel;
 import com.bestSpringApplication.taskManager.servises.UserService;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.xml.ws.http.HTTPException;
 import java.util.*;
+import java.util.function.Supplier;
 
 @RestController
 public class UsersController {
@@ -46,7 +43,9 @@ public class UsersController {
         return mainUsersInform;
     }
     @GetMapping("/admin/users/{id}")
-    public UserModel user(@PathVariable Long id) {
-        return userService.getUserById(id).orElse(null);//todo not found exception,PASHA?
+    public UserModel user(@PathVariable Long id) throws Throwable {
+        return userService.getUserById(id).orElseThrow(
+            (Supplier<Throwable>) () -> new ContentNotFoundException(
+                String.format("user with id=%s not found",id.toString())));
     }
 }

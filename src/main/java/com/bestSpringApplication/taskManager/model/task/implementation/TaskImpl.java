@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.model.task.classes;
+package com.bestSpringApplication.taskManager.model.task.implementation;
 import com.bestSpringApplication.taskManager.model.task.enums.taskCurrencyUnit;
 import com.bestSpringApplication.taskManager.model.task.enums.taskStatus;
 import com.bestSpringApplication.taskManager.model.task.interfaces.ProjectBaselineList;

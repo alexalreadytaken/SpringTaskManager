@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.model.task.classes;
+package com.bestSpringApplication.taskManager.model.task.implementation;
 import com.bestSpringApplication.taskManager.model.task.interfaces.Field;
 import java.util.Date;
 import java.util.List;

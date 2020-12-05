@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.model.task.classes;
+package com.bestSpringApplication.taskManager.model.task.implementation;
 
 public class FieldImpl {
     private String no;
