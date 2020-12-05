@@ -43,9 +43,9 @@ public class UsersController {
         return mainUsersInform;
     }
     @GetMapping("/admin/users/{id}")
-    public UserModel user(@PathVariable Long id) throws Throwable {
+    public UserModel user(@PathVariable String id) throws Throwable {
         return userService.getUserById(id).orElseThrow(
             (Supplier<Throwable>) () -> new ContentNotFoundException(
-                String.format("user with id=%s not found",id.toString())));
+                String.format("user with id=%s not found",id)));
     }
 }

@@ -50,6 +50,14 @@ public class UserService implements UserDetailsService {
     public Optional<UserModel> getUserById(Long id){
         return userRepo.findById(id);
     }
+    public Optional<UserModel> getUserById(String id){
+        try {
+            long id0 = Integer.parseInt(id);
+            return userRepo.findById(id0);
+        }catch (NumberFormatException ex){
+            return Optional.empty();
+        }
+    }
 }
 
 
