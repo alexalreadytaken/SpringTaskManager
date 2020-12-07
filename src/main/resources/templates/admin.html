@@ -5,15 +5,34 @@
     <title>Admin</title>
 </head>
 <body>
+<input type="file" id="file">
 <p>ADMIN PAGE</p>
 <div id="UsersList"></div>
 </body>
 <script>
+    document.querySelector('#file').addEventListener('change',evt => {
+        let fileData = evt.target["files"]
+        let formData = new FormData()
+        formData.append('file',fileData[0])
+
+        console.log(formData.get('file'))
+
+        evt.target.value=''
+
+        fetch('/admin/addTasks',{
+            method:'POST',
+            body:formData
+        }).then(response=>response.json())
+        .then(response=>alert(response.success===true?
+            'файл успешно добавлен':
+            'при отправке файла произошла ошибка,проверьте тип файла'))
+    })
+
     fetch("/admin/users").then(response => response.json()).then(response => {
-        let userList = document.getElementById("UsersList");
+        let userList = document.getElementById("UsersList") 
         response.forEach(element => {
-            let user ='<div style="border: 1px solid black">';
-            let hrefToUser;
+            let user ='<div style="border: 1px solid black">' 
+            let hrefToUser 
             Object.entries(element).reverse().forEach(el=>{
                 user+='<h4>'+el[0]+':'+el[1]+'</h4>'
                 if (el[0]==='id'){
