@@ -14,4 +14,10 @@ public class RestExceptionsHandler{
     public static ErrorMessage notFoundHandle(ContentNotFoundException ex){
         return new ErrorMessage(HttpStatus.NOT_FOUND.value(),ex.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static ErrorMessage illegalFileHandle(IllegalFileFormatException ex){
+        return new ErrorMessage(HttpStatus.BAD_REQUEST.value(),ex.getMessage());
+    }
 }

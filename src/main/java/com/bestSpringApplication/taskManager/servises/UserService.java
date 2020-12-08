@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.model.user.UserModel;
+import com.bestSpringApplication.taskManager.models.user.UserModel;
 import com.bestSpringApplication.taskManager.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

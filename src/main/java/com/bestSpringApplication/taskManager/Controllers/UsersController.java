@@ -2,7 +2,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 
 import com.bestSpringApplication.taskManager.exceptions.ContentNotFoundException;
-import com.bestSpringApplication.taskManager.model.user.UserModel;
+import com.bestSpringApplication.taskManager.models.user.UserModel;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
