@@ -18,10 +18,10 @@ public class TaskImpl implements Task {
     private LocalDateTime taskStartDate = LocalDateTime.now();
     private LocalDateTime taskEndDate = LocalDateTime.now();
     private LocalDateTime taskCompletionDate = LocalDateTime.now();
-    private String taskDuration ="124234";
-    private double taskPercentComplete = 1354.4;
-    private double taskWorkPercentComplete= 76776.45;
-    private int level = 0 ;
+    private String taskDuration ="0";
+    private double taskPercentComplete = 0.0;
+    private double taskWorkPercentComplete= 0.0;
+    private int level = 0;
     private String notes ="notes";
     private List<TaskImpl> childList = new ArrayList<>();
 //    private List<TaskImpl> parentList = new ArrayList<>();
