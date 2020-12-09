@@ -26,24 +26,26 @@ public class MainXmlParserImpl {
         return parse(mainDocument);
     }
     //fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme
-
-
+    
     private static MainXml parse(Document mainDocument){
+        Element mainRootElement = mainDocument.getRootElement();
         MainXml.MainXmlBuilder mainXmlBuilder = MainXml.startBuildXml();
-        Element element = mainDocument.getRootElement();
-        TaskImpl parse = TaskParserImpl.parse(element.getChild("task"), TaskImpl.startBuildTask().setTaskName("root").build());
-        Optional<Element> taskFieldListElem = Optional.ofNullable(element.getChild("task-field-list"));
-        Optional<Element> taskDependency = Optional.ofNullable(element.getChild("task-dependency-list"));
-        mainXmlBuilder.setTask(parse);
-        taskFieldListElem.ifPresent(fields -> {
+        
+        TaskImpl rootTask = TaskParserImpl.parse(mainRootElement.getChild("task"), TaskImpl.startBuildTask().setTaskName("root").build());
+        mainXmlBuilder.setTask(rootTask);
+        
+        Optional<Element> fieldList = Optional.ofNullable(mainRootElement.getChild("task-field-list"));
+        Optional<Element> dependencyList = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
+        
+        fieldList.ifPresent(fields -> {
             mainXmlBuilder.setTaskFieldList(TaskParserImpl.fieldToMap(fields, "field","no", "name"));
         });
-        taskDependency.ifPresent(Dependency ->{
-            List<Element> taskElementList = Dependency.getChildren("task-dependency");
-            List<TaskDependencyImpl> collect = taskElementList.stream().map(element1 -> new TaskDependencyImpl(
-                                    element1.getChildText("task-predecessor-id"),
-                                    element1.getChildText("task-successor-id"))).collect(Collectors.toList());
-            mainXmlBuilder.setTaskDependencyList(collect);
+        dependencyList.ifPresent(list ->{
+            List<Element> DependencyElements = list.getChildren("task-dependency");
+            List<TaskDependencyImpl> relativesList = DependencyElements.stream().map(DependencyChild -> new TaskDependencyImpl(
+                                    DependencyChild.getChildText("task-predecessor-id"),
+                                    DependencyChild.getChildText("task-successor-id"))).collect(Collectors.toList());
+            mainXmlBuilder.setTaskDependencyList(relativesList);
         });
         return mainXmlBuilder.build();
     }
