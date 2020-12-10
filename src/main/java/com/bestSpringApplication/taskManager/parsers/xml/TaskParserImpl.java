@@ -40,10 +40,12 @@ public class TaskParserImpl {
         Optional<Element> fieldListElem = Optional.ofNullable(element.getChild("field-list"));
         Optional<Element> taskListElem = Optional.ofNullable(element.getChild("task-list"));
         Optional<Element> taskNotes = Optional.ofNullable(element.getChild("task-notes"));
+
         taskBuilder
                 .setTaskName(element.getChildText("task-name"))
                 .setTaskId(element.getChildText("task-id"))
                 .setTaskDuration(taskDuration.orElse("none"));
+
         fieldListElem.ifPresent(fieldList -> {
             taskBuilder.setTaskFields(fieldToMap(fieldList, "field","field-no", "field-value"));
         });
@@ -55,6 +57,7 @@ public class TaskParserImpl {
                 taskBuilder.setDependency(taskDependency);
             }
         }
+
         taskListElem.ifPresent(tasksOpt->{
             Optional<List<Element>> tasks = Optional.ofNullable(tasksOpt.getChildren("task"));
             tasks.ifPresent(tasksListOpt->{
@@ -64,9 +67,9 @@ public class TaskParserImpl {
                 taskBuilder.setChildList(childTasks);
             });
         });
-
         return taskBuilder.build();
     }
+
     public static Map<String,String> fieldToMap(Element element, String field, String key, String value){
         List<Element> fields = element.getChildren(field);
         Map<String,String> fieldsMap = new HashMap<>();

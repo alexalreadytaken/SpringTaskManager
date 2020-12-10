@@ -29,7 +29,6 @@ public class MainXmlParserImpl {
     }
     //fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme
 
-
     private static MainXml parse(Document mainDocument){
         Element mainRootElement = mainDocument.getRootElement();
         MainXml.MainXmlBuilder mainXmlBuilder = MainXml.startBuildXml();
@@ -47,16 +46,11 @@ public class MainXmlParserImpl {
                                     DependencyChild.getChildText("task-predecessor-id"),
                                     DependencyChild.getChildText("task-successor-id"))).collect(Collectors.toList());
             mainXmlBuilder.setTaskDependencyList(relativesList);
-
             //fixme
             TaskImpl rootTask = TaskParserImpl.parse(mainRootElement.getChild("task"), relativesList);
             mainXmlBuilder.setTask(rootTask);
-
             TaskParserImpl.depthFirst(rootTask);
         });
-
-
-
         return mainXmlBuilder.build();
     }
 

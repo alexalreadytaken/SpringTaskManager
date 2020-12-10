@@ -14,8 +14,5 @@ import java.nio.charset.StandardCharsets;
 public class TaskManagerApplication {
 	public static void main(String[] args) throws IOException, JDOMException {
 		SpringApplication.run(TaskManagerApplication.class, args);
-//		File file = new File("C:\\Users\\rasbw\\IdeaProjects\\SpringTaskManager\\src\\main\\resources\\static\\text.xml");
-//		FileInputStream fileInputStream = new FileInputStream(file);
-//		MainXmlParserImpl.mainParser(fileInputStream);
 	}
 }
