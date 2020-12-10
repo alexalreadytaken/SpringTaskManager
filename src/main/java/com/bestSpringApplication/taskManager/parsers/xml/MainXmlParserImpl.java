@@ -10,7 +10,9 @@ import org.jdom2.input.SAXBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -21,24 +23,23 @@ public class MainXmlParserImpl {
         Document mainDocument = new SAXBuilder().build(is);
         return parse(mainDocument);
     }
-    public static MainXml mainParser(String is) throws JDOMException, IOException {
-        Document mainDocument = new SAXBuilder().build(is);
+    public static MainXml mainParser(String str) throws JDOMException, IOException {
+        Document mainDocument = new SAXBuilder().build(str);
         return parse(mainDocument);
     }
     //fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme fixme
-    
+
+
     private static MainXml parse(Document mainDocument){
         Element mainRootElement = mainDocument.getRootElement();
         MainXml.MainXmlBuilder mainXmlBuilder = MainXml.startBuildXml();
         
-        TaskImpl rootTask = TaskParserImpl.parse(mainRootElement.getChild("task"), TaskImpl.startBuildTask().setTaskName("root").build());
-        mainXmlBuilder.setTask(rootTask);
-        
         Optional<Element> fieldList = Optional.ofNullable(mainRootElement.getChild("task-field-list"));
         Optional<Element> dependencyList = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
-        
+
         fieldList.ifPresent(fields -> {
             mainXmlBuilder.setTaskFieldList(TaskParserImpl.fieldToMap(fields, "field","no", "name"));
+
         });
         dependencyList.ifPresent(list ->{
             List<Element> DependencyElements = list.getChildren("task-dependency");
@@ -46,7 +47,16 @@ public class MainXmlParserImpl {
                                     DependencyChild.getChildText("task-predecessor-id"),
                                     DependencyChild.getChildText("task-successor-id"))).collect(Collectors.toList());
             mainXmlBuilder.setTaskDependencyList(relativesList);
+
+            //fixme
+            TaskImpl rootTask = TaskParserImpl.parse(mainRootElement.getChild("task"), relativesList);
+            mainXmlBuilder.setTask(rootTask);
+
+            TaskParserImpl.depthFirst(rootTask);
         });
+
+
+
         return mainXmlBuilder.build();
     }
 

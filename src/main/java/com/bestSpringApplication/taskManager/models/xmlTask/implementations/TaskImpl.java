@@ -9,8 +9,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TaskImpl implements Task {
-    private boolean project;
-    private Pattern pattern = new PatternImpl("pattern", Collections.singletonList(new PeriodInDayImpl(true,1212,434524)));
     private Map<String, String> taskFields = new HashMap<>();
     private String taskName;
     private String taskId;
@@ -24,6 +22,9 @@ public class TaskImpl implements Task {
     private int level = 0;
     private String notes ="notes";
     private List<TaskImpl> childList = new ArrayList<>();
+
+    private List<TaskDependencyImpl> taskDependencyList = new ArrayList<>();
+
 //    private List<TaskImpl> parentList = new ArrayList<>();
 
    public TaskImpl() {}//fixme for hibernate?
@@ -33,7 +34,9 @@ public class TaskImpl implements Task {
     }
 
     public double getTaskWorkPercentComplete() { return taskWorkPercentComplete; }
-
+    public List<TaskDependencyImpl> getTaskDependencyList() {
+        return taskDependencyList;
+    }
     public LocalDateTime getTaskCompletionDate() { return taskCompletionDate; }
     public double getTaskPercentComplete() { return taskPercentComplete; }
     public LocalDateTime getTaskConstraint() { return taskConstraint; }
@@ -43,9 +46,7 @@ public class TaskImpl implements Task {
 //    public List<TaskImpl> getParentList() { return parentList; }
     public String getTaskDuration() { return taskDuration; }
     public List<TaskImpl> getChildList() {return childList;}
-    public Pattern getPattern() { return pattern; }
     public String getTaskName() { return taskName; }
-    public boolean isProject() { return project; }
     public String getTaskId() { return taskId; }
     public String getNotes() { return notes; }
 
@@ -69,10 +70,6 @@ public class TaskImpl implements Task {
         TaskBuilder(){}
         public TaskBuilder setNotes(String notes){
             TaskImpl.this.notes=notes;
-            return this;
-        }
-        public TaskBuilder setProject(boolean project) {
-            TaskImpl.this.project = project;
             return this;
         }
         public TaskBuilder setTaskFields(Map<String,String> taskFields) {
@@ -99,6 +96,14 @@ public class TaskImpl implements Task {
             TaskImpl.this.parentList = taskList;
             return this;
         }*/
+        public TaskBuilder setTaskDependencyList(List<TaskDependencyImpl> taskDependencyList) {
+            TaskImpl.this.taskDependencyList = taskDependencyList;
+            return this;
+        }
+        public TaskBuilder setDependency(TaskDependencyImpl taskDependency) {
+            TaskImpl.this.taskDependencyList.add(taskDependency);
+            return this;
+        }
         public TaskImpl build(){
             return TaskImpl.this;
         }
