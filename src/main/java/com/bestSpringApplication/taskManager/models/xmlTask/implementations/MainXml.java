@@ -1,33 +1,33 @@
 package com.bestSpringApplication.taskManager.models.xmlTask.implementations;
 
 
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.*;
+import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
 public class MainXml {
-    private Task task;
+    private List<Task> tasks;
     private Map<String,String> taskFieldList;
     private List<TaskDependencyImpl> taskDependencyList = new ArrayList<>();
 
-    public MainXml(){}//fixme for hibernate?
+    public MainXml(){}
 
     public static MainXmlBuilder startBuildXml(){
         return new MainXml().new MainXmlBuilder();
     }
     public List<TaskDependencyImpl> getTaskDependencyList() { return taskDependencyList; }
     public Map<String,String> getTaskFieldList() { return taskFieldList; }
-    public Task getTask() { return task; }
+    public List<Task> getTasks() { return tasks; }
+
 
 
     public class MainXmlBuilder {
 
         MainXmlBuilder(){}
-        public MainXmlBuilder setTask(Task task){
-            MainXml.this.task=task;
+        public MainXmlBuilder setTasks(List<Task> tasks) {
+            MainXml.this.tasks = tasks;
             return this;
         }
         public MainXmlBuilder setTaskFieldList(Map<String,String> taskFields){

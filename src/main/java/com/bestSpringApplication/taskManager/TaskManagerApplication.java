@@ -1,18 +1,11 @@
 package com.bestSpringApplication.taskManager;
 
-import com.bestSpringApplication.taskManager.parsers.xml.MainXmlParserImpl;
-import org.apache.commons.text.StringEscapeUtils;
-import org.jdom2.JDOMException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.codec.Utf8;
-
-import java.io.*;
-import java.nio.charset.StandardCharsets;
 
 @SpringBootApplication
 public class TaskManagerApplication {
-	public static void main(String[] args) throws IOException, JDOMException {
+	public static void main(String[] args) {
 		SpringApplication.run(TaskManagerApplication.class, args);
 	}
 }

@@ -3,32 +3,32 @@ package com.bestSpringApplication.taskManager.models.xmlTask.implementations;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
 
 public class TaskDependencyImpl implements TaskDependency {
-    private String TaskProcessorId;
-    private String TaskSuccessorId;
-    public TaskDependencyImpl(String taskProcessorId, String taskSuccessorId) {
-        TaskProcessorId = taskProcessorId;
-        TaskSuccessorId = taskSuccessorId;
+    private String taskParentId;
+    private String taskChildId;
+    public TaskDependencyImpl(String taskParentId, String taskChildId) {
+        this.taskParentId = taskParentId;
+        this.taskChildId = taskChildId;
     }
     public TaskDependencyImpl() {
     }
-    public String getTaskProcessorId() {
-        return TaskProcessorId;
+    public String getTaskParentId() {
+        return taskParentId;
     }
-    public void setTaskProcessorId(String taskProcessorId) {
-        TaskProcessorId = taskProcessorId;
+    public void setTaskParentId(String taskParentId) {
+        this.taskParentId = taskParentId;
     }
-    public String getTaskSuccessorId() {
-        return TaskSuccessorId;
+    public String getTaskChildId() {
+        return taskChildId;
     }
-    public void setTaskSuccessorId(String taskSuccessorId) {
-        TaskSuccessorId = taskSuccessorId;
+    public void setTaskChildId(String taskChildId) {
+        this.taskChildId = taskChildId;
     }
 
     @Override
     public String toString() {
         return "{" +
-                "TaskProcessorId='" + TaskProcessorId + '\'' +
-                ", TaskSuccessorId='" + TaskSuccessorId + '\'' +
+                "TaskProcessorId='" + taskParentId + '\'' +
+                ", TaskSuccessorId='" + taskChildId + '\'' +
                 '}';
     }
 }

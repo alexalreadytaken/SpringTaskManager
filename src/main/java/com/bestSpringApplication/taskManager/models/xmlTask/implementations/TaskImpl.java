@@ -1,54 +1,55 @@
 package com.bestSpringApplication.taskManager.models.xmlTask.implementations;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.enums.CurrencyUnit;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Pattern;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TaskImpl implements Task {
+    @JsonIgnore
+    private static final String responseDateFormat = "yyyy-MM-dd HH:mm:ss";
+
     private Map<String, String> taskFields = new HashMap<>();
     private String taskName;
     private String taskId;
+    @JsonFormat(pattern = responseDateFormat)
     private LocalDateTime taskConstraint = LocalDateTime.now();
+    @JsonFormat(pattern = responseDateFormat)
     private LocalDateTime taskStartDate = LocalDateTime.now();
+    @JsonFormat(pattern = responseDateFormat)
     private LocalDateTime taskEndDate = LocalDateTime.now();
+    @JsonFormat(pattern = responseDateFormat)
     private LocalDateTime taskCompletionDate = LocalDateTime.now();
-    private String taskDuration ="0";
+    private int taskDuration =0;
     private double taskPercentComplete = 0.0;
     private double taskWorkPercentComplete= 0.0;
-    private int level = 0;
-    private String notes ="notes";
-    private List<TaskImpl> childList = new ArrayList<>();
+    @JsonIgnore
+    private int level;
+    private String notes ="empty";
 
-    private List<TaskDependencyImpl> taskDependencyList = new ArrayList<>();
-
-//    private List<TaskImpl> parentList = new ArrayList<>();
-
-   public TaskImpl() {}//fixme for hibernate?
+   public TaskImpl() {}
 
     public static TaskBuilder startBuildTask(){
         return new TaskImpl().new TaskBuilder();
     }
 
     public double getTaskWorkPercentComplete() { return taskWorkPercentComplete; }
-    public List<TaskDependencyImpl> getTaskDependencyList() {
-        return taskDependencyList;
-    }
     public LocalDateTime getTaskCompletionDate() { return taskCompletionDate; }
     public double getTaskPercentComplete() { return taskPercentComplete; }
     public LocalDateTime getTaskConstraint() { return taskConstraint; }
     public Map<String, String> getTaskFields() { return taskFields; }
     public LocalDateTime getTaskStartDate() { return taskStartDate; }
     public LocalDateTime getTaskEndDate() { return taskEndDate; }
-//    public List<TaskImpl> getParentList() { return parentList; }
-    public String getTaskDuration() { return taskDuration; }
-    public List<TaskImpl> getChildList() {return childList;}
+    public int getTaskDuration() { return taskDuration; }
     public String getTaskName() { return taskName; }
     public String getTaskId() { return taskId; }
     public String getNotes() { return notes; }
+
+
+
 
     //odnorazoviy
     public int getLevel() {
@@ -58,12 +59,6 @@ public class TaskImpl implements Task {
     }
     public void setLevel(int level) {
         this.level = level;
-    }
-
-    //todo move to new handler ?
-    public static LocalDateTime parseDateFromFormat(String date,String format){
-        DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(format);
-        return LocalDateTime.from(inputFormat.parse(date));
     }
 
     public class TaskBuilder{
@@ -84,24 +79,24 @@ public class TaskImpl implements Task {
             TaskImpl.this.taskId = taskId;
             return this;
         }
-        public TaskBuilder setTaskDuration(String taskDuration) {
+        public TaskBuilder setTaskDuration(int taskDuration) {
             TaskImpl.this.taskDuration = taskDuration;
             return this;
         }
-        public TaskBuilder setChildList(List<TaskImpl> taskList) {
-            TaskImpl.this.childList = taskList;
+        public TaskBuilder setTaskConstraint(LocalDateTime taskConstraint) {
+            TaskImpl.this.taskConstraint = taskConstraint;
             return this;
         }
-        /*public TaskBuilder setParentList(List<TaskImpl> taskList) {
-            TaskImpl.this.parentList = taskList;
-            return this;
-        }*/
-        public TaskBuilder setTaskDependencyList(List<TaskDependencyImpl> taskDependencyList) {
-            TaskImpl.this.taskDependencyList = taskDependencyList;
+        public TaskBuilder setTaskStartDate(LocalDateTime taskStartDate) {
+            TaskImpl.this.taskStartDate = taskStartDate;
             return this;
         }
-        public TaskBuilder setDependency(TaskDependencyImpl taskDependency) {
-            TaskImpl.this.taskDependencyList.add(taskDependency);
+        public TaskBuilder setTaskEndDate(LocalDateTime taskEndDate) {
+            TaskImpl.this.taskEndDate = taskEndDate;
+            return this;
+        }
+        public TaskBuilder setTaskCompletionDate(LocalDateTime taskCompletionDate) {
+            TaskImpl.this.taskCompletionDate = taskCompletionDate;
             return this;
         }
         public TaskImpl build(){

@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.exceptions;
+package com.bestSpringApplication.taskManager.handlers.exceptions;
 
 public class ErrorMessage {
     private int status;
