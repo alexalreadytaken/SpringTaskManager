@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 @RestController
 public class UsersController {
@@ -20,17 +19,17 @@ public class UsersController {
     private UserService userService;
 
     @PostMapping("/reg")
-    public Map<String, String> register(@RequestBody Map<String,String> body){
-        HashMap<String, String> response = new HashMap<>();
+    public Map<String, Boolean> register(@RequestBody Map<String,String> body){
+        HashMap<String, Boolean> response = new HashMap<>();
 
         if (userService.containsMail(body.get("mail"))){
-            response.put("register","false");
+            response.put("register",false);
         }else {
             String mail = body.get("mail");
             String name = body.get("name");
             String password = body.get("password");
             userService.saveUser(new UserModel(mail,name,password, "USER"));
-            response.put("register","true");
+            response.put("register",true);
         }
         return response;
     }
@@ -46,9 +45,33 @@ public class UsersController {
         return mainUsersInform;
     }
     @GetMapping("/admin/users/{id}")
-    public UserModel user(@PathVariable String id) throws Throwable {
+    public UserModel user(@PathVariable String id){
+        return findUserById(id);
+    }
+    @DeleteMapping("/admin/users/{id}")
+    public Map<String,Boolean> deleteUser(@PathVariable String id){
+        Map<String,Boolean> response = new HashMap<>();
+
+        try {
+            UserModel user = findUserById(id);
+            userService.deleteUser(user);
+            response.put("delete",true);
+        }catch (ContentNotFoundException ex){
+            response.put("delete",false);
+        }
+        return response;
+    }
+    private UserModel findUserById(String id){
         return userService.getUserById(id).orElseThrow(
-            (Supplier<Throwable>) () -> new ContentNotFoundException(
+            ()->new ContentNotFoundException(
                 String.format("user with id=%s not found",id)));
     }
 }
+
+
+
+
+
+
+
+

@@ -43,6 +43,11 @@ public class UserService implements UserDetailsService {
         userModel.setPassword(encoder.encode(password));
         userRepo.save(userModel);
     }
+
+    public void deleteUser(UserModel user){
+        userRepo.delete(user);
+    }
+
     public List<UserModel> getAllUsers(){
         return userRepo.findAll();
     }

@@ -34,7 +34,6 @@
     })
 
     fetch("/admin/users").then(response => response.json()).then(response => {
-
         let userList = document.getElementById("UsersList")
         response.forEach(element => {
             let user ='<div style="border: 1px solid black">'

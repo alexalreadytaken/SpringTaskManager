@@ -45,6 +45,7 @@ public class TaskParserImpl {
             System.out.println(
                 taskFromStack.getTaskName()+ "(" + taskFromStack.getTaskId() + ")"+
                     " <--"+parentsId.toString());
+
             childList.forEach(el -> {
                 int some = level+1;
                 el.setLevel(some);
@@ -99,6 +100,7 @@ public class TaskParserImpl {
             dependencyList.add(new TaskDependencyImpl(parentId.orElse("root"),readyTask.getTaskId()));//fixme
             taskList.add(readyTask);
         }
+        depthFirst(dependencyList,taskList);
         return taskList;
     }
     public static Map<String,String> fieldToMap(Element element, String field, String key, String value){

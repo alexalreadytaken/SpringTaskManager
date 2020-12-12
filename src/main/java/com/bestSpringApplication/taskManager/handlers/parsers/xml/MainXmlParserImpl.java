@@ -25,9 +25,7 @@ public class MainXmlParserImpl {
         fieldListElem.ifPresent(fields ->
             mainXmlBuilder.setTaskFieldList(TaskParserImpl.fieldToMap(fields, "field","no", "name"))
         );
-        taskElem.ifPresent(tasks->
-            mainXmlBuilder.setTasks(TaskParserImpl.parse(tasks,dependencies))
-        );
+
         dependencyListElem.ifPresent(dependencyList ->{
             List<Element> DependencyElements = dependencyList.getChildren("task-dependency");
             dependencies.addAll(DependencyElements.stream().map(DependencyChild ->{
@@ -36,6 +34,9 @@ public class MainXmlParserImpl {
                 return new TaskDependencyImpl(parent,child);
             }).collect(Collectors.toList()));
         });
+        taskElem.ifPresent(tasks->
+            mainXmlBuilder.setTasks(TaskParserImpl.parse(tasks,dependencies))
+        );
         mainXmlBuilder.setTaskDependencyList(dependencies);
 
         return mainXmlBuilder.build();
