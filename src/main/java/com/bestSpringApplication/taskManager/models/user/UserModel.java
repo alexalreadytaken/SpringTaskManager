@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.models.user;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.enums.UserRole;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,8 +12,6 @@ import javax.persistence.Id;
 import java.util.Collection;
 import java.util.Collections;
 
-import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.enabled;
-
 @Entity
 public class UserModel implements UserDetails {
     @Id
@@ -22,14 +20,13 @@ public class UserModel implements UserDetails {
     private String mail;
     private String name;
     private String password;
-    private String userRole;
+    private String role;
 
-    public UserModel(String mail, String name, String password,String userRole) {
-        this.id = id;
+    public UserModel(String mail, String name, String password,String role) {
         this.mail = mail;
         this.name = name;
         this.password = password;
-        this.userRole=userRole;
+        this.role = role;
     }
 
     public UserModel() {
@@ -61,13 +58,14 @@ public class UserModel implements UserDetails {
         this.password = password;
     }
 
-    public String getUserRole() {
-        return userRole;
+    public String getRole() {
+        return role;
     }
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        final SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(userRole);
+        final SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role);
         return Collections.singletonList(simpleGrantedAuthority);
     }
 
@@ -77,26 +75,31 @@ public class UserModel implements UserDetails {
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return mail;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }

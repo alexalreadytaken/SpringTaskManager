@@ -34,24 +34,21 @@ public class UsersController {
         return response;
     }
     @GetMapping("/admin/users")
-    public List<Map<String,String>> userList(){
-        List<Map<String,String>> mainUsersInform = new ArrayList<>();
-        userService.getAllUsers().forEach(user->
-            mainUsersInform.add(new HashMap<String, String>(){{
-                put("id",user.getId().toString());
-                put("name",user.getName());
-            }})
-        );
-        return mainUsersInform;
+    public List<UserModel> userList(){
+        List<UserModel> allUsers = userService.getAllUsers();
+        allUsers.forEach(usr->usr.setPassword("not access"));
+        return allUsers;
     }
     @GetMapping("/admin/users/{id}")
     public UserModel user(@PathVariable String id){
-        return findUserById(id);
+        UserModel userById = findUserById(id);
+        userById.setPassword("no access");
+        return userById;
     }
+
     @DeleteMapping("/admin/users/{id}")
     public Map<String,Boolean> deleteUser(@PathVariable String id){
         Map<String,Boolean> response = new HashMap<>();
-
         try {
             UserModel user = findUserById(id);
             userService.deleteUser(user);
