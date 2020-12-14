@@ -36,7 +36,7 @@ public class UsersController {
     @GetMapping("/admin/users")
     public List<UserModel> userList(){
         List<UserModel> allUsers = userService.getAllUsers();
-        allUsers.forEach(usr->usr.setPassword("not access"));
+        allUsers.forEach(usr->usr.setPassword("no access"));
         return allUsers;
     }
     @GetMapping("/admin/users/{id}")
