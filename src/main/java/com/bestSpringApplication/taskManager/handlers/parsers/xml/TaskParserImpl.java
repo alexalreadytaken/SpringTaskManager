@@ -24,7 +24,7 @@ public class TaskParserImpl {
         while (!tasksStack.empty()){
             TaskImpl taskFromStack = tasksStack.pop();
             int level = taskFromStack.getLevel();
-            String taskId = taskFromStack.getTaskId();
+            String taskId = taskFromStack.getId();
             for (int i = 0; i < level; i++) {
                 System.out.print("    ");
             }
@@ -39,11 +39,11 @@ public class TaskParserImpl {
                 .filter(el->el.getTaskParentId().equals(taskId))
                 .map(TaskDependencyImpl::getTaskChildId).collect(Collectors.toSet());
 
-            List<TaskImpl> childList = taskImplList.stream().filter(el->childesId.contains(el.getTaskId()))
+            List<TaskImpl> childList = taskImplList.stream().filter(el->childesId.contains(el.getId()))
                 .collect(Collectors.toList());
 
             System.out.println(
-                taskFromStack.getTaskName()+ "(" + taskFromStack.getTaskId() + ")"+
+                taskFromStack.getName()+ "(" + taskFromStack.getId() + ")"+
                     " <--"+parentsId.toString());
 
             childList.forEach(el -> {
@@ -91,13 +91,13 @@ public class TaskParserImpl {
                 Optional<List<Element>> tasks = Optional.ofNullable(tasksOpt.getChildren("task"));
                 tasks.ifPresent(tasksListOpt->
                     tasksListOpt.forEach(el->{
-                        el.setAttribute("parent-id",taskBuilder.build().getTaskId());
+                        el.setAttribute("parent-id",taskBuilder.build().getId());
                         tasksStack.push(el);
                     })
                 );
             });
             TaskImpl readyTask = taskBuilder.build();
-            dependencyList.add(new TaskDependencyImpl(parentId.orElse("root"),readyTask.getTaskId()));//fixme
+            dependencyList.add(new TaskDependencyImpl(parentId.orElse("root"),readyTask.getId()));//fixme
             taskList.add(readyTask);
         }
         depthFirst(dependencyList,taskList);

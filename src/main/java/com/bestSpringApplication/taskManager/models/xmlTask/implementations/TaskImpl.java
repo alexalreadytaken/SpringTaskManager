@@ -12,20 +12,20 @@ public class TaskImpl implements Task {
     @JsonIgnore
     private static final String responseDateFormat = "yyyy-MM-dd HH:mm:ss";
 
-    private Map<String, String> taskFields = new HashMap<>();
-    private String taskName;
-    private String taskId;
+    private Map<String, String> fields = new HashMap<>();
+    private String name;
+    private String id;
     @JsonFormat(pattern = responseDateFormat)
-    private LocalDateTime taskConstraint = LocalDateTime.now();
+    private LocalDateTime constraint = LocalDateTime.now();
     @JsonFormat(pattern = responseDateFormat)
-    private LocalDateTime taskStartDate = LocalDateTime.now();
+    private LocalDateTime startDate = LocalDateTime.now();
     @JsonFormat(pattern = responseDateFormat)
-    private LocalDateTime taskEndDate = LocalDateTime.now();
+    private LocalDateTime endDate = LocalDateTime.now();
     @JsonFormat(pattern = responseDateFormat)
-    private LocalDateTime taskCompletionDate = LocalDateTime.now();
-    private int taskDuration =0;
-    private double taskPercentComplete = 0.0;
-    private double taskWorkPercentComplete= 0.0;
+    private LocalDateTime completionDate = LocalDateTime.now();
+    private int duration =0;
+    private double percentComplete = 0.0;
+    private double workPercentComplete = 0.0;
     @JsonIgnore
     private int level;
     private String notes ="empty";
@@ -36,16 +36,16 @@ public class TaskImpl implements Task {
         return new TaskImpl().new TaskBuilder();
     }
 
-    public double getTaskWorkPercentComplete() { return taskWorkPercentComplete; }
-    public LocalDateTime getTaskCompletionDate() { return taskCompletionDate; }
-    public double getTaskPercentComplete() { return taskPercentComplete; }
-    public LocalDateTime getTaskConstraint() { return taskConstraint; }
-    public Map<String, String> getTaskFields() { return taskFields; }
-    public LocalDateTime getTaskStartDate() { return taskStartDate; }
-    public LocalDateTime getTaskEndDate() { return taskEndDate; }
-    public int getTaskDuration() { return taskDuration; }
-    public String getTaskName() { return taskName; }
-    public String getTaskId() { return taskId; }
+    public double getWorkPercentComplete() { return workPercentComplete; }
+    public LocalDateTime getCompletionDate() { return completionDate; }
+    public double getPercentComplete() { return percentComplete; }
+    public LocalDateTime getConstraint() { return constraint; }
+    public Map<String, String> getFields() { return fields; }
+    public LocalDateTime getStartDate() { return startDate; }
+    public LocalDateTime getEndDate() { return endDate; }
+    public int getDuration() { return duration; }
+    public String getName() { return name; }
+    public String getId() { return id; }
     public String getNotes() { return notes; }
 
 
@@ -68,35 +68,35 @@ public class TaskImpl implements Task {
             return this;
         }
         public TaskBuilder setTaskFields(Map<String,String> taskFields) {
-            TaskImpl.this.taskFields = taskFields;
+            TaskImpl.this.fields = taskFields;
             return this;
         }
         public TaskBuilder setTaskName(String taskName) {
-            TaskImpl.this.taskName = taskName;
+            TaskImpl.this.name = taskName;
             return this;
         }
         public TaskBuilder setTaskId(String taskId) {
-            TaskImpl.this.taskId = taskId;
+            TaskImpl.this.id = taskId;
             return this;
         }
         public TaskBuilder setTaskDuration(int taskDuration) {
-            TaskImpl.this.taskDuration = taskDuration;
+            TaskImpl.this.duration = taskDuration;
             return this;
         }
         public TaskBuilder setTaskConstraint(LocalDateTime taskConstraint) {
-            TaskImpl.this.taskConstraint = taskConstraint;
+            TaskImpl.this.constraint = taskConstraint;
             return this;
         }
         public TaskBuilder setTaskStartDate(LocalDateTime taskStartDate) {
-            TaskImpl.this.taskStartDate = taskStartDate;
+            TaskImpl.this.startDate = taskStartDate;
             return this;
         }
         public TaskBuilder setTaskEndDate(LocalDateTime taskEndDate) {
-            TaskImpl.this.taskEndDate = taskEndDate;
+            TaskImpl.this.endDate = taskEndDate;
             return this;
         }
         public TaskBuilder setTaskCompletionDate(LocalDateTime taskCompletionDate) {
-            TaskImpl.this.taskCompletionDate = taskCompletionDate;
+            TaskImpl.this.completionDate = taskCompletionDate;
             return this;
         }
         public TaskImpl build(){

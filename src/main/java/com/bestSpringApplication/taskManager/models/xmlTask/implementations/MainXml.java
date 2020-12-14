@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class MainXml {
     private List<Task> tasks;
-    private Map<String,String> taskFieldList;
+    private Map<String,String> taskFieldList;//todo
     private List<TaskDependencyImpl> taskDependencyList = new ArrayList<>();
 
     public MainXml(){}
