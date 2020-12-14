@@ -26,9 +26,6 @@ fetch("/admin/users").then(response => response.json()).then(response => {
         let hrefToUser = ''
         Object.entries(element).reverse().forEach(el=>{
             user+='<h4>'+el[0]+':'+el[1]+'</h4>'
-            if (el[0]==='id'){
-                hrefToUser='<a href="/admin/users/'+el[1]+'">more info</a>'
-            }
         })
         user+=hrefToUser
         user+='</div>'
