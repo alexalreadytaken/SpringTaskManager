@@ -4,31 +4,32 @@ import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.Map;
 
+@Entity(name = "task")
 public class TaskImpl implements Task {
     @JsonIgnore
-    private static final String responseDateFormat = "yyyy-MM-dd HH:mm:ss";
+    private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    private Map<String, String> fields = new HashMap<>();
-    private String name;
+    @Id
     private String id;
-    @JsonFormat(pattern = responseDateFormat)
-    private LocalDateTime constraint = LocalDateTime.now();
-    @JsonFormat(pattern = responseDateFormat)
-    private LocalDateTime startDate = LocalDateTime.now();
-    @JsonFormat(pattern = responseDateFormat)
-    private LocalDateTime endDate = LocalDateTime.now();
-    @JsonFormat(pattern = responseDateFormat)
-    private LocalDateTime completionDate = LocalDateTime.now();
-    private int duration =0;
-    private double percentComplete = 0.0;
-    private double workPercentComplete = 0.0;
-    @JsonIgnore
-    private int level;
-    private String notes ="empty";
+    private Map<String, String> fields;
+    private String name;
+    @JsonFormat(pattern = DATE_FORMAT)
+    private LocalDateTime constraint;
+    @JsonFormat(pattern = DATE_FORMAT)
+    private LocalDateTime startDate;
+    @JsonFormat(pattern = DATE_FORMAT)
+    private LocalDateTime endDate;
+    @JsonFormat(pattern = DATE_FORMAT)
+    private LocalDateTime completionDate;
+    private int duration;
+    private double percentComplete;
+    private double workPercentComplete;
+    private String notes;
 
    public TaskImpl() {}
 
@@ -47,19 +48,6 @@ public class TaskImpl implements Task {
     public String getName() { return name; }
     public String getId() { return id; }
     public String getNotes() { return notes; }
-
-
-
-
-    //odnorazoviy
-    public int getLevel() {
-        int a = level;
-        level = 0;
-        return a;
-    }
-    public void setLevel(int level) {
-        this.level = level;
-    }
 
     public class TaskBuilder{
         TaskBuilder(){}

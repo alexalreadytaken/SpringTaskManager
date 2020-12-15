@@ -12,7 +12,7 @@ import javax.persistence.Id;
 import java.util.Collection;
 import java.util.Collections;
 
-@Entity
+@Entity(name = "user")
 public class UserModel implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class MainXml {
     private List<Task> tasks;
-    private Map<String,String> taskFieldList;//todo
+    private Map<String,String> taskFieldList;
     private List<TaskDependencyImpl> taskDependencyList = new ArrayList<>();
 
     public MainXml(){}
@@ -20,8 +20,6 @@ public class MainXml {
     public List<TaskDependencyImpl> getTaskDependencyList() { return taskDependencyList; }
     public Map<String,String> getTaskFieldList() { return taskFieldList; }
     public List<Task> getTasks() { return tasks; }
-
-
 
     public class MainXmlBuilder {
 

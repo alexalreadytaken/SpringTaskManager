@@ -13,46 +13,6 @@ import java.util.stream.Collectors;
 
 public class TaskParserImpl {
 
-    @Deprecated
-    //работает корректно только без xml`ных dependency
-    public static void depthFirst(List<TaskDependencyImpl> dependencies,List<Task> tasks){
-        Stack<TaskImpl> tasksStack = new Stack<>();
-        List<TaskImpl> taskImplList = (List<TaskImpl>) (List<?>) tasks;
-        TaskImpl rootTask =taskImplList.get(0);
-        rootTask.setLevel(0);
-        tasksStack.push(rootTask);
-        while (!tasksStack.empty()){
-            TaskImpl taskFromStack = tasksStack.pop();
-            int level = taskFromStack.getLevel();
-            String taskId = taskFromStack.getId();
-            for (int i = 0; i < level; i++) {
-                System.out.print("    ");
-            }
-            Set<String> parentsId = dependencies.stream()
-                .filter(el->el.getTaskChildId().equals(taskId))
-                .map(TaskDependencyImpl::getTaskParentId).collect(Collectors.toSet());
-            /*
-            List<TaskImpl> parentList = taskImplList.stream().filter(el->parentsId.contains(el.getTaskId()))
-                .collect(Collectors.toList());*/
-
-            Set<String> childesId = dependencies.stream()
-                .filter(el->el.getTaskParentId().equals(taskId))
-                .map(TaskDependencyImpl::getTaskChildId).collect(Collectors.toSet());
-
-            List<TaskImpl> childList = taskImplList.stream().filter(el->childesId.contains(el.getId()))
-                .collect(Collectors.toList());
-
-            System.out.println(
-                taskFromStack.getName()+ "(" + taskFromStack.getId() + ")"+
-                    " <--"+parentsId.toString());
-
-            childList.forEach(el -> {
-                int some = level+1;
-                el.setLevel(some);
-                tasksStack.push(el);
-            });
-        }
-    }
     public static List<Task> parse(Element element, List<TaskDependencyImpl> dependencyList){
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
@@ -100,7 +60,6 @@ public class TaskParserImpl {
             dependencyList.add(new TaskDependencyImpl(parentId.orElse("root"),readyTask.getId()));//fixme
             taskList.add(readyTask);
         }
-        depthFirst(dependencyList,taskList);
         return taskList;
     }
     public static Map<String,String> fieldToMap(Element element, String field, String key, String value){
