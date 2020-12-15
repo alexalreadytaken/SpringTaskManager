@@ -13,23 +13,23 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity(name = "user")
-public class UserModel implements UserDetails {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String mail;
     private String name;
-    private String password;
+    private String password;//todo
     private String role;
 
-    public UserModel(String mail, String name, String password,String role) {
+    public User(String mail, String name, String password, String role) {
         this.mail = mail;
         this.name = name;
         this.password = password;
         this.role = role;
     }
 
-    public UserModel() {
+    public User() {
     }
 
     public Long getId() {

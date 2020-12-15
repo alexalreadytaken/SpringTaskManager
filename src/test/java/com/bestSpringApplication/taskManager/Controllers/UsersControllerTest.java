@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
-import com.bestSpringApplication.taskManager.models.user.UserModel;
+import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -26,14 +26,14 @@ class UsersControllerTest {
     @Autowired
     private MockMvc client;
 
-    private final UserModel existUser = new UserModel("test-1","test-1","test-1","USER");
-    private final UserModel notExistUser = new UserModel("test-2","test-2","test-2","USER");
+    private final User existUser = new User("test-1","test-1","test-1","USER");
+    private final User notExistUser = new User("test-2","test-2","test-2","USER");
 
     @BeforeEach
     public void start(){
         try {
-            userService.deleteUser((UserModel) userService.loadUserByUsername(notExistUser.getMail()));
-            userService.deleteUser((UserModel) userService.loadUserByUsername(existUser.getMail()));
+            userService.deleteUser((User) userService.loadUserByUsername(notExistUser.getMail()));
+            userService.deleteUser((User) userService.loadUserByUsername(existUser.getMail()));
         }catch (UsernameNotFoundException ignored){}
         userService.saveUser(existUser);
     }
@@ -43,7 +43,7 @@ class UsersControllerTest {
         register(existUser,false);
         register(notExistUser,true);
     }
-    private ResultActions register(UserModel user, boolean expectedResponse) throws Exception {
+    private ResultActions register(User user, boolean expectedResponse) throws Exception {
         return this.client.perform(post("/reg")
             .contentType(MediaType.APPLICATION_JSON)
             .content(String.format("{\"name\":\"%s\",\"mail\":\"%s\",\"password\":\"%s\"}"
@@ -55,8 +55,8 @@ class UsersControllerTest {
     @AfterEach
     public void end(){
         try {
-            userService.deleteUser((UserModel) userService.loadUserByUsername(notExistUser.getMail()));
-            userService.deleteUser((UserModel) userService.loadUserByUsername(existUser.getMail()));
+            userService.deleteUser((User) userService.loadUserByUsername(notExistUser.getMail()));
+            userService.deleteUser((User) userService.loadUserByUsername(existUser.getMail()));
         }catch (UsernameNotFoundException ignored){}
     }
 }

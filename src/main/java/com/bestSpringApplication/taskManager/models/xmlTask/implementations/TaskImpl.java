@@ -4,19 +4,18 @@ import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Optional;
 
-@Entity(name = "task")
+//@Entity(name = "task")
 public class TaskImpl implements Task {
     @JsonIgnore
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    @Id
+//    @Id
     private String id;
-    private Map<String, String> fields;
+    private Map<String, String> fields; //optional
     private String name;
     @JsonFormat(pattern = DATE_FORMAT)
     private LocalDateTime constraint;
@@ -29,7 +28,7 @@ public class TaskImpl implements Task {
     private int duration;
     private double percentComplete;
     private double workPercentComplete;
-    private String notes;
+    private String notes; //optional
 
    public TaskImpl() {}
 
@@ -41,13 +40,17 @@ public class TaskImpl implements Task {
     public LocalDateTime getCompletionDate() { return completionDate; }
     public double getPercentComplete() { return percentComplete; }
     public LocalDateTime getConstraint() { return constraint; }
-    public Map<String, String> getFields() { return fields; }
     public LocalDateTime getStartDate() { return startDate; }
     public LocalDateTime getEndDate() { return endDate; }
     public int getDuration() { return duration; }
     public String getName() { return name; }
     public String getId() { return id; }
-    public String getNotes() { return notes; }
+
+    public Optional<String> getNotes() { return Optional.ofNullable(notes); }
+    //good practice ?
+    public Optional<Map<String, String>> getFields() { return Optional.ofNullable(fields); }
+
+    public void setFields(Map<String, String> fields) { this.fields = fields; }
 
     public class TaskBuilder{
         TaskBuilder(){}

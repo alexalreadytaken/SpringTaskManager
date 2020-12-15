@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.models.user.UserModel;
+import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -26,7 +26,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String str) throws UsernameNotFoundException {
-        final Optional<UserModel> user = userRepo.findByMail(str);
+        final Optional<User> user = userRepo.findByMail(str);
         return user.orElseThrow(()-> new UsernameNotFoundException("USER NOT FOUND"));
     }
 
@@ -38,24 +38,24 @@ public class UserService implements UserDetailsService {
             return false;
         }
     }
-    public void saveUser(UserModel userModel){
-        String password = userModel.getPassword();
-        userModel.setPassword(encoder.encode(password));
-        userRepo.save(userModel);
+    public void saveUser(User user){
+        String password = user.getPassword();
+        user.setPassword(encoder.encode(password));
+        userRepo.save(user);
     }
 
-    public void deleteUser(UserModel user){
+    public void deleteUser(User user){
         userRepo.delete(user);
     }
 
-    public List<UserModel> getAllUsers(){
+    public List<User> getAllUsers(){
         return userRepo.findAll();
     }
 
-    public Optional<UserModel> getUserById(Long id){
+    public Optional<User> getUserById(Long id){
         return userRepo.findById(id);
     }
-    public Optional<UserModel> getUserById(String id){
+    public Optional<User> getUserById(String id){
         try {
             long id0 = Integer.parseInt(id);
             return userRepo.findById(id0);
