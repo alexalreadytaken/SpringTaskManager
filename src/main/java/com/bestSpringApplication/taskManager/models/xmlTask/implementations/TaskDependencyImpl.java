@@ -1,6 +1,7 @@
 package com.bestSpringApplication.taskManager.models.xmlTask.implementations;
 
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
@@ -9,6 +10,7 @@ import javax.persistence.*;
 public class TaskDependencyImpl implements TaskDependency {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
     private String taskParentId;
     private String taskChildId;

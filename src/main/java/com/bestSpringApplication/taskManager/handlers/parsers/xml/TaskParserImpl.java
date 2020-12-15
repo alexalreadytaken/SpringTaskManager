@@ -34,12 +34,7 @@ public class TaskParserImpl {
 
             taskBuilder
                 .setTaskName(taskName.orElse("default-name"))
-                .setTaskId(taskId.orElse("default-id"))
-                //test
-                .setTaskDuration(Integer.parseInt(taskElemFromStack.getChildText("task-duration")))
-                .setTaskStartDate(DateHandler.parseDateFromFormat(taskElemFromStack.getChildText("task-start-date"),"dd-MM-yyyy, HH:mm:ss"))
-                .setTaskEndDate(DateHandler.parseDateFromFormat(taskElemFromStack.getChildText("task-end-date"),"dd-MM-yyyy, HH:mm:ss"));
-
+                .setTaskId(taskId.orElse("default-id"));
 
             fieldListElem.ifPresent(fieldList ->
                 taskBuilder.setTaskFields(fieldToMap(fieldList, "field","field-no", "field-value"))

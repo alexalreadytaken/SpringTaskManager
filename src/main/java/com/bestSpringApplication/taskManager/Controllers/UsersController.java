@@ -34,15 +34,11 @@ public class UsersController {
     }
     @GetMapping("/admin/users")
     public List<User> userList(){
-        List<User> allUsers = userService.getAllUsers();
-        allUsers.forEach(usr->usr.setPassword("no access"));
-        return allUsers;
+        return userService.getAllUsers();
     }
     @GetMapping("/admin/users/{id}")
     public User user(@PathVariable String id){
-        User userById = findUserById(id);
-        userById.setPassword("no access");
-        return userById;
+        return findUserById(id);
     }
 
     @DeleteMapping("/admin/users/{id}")

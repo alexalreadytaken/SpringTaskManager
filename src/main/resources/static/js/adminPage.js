@@ -11,10 +11,6 @@ document.querySelector('#file').addEventListener('change',evt => {
         body:formData
     }).then(response=>response.json())
         .then(response=>{
-            let taskDependencyList = response.taskDependencyList;
-            taskDependencyList.sort((a,b)=>{
-                return a.taskParentId - b.taskParentId;
-            });
             console.log(response)
         })
 })

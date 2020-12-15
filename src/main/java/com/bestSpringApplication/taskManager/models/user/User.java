@@ -19,7 +19,8 @@ public class User implements UserDetails {
     private Long id;
     private String mail;
     private String name;
-    private String password;//todo
+    @JsonIgnore
+    private String password;
     private String role;
 
     public User(String mail, String name, String password, String role) {
