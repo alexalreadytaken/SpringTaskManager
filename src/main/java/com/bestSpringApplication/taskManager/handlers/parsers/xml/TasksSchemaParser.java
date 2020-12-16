@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.MainXml;
+import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
@@ -10,11 +10,11 @@ import org.jdom2.Element;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class MainXmlParserImpl {
+public class TasksSchemaParser {
 
-    public static MainXml parseCourseXml(Document mainDocument){
+    public static TasksSchema parseSchemaXml(Document mainDocument){
         Element mainRootElement = mainDocument.getRootElement();
-        MainXml mainXml = new MainXml();
+        TasksSchema tasksSchema = new TasksSchema();
 
         Optional<Element> fieldListElem = Optional.ofNullable(mainRootElement.getChild("task-field-list"));
         Optional<Element> dependencyListElem = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
@@ -52,11 +52,11 @@ public class MainXmlParserImpl {
                     });
                 });
             }
-            mainXml.setTasks(tasks);
+            tasksSchema.setTasks(tasks);
         });
-        mainXml.setTaskDependencyList(dependencies);
+        tasksSchema.setTaskDependencyList(dependencies);
 
-        return mainXml;
+        return tasksSchema;
     }
 
 }
