@@ -1,5 +1,6 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -9,6 +10,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @EnableWebMvc
 public class StaticResolver implements WebMvcConfigurer {
+
+    @Value("${task.pool.path}")
+    private String taskPoolPath;
+
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/register").setViewName("register");
@@ -26,5 +31,7 @@ public class StaticResolver implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/css/");
         registry.addResourceHandler("favicon.ico")
                 .addResourceLocations("classpath:/static/favicon.ico");
+        registry.addResourceHandler("/tasks/schema/**")
+                .addResourceLocations("file://"+taskPoolPath);
     }
 }

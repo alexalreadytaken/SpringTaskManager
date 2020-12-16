@@ -13,6 +13,7 @@ public class TaskImpl implements Task {
     @JsonIgnore
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+
 //    @Id
     private String id;
     private Map<String, String> fields; //optional
