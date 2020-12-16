@@ -2,8 +2,8 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
-import com.bestSpringApplication.taskManager.handlers.parsers.xml.MainXmlParserImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.MainXml;
+import com.bestSpringApplication.taskManager.handlers.parsers.xml.TasksSchemaParser;
+import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -27,12 +27,12 @@ public class TasksController {
 
 
     @PostMapping("/admin/addTasks")
-    public MainXml newTasks(@RequestParam("file") MultipartFile file) throws IOException, JDOMException{
+    public TasksSchema newTasks(@RequestParam("file") MultipartFile file) throws IOException, JDOMException{
         String[] dividedFileName = file.getOriginalFilename().split("\\.");
         String fileType = dividedFileName[dividedFileName.length-1];
         if (confirmedFileTypes.contains(fileType)){
             Document courseXml = new SAXBuilder().build(file.getInputStream());
-            return MainXmlParserImpl.parseCourseXml(courseXml);
+            return TasksSchemaParser.parseSchemaXml(courseXml);
         }else {
             throw new IllegalFileFormatException(String.format("файл с расширением %s не поддерживается",fileType));
         }
