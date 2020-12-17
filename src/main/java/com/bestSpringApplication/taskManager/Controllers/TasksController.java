@@ -4,7 +4,6 @@ package com.bestSpringApplication.taskManager.Controllers;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
-import org.aspectj.lang.annotation.Before;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -25,7 +24,7 @@ public class TasksController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TasksController.class);
 
-    private static final Map<String,TasksSchema> SCHEMAS = new HashMap<>();
+    public static final Map<String,TasksSchema> SCHEMAS = new HashMap<>();
 
     @Value("${task.pool.path}")
     private String taskPoolPath;
@@ -91,6 +90,7 @@ public class TasksController {
             LOGGER.error("error with XML parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
             throw new IllegalXmlFormatException("загрузка файла не удалась,проверьте структуру своего XML файла");
         }catch (NullPointerException ex){
+            //fixme
             LOGGER.error("NPE with message:{}",ex.getMessage());
         }
     }

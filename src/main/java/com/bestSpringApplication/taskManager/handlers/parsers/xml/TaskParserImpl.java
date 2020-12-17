@@ -1,6 +1,5 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
-import com.bestSpringApplication.taskManager.handlers.DateHandler;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
@@ -10,7 +9,6 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class TaskParserImpl {
 
