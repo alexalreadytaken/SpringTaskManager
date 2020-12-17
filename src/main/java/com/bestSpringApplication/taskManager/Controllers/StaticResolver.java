@@ -31,7 +31,7 @@ public class StaticResolver implements WebMvcConfigurer {
                 .addResourceLocations("classpath:/static/css/");
         registry.addResourceHandler("favicon.ico")
                 .addResourceLocations("classpath:/static/favicon.ico");
-        registry.addResourceHandler("/tasks/schema/**")
-                .addResourceLocations("file://"+taskPoolPath);
+        registry.addResourceHandler("admin/tasks/schema/**")
+                .addResourceLocations("file:///"+taskPoolPath);
     }
 }
