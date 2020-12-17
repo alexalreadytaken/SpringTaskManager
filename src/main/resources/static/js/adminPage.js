@@ -1,11 +1,11 @@
 
 
 
-fetch("/admin/tasks").then(response => response.json()).then(response =>{
+fetch("/admin/tasksFiles").then(response => response.json()).then(response =>{
     let tasksList = document.getElementById("tasksList");
-
     response.forEach(el=>{
         let div = document.createElement('div');
+        div.style.margin='10px'
         let fileDownload = document.createElement('a')
         let file = el.filename
         fileDownload.innerText=file

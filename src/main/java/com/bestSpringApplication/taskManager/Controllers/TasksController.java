@@ -4,6 +4,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
+import org.aspectj.lang.annotation.Before;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -12,16 +13,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
-import reactor.core.publisher.Flux;
-import reactor.core.publisher.Mono;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import javax.annotation.PostConstruct;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,6 +25,8 @@ public class TasksController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TasksController.class);
 
+    private static final Map<String,TasksSchema> SCHEMAS = new HashMap<>();
+
     @Value("${task.pool.path}")
     private String taskPoolPath;
 
@@ -37,14 +34,41 @@ public class TasksController {
         Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
             "xml","mrp","txt")));
 
-
-    /*@GetMapping("admin/tasks")
-    public Flux<Object> filesList(){
-        return Flux.from(new File(taskPoolPath));
-    }*/
+    @PostConstruct
+    public void init(){
+        File tasksDir = new File(taskPoolPath);
+        if (tasksDir.exists()){
+            Optional<File[]> files =
+                Optional.ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
+            files.ifPresent(files1 ->
+                Arrays.stream(files1).forEach(el-> {
+                    try {
+                        InputStream fileInputStream = new FileInputStream(el);
+                        Document schemaDoc = new SAXBuilder().build(fileInputStream);
+                        TasksSchema schema = TasksSchema.parseFromXml(schemaDoc);
+                        SCHEMAS.put(el.getName(),schema);
+                    } catch (FileNotFoundException e) {
+                        LOGGER.warn("file was deleted in initializing time");
+                    } catch (JDOMException e) {
+                        LOGGER.error("error with parse XML:{}",e.getMessage());
+                    } catch (IOException e) {
+                        LOGGER.error(e.getMessage());
+                    }
+                })
+            );
+        }else {
+            tasksDir.mkdir();
+        }
+    }
     @GetMapping("/admin/tasks")
-    public List<Map<String,String>> fileTaskList() throws IOException {
+    public List<TasksSchema> schema(){
+        return new ArrayList<>(SCHEMAS.values());
+    }
+
+    @GetMapping("/admin/tasksFiles")
+    public List<Map<String,String>> fileTaskList() {
         return Arrays.stream(
+            // doesn't really throw
             new File(taskPoolPath).listFiles(el -> !el.isDirectory()))
             .map(el->new HashMap<String,String>(){{put("filename",el.getName());}})
             .collect(Collectors.toList());
