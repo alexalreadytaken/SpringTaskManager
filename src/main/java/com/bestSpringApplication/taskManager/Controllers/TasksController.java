@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -41,16 +42,17 @@ public class TasksController {
             String[] fileNameAndType = Objects.requireNonNull(file.getOriginalFilename()).split("\\.", 2);
             if (confirmedFileTypes.contains(fileNameAndType[1])){
                 Document courseXml = new SAXBuilder().build(file.getInputStream());
-                TasksSchema x = TasksSchema.parseFromXml(courseXml);
-                System.err.println(x);
+                TasksSchema.parseFromXml(courseXml);
                 file.transferTo(new File(taskPoolPath+file.getOriginalFilename()));
             }else {
+                LOGGER.warn("unsupported file type sent,file:{}",file.getOriginalFilename());
                 throw new IllegalFileFormatException(String.format("файл с расширением %s не поддерживается",fileNameAndType[1]));
             }
         }catch (JDOMException ex){
-//            LOGGER.error("error with XML parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
+            LOGGER.error("error with XML parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
             throw new IllegalXmlFormatException("загрузка файла не удалась,проверьте структуру своего XML файла");
         }catch (NullPointerException ex){
+            LOGGER.error("NPE with exception:{}",ex.getMessage());
             throw new IllegalFileFormatException("проверьте имя вашего файла");
         }
     }
