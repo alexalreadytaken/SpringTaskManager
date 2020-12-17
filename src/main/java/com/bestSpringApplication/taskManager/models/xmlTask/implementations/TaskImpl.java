@@ -4,6 +4,7 @@ import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
@@ -14,9 +15,12 @@ public class TaskImpl implements Task {
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 
-//    @Id
+    @Id
     private String id;
+
+    @ElementCollection
     private Map<String, String> fields; //optional
+
     private String name;
     @JsonFormat(pattern = DATE_FORMAT)
     private LocalDateTime constraint;

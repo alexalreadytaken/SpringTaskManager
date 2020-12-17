@@ -16,8 +16,12 @@ import java.util.Map;
 @RestController
 public class UsersController {
 
+    private final UserService userService;
+
     @Autowired
-    private UserService userService;
+    public UsersController(UserService userService) {
+        this.userService = userService;
+    }
     private static final String methodistIp = "http://10.1.0.88:8080";
 
     @PostMapping("/reg")

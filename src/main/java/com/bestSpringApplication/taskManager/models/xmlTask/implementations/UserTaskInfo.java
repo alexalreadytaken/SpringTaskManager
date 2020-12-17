@@ -1,5 +1,6 @@
 package com.bestSpringApplication.taskManager.models.xmlTask.implementations;
 import com.bestSpringApplication.taskManager.models.user.User;
+import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
 
 import java.time.LocalDateTime;
 

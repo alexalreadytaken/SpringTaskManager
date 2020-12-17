@@ -26,7 +26,7 @@ public class UserService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String str) throws UsernameNotFoundException {
-        final Optional<User> user = userRepo.findByMail(str);
+        final Optional<User> user = userRepo.findByMail(str);// it should/так надо
         return user.orElseThrow(()-> new UsernameNotFoundException("USER NOT FOUND"));
     }
 

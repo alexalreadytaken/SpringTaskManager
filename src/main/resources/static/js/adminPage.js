@@ -9,10 +9,11 @@ document.querySelector('#file').addEventListener('change',evt => {
     fetch('/admin/addTasks',{
         method:'POST',
         body:formData
-    }).then(response=>response.json())
-        .then(response=>{
-            console.log(response)
-        })
+    }).then(response=>
+        response.status!==200? response.json():{result:'загружено успешно'}
+    ).then(response=>{
+        alert(response.result)
+    })
 })
 
 fetch("/admin/users").then(response => response.json()).then(response => {

@@ -78,7 +78,7 @@ public class User implements UserDetails {
     @Override
     @JsonIgnore
     public String getUsername() {
-        return mail;
+        return name;
     }
 
     @Override

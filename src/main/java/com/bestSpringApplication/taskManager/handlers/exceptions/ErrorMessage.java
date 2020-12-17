@@ -2,14 +2,24 @@ package com.bestSpringApplication.taskManager.handlers.exceptions;
 
 public class ErrorMessage {
     private int status;
-    private String message;
+    private long timestamp;
+    private String result;
 
-    public ErrorMessage(int status, String message) {
+    public ErrorMessage(int status, long timestamp, String result) {
         this.status = status;
-        this.message = message;
+        this.timestamp = timestamp;
+        this.result = result;
     }
 
     public ErrorMessage() {
+    }
+
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(long timestamp) {
+        this.timestamp = timestamp;
     }
 
     public int getStatus() {
@@ -20,11 +30,11 @@ public class ErrorMessage {
         this.status = status;
     }
 
-    public String getMessage() {
-        return message;
+    public String getResult() {
+        return result;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setResult(String result) {
+        this.result = result;
     }
 }

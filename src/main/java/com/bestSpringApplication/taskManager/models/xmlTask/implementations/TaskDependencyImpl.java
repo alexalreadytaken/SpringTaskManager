@@ -39,8 +39,8 @@ public class TaskDependencyImpl implements TaskDependency {
     @Override
     public String toString() {
         return "{" +
-                "TaskProcessorId='" + taskParentId + '\'' +
-                ", TaskSuccessorId='" + taskChildId + '\'' +
+                "TaskParentId='" + taskParentId + '\'' +
+                ", TaskChildId='" + taskChildId + '\'' +
                 '}';
     }
 }

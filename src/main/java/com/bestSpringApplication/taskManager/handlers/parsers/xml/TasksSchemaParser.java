@@ -4,6 +4,7 @@ import com.bestSpringApplication.taskManager.models.xmlTask.implementations.Task
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
@@ -20,7 +21,7 @@ public class TasksSchemaParser {
         Optional<Element> dependencyListElem = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
         Optional<Element> taskElem = Optional.ofNullable(mainRootElement.getChild("task"));
 
-        List<TaskDependencyImpl> dependencies = new ArrayList<>();
+        List<TaskDependency> dependencies = new ArrayList<>();
         Map<String,String> tasksFields = new HashMap<>();
 
         fieldListElem.ifPresent(fields ->

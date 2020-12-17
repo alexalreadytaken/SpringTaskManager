@@ -4,6 +4,7 @@ import com.bestSpringApplication.taskManager.handlers.DateHandler;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
@@ -13,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class TaskParserImpl {
 
-    public static List<Task> parse(Element element, List<TaskDependencyImpl> dependencyList){
+    public static List<Task> parse(Element element, List<TaskDependency> dependencyList){
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
 
