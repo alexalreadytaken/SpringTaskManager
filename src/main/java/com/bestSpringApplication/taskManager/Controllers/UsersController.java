@@ -6,9 +6,6 @@ import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Flux;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,17 +39,6 @@ public class UsersController {
     @GetMapping("/admin/users")
     public List<User> userList(){
         return userService.getAllUsers();
-    }
-
-    @GetMapping("/students")
-    public Flux<Object> test(){
-        WebClient client = WebClient.create(methodistIp);
-
-        return client
-                .get()
-                .uri("/api/users")
-                .retrieve()
-                .bodyToFlux(Object.class);
     }
 
     @GetMapping("/admin/users/{id}")

@@ -17,7 +17,6 @@ public class TaskParserImpl {
     public static List<Task> parse(Element element, List<TaskDependency> dependencyList) {
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
-
         tasksStack.push(element);
 
         while (!tasksStack.empty()) {

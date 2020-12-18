@@ -1,5 +1,6 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
+import com.bestSpringApplication.taskManager.Controllers.TasksController;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
@@ -8,13 +9,17 @@ import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDepen
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class TasksSchemaParser {
+    private static final Logger LOGGER = LoggerFactory.getLogger(TasksSchemaParser.class);
 
     public static TasksSchema parseSchemaXml(Document mainDocument) throws JDOMException {
+
         Element mainRootElement = mainDocument.getRootElement();
         TasksSchema tasksSchema = new TasksSchema();
 
@@ -22,9 +27,12 @@ public class TasksSchemaParser {
         Optional<Element> dependencyListElem = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
         Optional<Element> taskElem = Optional.ofNullable(mainRootElement.getChild("task"));
 
-        fieldListElem.orElseThrow(()-> new JDOMException("Schema graph is empty"));
-        taskElem.orElseThrow(()-> new JDOMException("Schema taskMap is empty"));
-        
+        dependencyListElem.orElseThrow(()-> new JDOMException("Schema dependencyList is empty"));
+        taskElem.orElseThrow(()-> new JDOMException("Schema taskElem is empty"));
+
+        LOGGER.debug("Nice! dependencyList{}, taskElem{}",
+                dependencyListElem.isPresent(),
+                taskElem.isPresent());
         List<TaskDependency> taskDependencies = new ArrayList<>();
         Map<String,String> schemeFields = new HashMap<>();
 
@@ -48,9 +56,6 @@ public class TasksSchemaParser {
                 tasksSchema.getTasksMap(),
                 tasksSchema.getTaskDependencies()
             ));
-
-
-
         return tasksSchema;
     }
 
@@ -58,21 +63,21 @@ public class TasksSchemaParser {
         Map<Task,List<Task>> tasksGraph = new HashMap<>();
         TaskDependency rootTask = taskDependencies.stream().filter(el -> ((TaskDependencyImpl) el).getTaskParentId().equals("root"))
             .findFirst().orElseThrow(() -> new JDOMException("Root task element not found!"));
-
         Stack<Task> taskStack = new Stack<>();
         taskStack.push(taskMap.get(((TaskDependencyImpl) rootTask).getTaskChildId()));
         while (!taskStack.empty()){
             TaskImpl task = ((TaskImpl) taskStack.pop());
             String taskId = task.getId();
+
             List<String> childesId =
                 taskDependencies.stream()
-                .filter(el->((TaskDependencyImpl)el).getTaskParentId().equals(taskId))
-                .map(el->((TaskDependencyImpl)el).getTaskChildId())
-                .collect(Collectors.toList());
+                    .filter(el->((TaskDependencyImpl)el).getTaskParentId().equals(taskId))
+                    .map(el->((TaskDependencyImpl)el).getTaskChildId())
+                    .collect(Collectors.toList());
             List<Task> childTasks =
                 childesId.stream()
-                .map(taskMap::get)
-                .collect(Collectors.toList());
+                    .map(taskMap::get)
+                    .collect(Collectors.toList());
             tasksGraph.put(task,childTasks);
             childTasks.forEach(taskStack::push);
         }
