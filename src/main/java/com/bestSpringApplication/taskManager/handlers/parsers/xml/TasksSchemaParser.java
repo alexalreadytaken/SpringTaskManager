@@ -30,7 +30,7 @@ public class TasksSchemaParser {
         dependencyListElem.orElseThrow(()-> new JDOMException("Schema dependencyList is empty"));
         taskElem.orElseThrow(()-> new JDOMException("Schema taskElem is empty"));
 
-        LOGGER.debug("Nice! dependencyList{}, taskElem{}",
+        LOGGER.debug("Nice! dependencyList exist: {}, taskElem exist: {}",
                 dependencyListElem.isPresent(),
                 taskElem.isPresent());
         List<TaskDependency> taskDependencies = new ArrayList<>();
@@ -56,6 +56,7 @@ public class TasksSchemaParser {
                 tasksSchema.getTasksMap(),
                 tasksSchema.getTaskDependencies()
             ));
+        LOGGER.debug("Dependencies: {}, TasksGraph: {}", !taskDependencies.isEmpty(), !tasksSchema.getTasksGraph().isEmpty());
         return tasksSchema;
     }
 
