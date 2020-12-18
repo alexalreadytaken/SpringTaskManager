@@ -11,6 +11,10 @@ import java.time.Instant;
 @RestControllerAdvice
 public class RestExceptionsHandler{
 
+
+
+
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public static ErrorMessage notFoundHandle(ContentNotFoundException ex){

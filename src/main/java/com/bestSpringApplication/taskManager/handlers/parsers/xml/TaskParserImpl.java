@@ -7,12 +7,14 @@ import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDepen
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.w3c.dom.DOMException;
 
 import java.util.*;
 
 public class TaskParserImpl {
 
-    public static List<Task> parse(Element element, List<TaskDependency> dependencyList){
+    public static List<Task> parse(Element element, List<TaskDependency> dependencyList) {
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
 
@@ -29,7 +31,6 @@ public class TaskParserImpl {
             Optional<String> parentId = Optional.ofNullable(taskElemFromStack.getAttributeValue("parent-id"));
             Optional<String> taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"));
             Optional<String> taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"));
-
 
             taskBuilder
                 .setTaskName(taskName.orElse("default-name"))

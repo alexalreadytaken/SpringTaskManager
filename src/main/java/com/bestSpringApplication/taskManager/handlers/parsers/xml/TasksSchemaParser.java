@@ -22,6 +22,9 @@ public class TasksSchemaParser {
         Optional<Element> dependencyListElem = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
         Optional<Element> taskElem = Optional.ofNullable(mainRootElement.getChild("task"));
 
+        fieldListElem.orElseThrow(()-> new JDOMException("Schema graph is empty"));
+        taskElem.orElseThrow(()-> new JDOMException("Schema taskMap is empty"));
+        
         List<TaskDependency> taskDependencies = new ArrayList<>();
         Map<String,String> schemeFields = new HashMap<>();
 
@@ -45,6 +48,8 @@ public class TasksSchemaParser {
                 tasksSchema.getTasksMap(),
                 tasksSchema.getTaskDependencies()
             ));
+
+
 
         return tasksSchema;
     }
