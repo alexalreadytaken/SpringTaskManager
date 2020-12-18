@@ -36,14 +36,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] permittedMappings = {"/favicon.ico","/js/**","/register","/reg","/admin/**"};//fixme: remove admin, only for test ng
+        String[] permittedMappings = {"/favicon.ico","/js/**","/register","/reg"};
         http
                     .cors().configurationSource(corsConfig())
                 .and()
                     .csrf().disable()
                     .authorizeRequests()
                     .antMatchers(permittedMappings).permitAll()
-//                    .antMatchers("/admin/**").hasAuthority("ADMIN")
+                    .antMatchers("/admin/**").hasAuthority("ADMIN")
                     .anyRequest()
                     .authenticated()
                 .and()

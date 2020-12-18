@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,7 +42,7 @@ class StaticResolverTest {
 
     @Test
     public void loginTest() throws Exception {
-        clientLogin("admin","admin","/home");
+        clientLogin("1","1","/home");
         clientLogin("unregistered","unregistered","/login?error");
         clientLogin("user","user","/home");
     }
@@ -61,14 +63,14 @@ class StaticResolverTest {
     public void authorizedGetMappingTests() throws Exception {
         clientGetMapping("/home",status().isOk(), (MockHttpSession) SESSIONS.get("user"));
         clientGetMapping("/home",status().isUnauthorized(), (MockHttpSession) SESSIONS.get("unregistered"));
-        clientGetMapping("/home",status().isOk(), (MockHttpSession) SESSIONS.get("admin"));
-        clientGetMapping("/randomUrl",status().isNotFound(), (MockHttpSession) SESSIONS.get("admin"));
+        clientGetMapping("/home",status().isOk(), (MockHttpSession) SESSIONS.get("1"));
+        clientGetMapping("/randomUrl",status().isNotFound(), (MockHttpSession) SESSIONS.get("1"));
     }
     @Test
     public void rolesGetMappingTests() throws Exception {
         clientGetMapping("/admin",status().isForbidden(), (MockHttpSession) SESSIONS.get("user"));
         clientGetMapping("/admin",status().isUnauthorized(), (MockHttpSession) SESSIONS.get("unregistered"));
-        clientGetMapping("/admin",status().isOk(), (MockHttpSession) SESSIONS.get("admin"));
+        clientGetMapping("/admin",status().isOk(), (MockHttpSession) SESSIONS.get("1"));
     }
 
     public void clientLogin(String mail,String password,String redirectUrl) throws Exception {
