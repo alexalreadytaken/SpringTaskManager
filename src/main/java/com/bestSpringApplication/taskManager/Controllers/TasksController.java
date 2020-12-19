@@ -42,14 +42,16 @@ public class TasksController {
             files.ifPresent(files1 ->
                 Arrays.stream(files1).forEach(el-> {
                     try {
+                        LOGGER.trace("getting file {} to parse",el.getName());
                         InputStream fileInputStream = new FileInputStream(el);
                         Document schemaDoc = new SAXBuilder().build(fileInputStream);
                         TasksSchema schema = TasksSchema.parseFromXml(schemaDoc);
+                        LOGGER.trace("putting schema to schemes,file:{}",el.getName());
                         SCHEMAS.put(el.getName(),schema);
                     } catch (FileNotFoundException e) {
                         LOGGER.warn("file was deleted in initializing time");
                     } catch (JDOMException e) {
-                        LOGGER.error("error with parse XML:{}",e.getMessage());
+                        LOGGER.error("error with parse XML:{},file:{}",e.getMessage(),el.getName());
                     } catch (IOException e) {
                         LOGGER.error(e.getMessage());
                     }
@@ -78,9 +80,12 @@ public class TasksController {
     public void newTasks(@RequestParam("file") MultipartFile file) throws IOException {
         try {
             String[] fileNameAndType = Objects.requireNonNull(file.getOriginalFilename()).split("\\.", 2);
+            LOGGER.trace("Receive file:{}",file.getOriginalFilename());
             if (confirmedFileTypes.contains(fileNameAndType[1])){
                 Document courseXml = new SAXBuilder().build(file.getInputStream());
                 TasksSchema.parseFromXml(courseXml);
+                LOGGER.trace("Move file {} to directory {}",
+                    file.getOriginalFilename(),taskPoolPath);
                 file.transferTo(new File(taskPoolPath+file.getOriginalFilename()));
             }else {
                 LOGGER.warn("unsupported file type sent,file:{}",file.getOriginalFilename());

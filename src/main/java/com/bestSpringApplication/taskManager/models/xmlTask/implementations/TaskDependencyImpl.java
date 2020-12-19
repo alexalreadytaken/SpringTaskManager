@@ -6,10 +6,7 @@ import org.hibernate.annotations.GeneratorType;
 
 import javax.persistence.*;
 
-//@Entity(name = "task-dependencies")
 public class TaskDependencyImpl implements TaskDependency {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Long id;
     private String taskParentId;

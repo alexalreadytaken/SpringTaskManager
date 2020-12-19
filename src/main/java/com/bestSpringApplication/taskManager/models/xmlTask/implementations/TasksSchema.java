@@ -27,7 +27,9 @@ public class TasksSchema {
     public static TasksSchema parseFromXml(Document document) throws JDOMException {
         return TasksSchemaParser.parseSchemaXml(document);
     }
-
+    public boolean isValid(){
+        return !tasksMap.isEmpty()&&!tasksGraph.isEmpty();
+    }
     public List<TaskDependency> getTaskDependencies() {
         return taskDependencies;
     }

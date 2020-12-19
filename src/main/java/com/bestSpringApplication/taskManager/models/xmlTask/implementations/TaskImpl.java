@@ -9,18 +9,14 @@ import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Optional;
 
-//@Entity(name = "task")
 public class TaskImpl implements Task {
     @JsonIgnore
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 
-    @Id
     private String id;
 
-    @ElementCollection
     private Map<String, String> fields; //optional
-
     private String name;
     @JsonFormat(pattern = DATE_FORMAT)
     private LocalDateTime constraint;

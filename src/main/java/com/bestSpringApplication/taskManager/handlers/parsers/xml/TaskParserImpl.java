@@ -14,7 +14,7 @@ import java.util.*;
 
 public class TaskParserImpl {
 
-    public static List<Task> parse(Element element, List<TaskDependency> dependencyList) {
+    public static List<Task> parse(Element element, List<TaskDependency> dependencyList) throws JDOMException {
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
         tasksStack.push(element);
@@ -32,8 +32,8 @@ public class TaskParserImpl {
             Optional<String> taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"));
 
             taskBuilder
-                .setTaskName(taskName.orElse("default-name"))
-                .setTaskId(taskId.orElse("default-id"));
+                .setTaskName(taskName.orElseThrow(()->new JDOMException("Task name is empty!")))
+                .setTaskId(taskId.orElseThrow(()-> new JDOMException("Task id is empty!")));
 
             fieldListElem.ifPresent(fieldList ->
                 taskBuilder.setTaskFields(fieldToMap(fieldList, "field","field-no", "field-value"))
@@ -51,7 +51,7 @@ public class TaskParserImpl {
                 );
             });
             TaskImpl readyTask = taskBuilder.build();
-            dependencyList.add(new TaskDependencyImpl(parentId.orElse("root"),readyTask.getId()));//fixme
+            dependencyList.add(new TaskDependencyImpl(parentId.orElse("root"),readyTask.getId()));
             taskList.add(readyTask);
         }
         return taskList;

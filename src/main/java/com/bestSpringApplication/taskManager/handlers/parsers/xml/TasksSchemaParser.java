@@ -1,6 +1,5 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
-import com.bestSpringApplication.taskManager.Controllers.TasksController;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
@@ -16,6 +15,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class TasksSchemaParser {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TasksSchemaParser.class);
 
     public static TasksSchema parseSchemaXml(Document mainDocument) throws JDOMException {
@@ -27,12 +27,13 @@ public class TasksSchemaParser {
         Optional<Element> dependencyListElem = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
         Optional<Element> taskElem = Optional.ofNullable(mainRootElement.getChild("task"));
 
-        dependencyListElem.orElseThrow(()-> new JDOMException("Schema dependencyList is empty"));
-        taskElem.orElseThrow(()-> new JDOMException("Schema taskElem is empty"));
+        LOGGER.trace("Start parse: dependencyList Xml element exist: {}, task Xml element exist: {}",
+            dependencyListElem.isPresent(),
+            taskElem.isPresent());
 
-        LOGGER.debug("Nice! dependencyList exist: {}, taskElem exist: {}",
-                dependencyListElem.isPresent(),
-                taskElem.isPresent());
+        dependencyListElem.orElseThrow(()-> new JDOMException("Schema dependencyList is empty!"));
+        taskElem.orElseThrow(()-> new JDOMException("Schema taskElem is empty!"));
+
         List<TaskDependency> taskDependencies = new ArrayList<>();
         Map<String,String> schemeFields = new HashMap<>();
 
@@ -42,13 +43,14 @@ public class TasksSchemaParser {
         dependencyListElem.ifPresent(dependencyListElemOpt ->
             taskDependencies.addAll(parseDependenciesList(dependencyListElemOpt))
         );
-        taskElem.ifPresent(tasksOpt-> {
-            List<Task> tasks = TaskParserImpl.parse(tasksOpt, taskDependencies);
-            if (schemeFields.size()!=0)addTaskFields(tasks,schemeFields);
-            Map<String,Task> completeTasksList = new HashMap<>();
-            tasks.forEach(task -> completeTasksList.put(((TaskImpl)task).getId(),task));
-            tasksSchema.setTasksMap(completeTasksList);
-        });
+
+        List<Task> tasks = null;
+        tasks = TaskParserImpl.parse(taskElem.get(), taskDependencies);
+        if (schemeFields.size()!=0)addTaskFields(tasks,schemeFields);
+        Map<String,Task> completeTasksList = new HashMap<>();
+        tasks.forEach(task -> completeTasksList.put(((TaskImpl)task).getId(),task));
+        tasksSchema.setTasksMap(completeTasksList);
+
 
         tasksSchema.setTaskDependencies(taskDependencies);
         tasksSchema.setTasksGraph(
@@ -56,7 +58,7 @@ public class TasksSchemaParser {
                 tasksSchema.getTasksMap(),
                 tasksSchema.getTaskDependencies()
             ));
-        LOGGER.debug("Dependencies: {}, TasksGraph: {}", !taskDependencies.isEmpty(), !tasksSchema.getTasksGraph().isEmpty());
+
         return tasksSchema;
     }
 
