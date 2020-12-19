@@ -1,5 +1,6 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
+import com.bestSpringApplication.taskManager.handlers.TasksHandler;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
@@ -44,9 +45,8 @@ public class TasksSchemaParser {
             taskDependencies.addAll(parseDependenciesList(dependencyListElemOpt))
         );
 
-        List<Task> tasks = null;
-        tasks = TaskParserImpl.parse(taskElem.get(), taskDependencies);
-        if (schemeFields.size()!=0)addTaskFields(tasks,schemeFields);
+        List<Task> tasks = TaskParserImpl.parse(taskElem.get(), taskDependencies);
+        if (schemeFields.size()!=0)TasksHandler.addTaskFields(tasks,schemeFields);
         Map<String,Task> completeTasksList = new HashMap<>();
         tasks.forEach(task -> completeTasksList.put(((TaskImpl)task).getId(),task));
         tasksSchema.setTasksMap(completeTasksList);
@@ -54,53 +54,12 @@ public class TasksSchemaParser {
 
         tasksSchema.setTaskDependencies(taskDependencies);
         tasksSchema.setTasksGraph(
-            makeTasksGraph(
+            TasksHandler.makeTasksGraph(
                 tasksSchema.getTasksMap(),
                 tasksSchema.getTaskDependencies()
             ));
 
         return tasksSchema;
-    }
-
-    private static Map<Task,List<Task>> makeTasksGraph(Map<String,Task> taskMap,List<TaskDependency> taskDependencies) throws JDOMException {
-        Map<Task,List<Task>> tasksGraph = new HashMap<>();
-        TaskDependency rootTask = taskDependencies.stream().filter(el -> ((TaskDependencyImpl) el).getTaskParentId().equals("root"))
-            .findFirst().orElseThrow(() -> new JDOMException("Root task element not found!"));
-        Stack<Task> taskStack = new Stack<>();
-        taskStack.push(taskMap.get(((TaskDependencyImpl) rootTask).getTaskChildId()));
-        while (!taskStack.empty()){
-            TaskImpl task = ((TaskImpl) taskStack.pop());
-            String taskId = task.getId();
-
-            List<String> childesId =
-                taskDependencies.stream()
-                    .filter(el->((TaskDependencyImpl)el).getTaskParentId().equals(taskId))
-                    .map(el->((TaskDependencyImpl)el).getTaskChildId())
-                    .collect(Collectors.toList());
-            List<Task> childTasks =
-                childesId.stream()
-                    .map(taskMap::get)
-                    .collect(Collectors.toList());
-            tasksGraph.put(task,childTasks);
-            childTasks.forEach(taskStack::push);
-        }
-        return tasksGraph;
-    }
-
-    private static void addTaskFields(List<Task> tasks, Map<String, String> schemeFields) {
-        tasks.forEach(task -> {
-            TaskImpl taskImpl = (TaskImpl) task;
-            taskImpl.getFields().ifPresent(taskFields->{
-                Map<String,String> completedTaskFields = new HashMap<>();
-                for (int i = 0; i < taskFields.size(); i++) {
-                    String i0 = String.valueOf(i);
-                    String key = schemeFields.get(i0);
-                    String value = taskFields.get(i0);
-                    completedTaskFields.put(key,value);
-                }
-                taskImpl.setFields(completedTaskFields);
-            });
-        });
     }
 
     private static List<TaskDependency> parseDependenciesList(Element dependencyListElem) {
