@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity(name = "user")
-public class User implements UserDetails {
+public class User implements UserDetails,Cloneable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -62,6 +62,12 @@ public class User implements UserDetails {
     public String getRole() {
         return role;
     }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
 
     @Override
     @JsonIgnore

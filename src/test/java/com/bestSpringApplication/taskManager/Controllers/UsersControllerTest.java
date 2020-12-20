@@ -1,18 +1,19 @@
+/*
 package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.models.user.User;
-import com.bestSpringApplication.taskManager.servises.UserService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static com.bestSpringApplication.taskManager.Controllers.UsersHandler.existUser;
+import static com.bestSpringApplication.taskManager.Controllers.UsersHandler.notExistUser;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -21,21 +22,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class UsersControllerTest {
 
-    @Autowired
-    private UserService userService;
+
     @Autowired
     private MockMvc client;
 
-    private final User existUser = new User("test-1","test-1","test-1","USER");
-    private final User notExistUser = new User("test-2","test-2","test-2","USER");
+    private static final Logger LOGGER = LoggerFactory.getLogger(UsersControllerTest.class);
 
-    @BeforeEach
-    public void start(){
-        try {
-            userService.deleteUser((User) userService.loadUserByUsername(notExistUser.getMail()));
-            userService.deleteUser((User) userService.loadUserByUsername(existUser.getMail()));
-        }catch (UsernameNotFoundException ignored){}
-        userService.saveUser(existUser);
+
+
+    @BeforeAll
+    static void start(){
+        LOGGER.info("START USERS CONTROLLER TESTS");
     }
 
     @Test
@@ -52,11 +49,9 @@ class UsersControllerTest {
             .andDo(print());
     }
 
-    @AfterEach
-    public void end(){
-        try {
-            userService.deleteUser((User) userService.loadUserByUsername(notExistUser.getMail()));
-            userService.deleteUser((User) userService.loadUserByUsername(existUser.getMail()));
-        }catch (UsernameNotFoundException ignored){}
+    @AfterAll
+    static void end(){
+        LOGGER.info("END USERS CONTROLLER TESTS");
     }
 }
+*/

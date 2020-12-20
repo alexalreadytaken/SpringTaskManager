@@ -8,19 +8,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 
 import javax.servlet.http.HttpSession;
-import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.bestSpringApplication.taskManager.Controllers.UsersHandler.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestBuilders.formLogin;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -34,17 +32,22 @@ class StaticResolverTest {
 
     @Autowired
     private MockMvc client;
+    @Autowired
+    private UsersHandler usersHandler;
 
     @BeforeAll
     static void start() {
-        LOGGER.info("START GET_MAPPINGS TEST IN {}",LocalDateTime.now());
+        LOGGER.info("START GET MAPPINGS TEST");
     }
 
     @Test
     public void loginTest() throws Exception {
-        clientLogin("1","1","/home");
-        clientLogin("unregistered","unregistered","/login?error");
-        clientLogin("user","user","/home");
+        LOGGER.debug("Preparing users to db");
+        usersHandler.prepare();
+
+        clientLogin(existAdmin.getMail(),existAdmin.getPassword(),"/home");
+        clientLogin(notExistUser.getMail(),notExistUser.getPassword(),"/login?error");
+        clientLogin(existUser.getMail(),existUser.getPassword(),"/home");
     }
 
     @Test
@@ -61,16 +64,24 @@ class StaticResolverTest {
     }
     @Test
     public void authorizedGetMappingTests() throws Exception {
-        clientGetMapping("/home",status().isOk(), (MockHttpSession) SESSIONS.get("user"));
-        clientGetMapping("/home",status().isUnauthorized(), (MockHttpSession) SESSIONS.get("unregistered"));
-        clientGetMapping("/home",status().isOk(), (MockHttpSession) SESSIONS.get("1"));
-        clientGetMapping("/randomUrl",status().isNotFound(), (MockHttpSession) SESSIONS.get("1"));
+        clientGetMapping("/home",status().isOk(), (MockHttpSession) SESSIONS.get(existUser.getMail()));
+        clientGetMapping("/home",status().isUnauthorized(), (MockHttpSession) SESSIONS.get(notExistUser.getMail()));
+        clientGetMapping("/home",status().isOk(), (MockHttpSession) SESSIONS.get(existAdmin.getMail()));
+        clientGetMapping("/randomUrl",status().isNotFound(), (MockHttpSession) SESSIONS.get(existAdmin.getMail()));
     }
     @Test
     public void rolesGetMappingTests() throws Exception {
-        clientGetMapping("/admin",status().isForbidden(), (MockHttpSession) SESSIONS.get("user"));
-        clientGetMapping("/admin",status().isUnauthorized(), (MockHttpSession) SESSIONS.get("unregistered"));
-        clientGetMapping("/admin",status().isOk(), (MockHttpSession) SESSIONS.get("1"));
+        clientGetMapping("/admin",status().isForbidden(), (MockHttpSession) SESSIONS.get(existUser.getMail()));
+        clientGetMapping("/admin",status().isUnauthorized(), (MockHttpSession) SESSIONS.get(notExistUser.getMail()));
+        clientGetMapping("/admin",status().isOk(), (MockHttpSession) SESSIONS.get(existAdmin.getMail()));
+
+        LOGGER.debug("Remove users from db");
+        usersHandler.curlUp();
+    }
+
+    @AfterAll
+    static void end() {
+        LOGGER.info("END GET MAPPINGS TEST");
     }
 
     public void clientLogin(String mail,String password,String redirectUrl) throws Exception {
@@ -87,11 +98,6 @@ class StaticResolverTest {
     public void clientGetMapping(String url, ResultMatcher result) throws Exception {
         client.perform(get(url))
             .andExpect(result);
-    }
-
-    @AfterAll
-    static void end() {
-        LOGGER.info("END GET_MAPPINGS TEST IN {}",LocalDateTime.now());
     }
 
 }
