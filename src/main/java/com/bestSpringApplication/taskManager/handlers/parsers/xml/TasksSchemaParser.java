@@ -48,7 +48,7 @@ public class TasksSchemaParser {
         List<Task> tasks = TaskParserImpl.parse(taskElem.get(), taskDependencies);
         if (schemeFields.size()!=0)TasksHandler.addTaskFields(tasks,schemeFields);
         Map<String,Task> completeTasksList = new HashMap<>();
-        tasks.forEach(task -> completeTasksList.put(((TaskImpl)task).getId(),task));
+        tasks.forEach(task -> completeTasksList.put(task.getId(),task));
         tasksSchema.setTasksMap(completeTasksList);
 
 

@@ -1,6 +1,5 @@
 package com.bestSpringApplication.taskManager.handlers;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
@@ -16,23 +15,23 @@ public class TasksHandler {
 
     public static Map<Task, List<Task>> makeTasksGraph(Map<String, Task> taskMap, List<TaskDependency> taskDependencies) throws JDOMException {
         Map<Task,List<Task>> tasksGraph = new HashMap<>();
-        TaskDependency rootTask = taskDependencies.stream().filter(el -> ((TaskDependencyImpl) el).getTaskParentId().equals("root"))
-            .findFirst().orElseThrow(() -> new JDOMException("Root task element not found!"));
+        TaskDependency rootTask = taskDependencies.stream()
+                .filter(el -> el.getTaskParentId().equals("root"))
+                .findFirst().orElseThrow(() ->
+                        new JDOMException("Root task element not found!"));
         Stack<Task> taskStack = new Stack<>();
-        taskStack.push(taskMap.get(((TaskDependencyImpl) rootTask).getTaskChildId()));
+        taskStack.push(taskMap.get(rootTask.getTaskChildId()));
         while (!taskStack.empty()){
             TaskImpl task = ((TaskImpl) taskStack.pop());
             String taskId = task.getId();
 
-            List<String> childesId =
-                taskDependencies.stream()
-                    .filter(el->((TaskDependencyImpl)el).getTaskParentId().equals(taskId))
-                    .map(el->((TaskDependencyImpl)el).getTaskChildId())
-                    .collect(Collectors.toList());
-            List<Task> childTasks =
-                childesId.stream()
-                    .map(taskMap::get)
-                    .collect(Collectors.toList());
+            List<String> childesId = taskDependencies.stream()
+                            .filter(el-> el.getTaskParentId().equals(taskId))
+                            .map(TaskDependency::getTaskChildId)
+                            .collect(Collectors.toList());
+            List<Task> childTasks = childesId.stream()
+                            .map(taskMap::get)
+                            .collect(Collectors.toList());
             tasksGraph.put(task,childTasks);
             childTasks.forEach(taskStack::push);
         }

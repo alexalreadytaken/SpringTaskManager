@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.w3c.dom.DOMException;
 
 import java.util.*;
 

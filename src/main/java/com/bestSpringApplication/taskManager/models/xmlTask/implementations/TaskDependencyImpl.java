@@ -20,9 +20,11 @@ public class TaskDependencyImpl implements TaskDependency {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+    @Override
     public String getTaskChildId() {
         return taskChildId;
     }
+    @Override
     public String getTaskParentId() {
         return taskParentId;
     }
