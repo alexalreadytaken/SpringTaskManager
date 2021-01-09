@@ -36,14 +36,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] permittedMappings = {"/favicon.ico","/js/**","/register","/reg"};
+        String[] permittedMappings = {"/favicon.ico","/js/**","/register","/reg","admin/**"};
         http
-                    .cors().configurationSource(corsConfig())
-                .and()
+//                    .cors().configurationSource(corsConfig())
+//                .and()
                     .csrf().disable()
                     .authorizeRequests()
                     .antMatchers(permittedMappings).permitAll()
-                    .antMatchers("/admin/**").hasAuthority("ADMIN")
+//                    .antMatchers("/admin/**").hasAuthority("ADMIN")
                     .anyRequest()
                     .authenticated()
                 .and()
@@ -63,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .deleteCookies("JSESSIONID","remember-me")
                     .logoutSuccessUrl("/login");
     }
-    @Bean
+    /*@Bean
     CorsConfigurationSource corsConfig(){
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
@@ -71,7 +71,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         UrlBasedCorsConfigurationSource finalConfig = new UrlBasedCorsConfigurationSource();
         finalConfig.registerCorsConfiguration("/**",config);
         return finalConfig;
-    }
+    }*/
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

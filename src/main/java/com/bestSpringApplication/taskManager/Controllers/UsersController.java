@@ -19,7 +19,6 @@ public class UsersController {
     public UsersController(UserService userService) {
         this.userService = userService;
     }
-    private static final String methodistIp = "http://10.1.0.88:8080";
 
     @PostMapping("/reg")
     public Map<String, Boolean> register(@RequestBody Map<String,String> body){
