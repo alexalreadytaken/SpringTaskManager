@@ -38,9 +38,11 @@ public class UserService implements UserDetailsService {
             return false;
         }
     }
+
     public void saveUser(User user){
         String password = user.getPassword();
-        user.setPassword(encoder.encode(password));
+        String encodedPass = encoder.encode(password);
+        user.setPassword(encodedPass);
         userRepo.save(user);
     }
 

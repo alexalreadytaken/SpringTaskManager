@@ -18,7 +18,9 @@ public class TasksSchema {
 
     public TasksSchema(){}
 
-    public TasksSchema(Map<String, Task> tasksMap, Map<Task, List<Task>> tasksGraph, List<TaskDependency> taskDependencies) {
+    public TasksSchema(Map<String, Task> tasksMap,
+                       Map<Task, List<Task>> tasksGraph,
+                       List<TaskDependency> taskDependencies) {
         this.tasksMap = tasksMap;
         this.tasksGraph = tasksGraph;
         this.taskDependencies = taskDependencies;
@@ -27,9 +29,11 @@ public class TasksSchema {
     public static TasksSchema parseFromXml(Document document) throws JDOMException {
         return TasksSchemaParser.parseSchemaXml(document);
     }
+
     public boolean isValid(){
         return !tasksMap.isEmpty()&&!tasksGraph.isEmpty();
     }
+
     public List<TaskDependency> getTaskDependencies() {
         return taskDependencies;
     }

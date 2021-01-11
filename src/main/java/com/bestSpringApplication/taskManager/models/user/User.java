@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Entity(name = "user")
-public class User implements UserDetails,Cloneable {
+public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,8 +30,7 @@ public class User implements UserDetails,Cloneable {
         this.role = role;
     }
 
-    public User() {
-    }
+    public User() {}
 
     public Long getId() {
         return id;
@@ -44,6 +43,7 @@ public class User implements UserDetails,Cloneable {
     public String getMail() {
         return mail;
     }
+
     public void setMail(String mail) {
         this.mail = mail;
     }
@@ -51,6 +51,7 @@ public class User implements UserDetails,Cloneable {
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }

@@ -11,10 +11,12 @@ public class TaskDependencyImpl implements TaskDependency {
     private Long id;
     private String taskParentId;
     private String taskChildId;
+
     public TaskDependencyImpl(String taskParentId, String taskChildId) {
         this.taskParentId = taskParentId;
         this.taskChildId = taskChildId;
     }
+
     public TaskDependencyImpl() {
     }
 

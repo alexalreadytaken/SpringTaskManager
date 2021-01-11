@@ -8,7 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.w3c.dom.DOMException;
 
 import java.util.*;
 
@@ -25,7 +24,7 @@ public class TaskParserImpl {
 
             Optional<Element> fieldListElem = Optional.ofNullable(taskElemFromStack.getChild("field-list"));
             Optional<Element> taskListElem = Optional.ofNullable(taskElemFromStack.getChild("task-list"));
-            Optional<Element> taskNotes = Optional.ofNullable(taskElemFromStack.getChild("task-notes"));
+            Optional<Element> taskNotesElem = Optional.ofNullable(taskElemFromStack.getChild("task-notes"));
 
             Optional<String> parentId = Optional.ofNullable(taskElemFromStack.getAttributeValue("parent-id"));
             Optional<String> taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"));
@@ -38,8 +37,8 @@ public class TaskParserImpl {
             fieldListElem.ifPresent(fieldList ->
                 taskBuilder.setTaskFields(fieldToMap(fieldList, "field","field-no", "field-value"))
             );
-            taskNotes.ifPresent(value ->
-                taskBuilder.setNotes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(value.getValue())))
+            taskNotesElem.ifPresent(notes ->
+                taskBuilder.setNotes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
             );
             taskListElem.ifPresent(tasksOpt->{
                 Optional<List<Element>> tasks = Optional.ofNullable(tasksOpt.getChildren("task"));

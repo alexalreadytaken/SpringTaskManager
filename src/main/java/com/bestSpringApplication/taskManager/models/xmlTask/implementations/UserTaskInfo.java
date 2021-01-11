@@ -1,48 +1,40 @@
 package com.bestSpringApplication.taskManager.models.xmlTask.implementations;
-import com.bestSpringApplication.taskManager.models.user.User;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.time.LocalDateTime;
 
+@Entity
 public class UserTaskInfo {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private User user;
-    private Task task;
+    private String userId;
+    private String taskId;
     private LocalDateTime startDate;
     private LocalDateTime completeDate;
     private boolean userIsFinishTask;
     private boolean confirmTask;
     private String grade;
 
-    public UserTaskInfo(
-            Integer id,
-            User user,
-            Task task,
-            LocalDateTime startDate,
-            LocalDateTime completeDate,
-            boolean userIsFinishTask,
-            boolean confirmTask,
-            String grade) {
-        this.id = id;
-        this.user = user;
-        this.task = task;
-        this.startDate = startDate;
-        this.completeDate = completeDate;
-        this.userIsFinishTask = userIsFinishTask;
-        this.confirmTask = confirmTask;
-        this.grade = grade;
+    public UserTaskInfo(){}
+
+    public static UserTaskInfoBuilder newRelation(){
+        return new UserTaskInfo().new UserTaskInfoBuilder();
     }
 
     public Integer getId() {
         return id;
     }
 
-    public User getUser() {
-        return user;
+    public String getUserId() {
+        return userId;
     }
 
-    public Task getTask() {
-        return task;
+    public String getTaskId() {
+        return taskId;
     }
 
     public LocalDateTime getStartDate() {
@@ -65,35 +57,46 @@ public class UserTaskInfo {
         return grade;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+    public class UserTaskInfoBuilder{
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+        UserTaskInfoBuilder(){}
 
-    public void setTask(Task task) {
-        this.task = task;
-    }
+        public UserTaskInfoBuilder userId(String user) {
+            UserTaskInfo.this.userId = user;
+            return this;
+        }
 
-    public void setStartDate(LocalDateTime startDate) {
-        this.startDate = startDate;
-    }
+        public UserTaskInfoBuilder taskId(String taskId) {
+            UserTaskInfo.this.taskId = taskId;
+            return this;
+        }
 
-    public void setCompleteDate(LocalDateTime completeDate) {
-        this.completeDate = completeDate;
-    }
+        public UserTaskInfoBuilder startDate(LocalDateTime startDate) {
+            UserTaskInfo.this.startDate = startDate;
+            return this;
+        }
 
-    public void setUserIsFinishTask(boolean userIsFinishTask) {
-        this.userIsFinishTask = userIsFinishTask;
-    }
+        public UserTaskInfoBuilder completeDate(LocalDateTime completeDate) {
+            UserTaskInfo.this.completeDate = completeDate;
+            return this;
+        }
 
-    public void setConfirmTask(boolean confirmTask) {
-        this.confirmTask = confirmTask;
-    }
+        public UserTaskInfoBuilder UserIsFinishTask(boolean userIsFinishTask) {
+            UserTaskInfo.this.userIsFinishTask = userIsFinishTask;
+            return this;
+        }
 
-    public void setGrade(String grade) {
-        this.grade = grade;
+        public UserTaskInfoBuilder confirmTask(boolean confirmTask) {
+            UserTaskInfo.this.confirmTask = confirmTask;
+            return this;
+        }
+
+        public UserTaskInfoBuilder grade(String grade) {
+            UserTaskInfo.this.grade = grade;
+            return this;
+        }
+        public UserTaskInfo build(){
+            return UserTaskInfo.this;
+        }
     }
 }

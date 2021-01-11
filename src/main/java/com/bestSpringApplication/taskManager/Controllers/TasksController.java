@@ -3,6 +3,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
+import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

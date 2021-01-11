@@ -28,7 +28,7 @@ public class TasksSchemaParser {
         Optional<Element> dependencyListElem = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
         Optional<Element> taskElem = Optional.ofNullable(mainRootElement.getChild("task"));
 
-        LOGGER.trace("Start parse: dependencyList Xml element exist: {}, task Xml element exist: {}",
+        LOGGER.trace("Start parse: dependencyList exist={}, task exist={}",
             dependencyListElem.isPresent(),
             taskElem.isPresent());
 
@@ -47,17 +47,15 @@ public class TasksSchemaParser {
 
         List<Task> tasks = TaskParserImpl.parse(taskElem.get(), taskDependencies);
         if (schemeFields.size()!=0)TasksHandler.addTaskFields(tasks,schemeFields);
-        Map<String,Task> completeTasksList = new HashMap<>();
-        tasks.forEach(task -> completeTasksList.put(((TaskImpl)task).getId(),task));
-        tasksSchema.setTasksMap(completeTasksList);
+        Map<String,Task> completeTasksMap = new HashMap<>();
+        tasks.forEach(task -> completeTasksMap.put(((TaskImpl)task).getId(),task));
 
+        Map<Task, List<Task>> tasksGraph = TasksHandler.
+            makeTasksGraph(completeTasksMap,taskDependencies);
 
+        tasksSchema.setTasksMap(completeTasksMap);
         tasksSchema.setTaskDependencies(taskDependencies);
-        tasksSchema.setTasksGraph(
-            TasksHandler.makeTasksGraph(
-                tasksSchema.getTasksMap(),
-                tasksSchema.getTaskDependencies()
-            ));
+        tasksSchema.setTasksGraph(tasksGraph);
 
         return tasksSchema;
     }
