@@ -3,8 +3,8 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
-import com.bestSpringApplication.taskManager.models.user.User;
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
+import com.bestSpringApplication.taskManager.models.xmlTask.implementations.StudySchemeImpl;
+import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.StudyScheme;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -12,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,7 +25,8 @@ public class TasksController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TasksController.class);
 
-    public static final Map<String,TasksSchema> SCHEMAS = new HashMap<>();
+    public static final Map<Integer,StudyScheme> SCHEMAS = new HashMap<>();
+    private int schemesCount = 0;
 
     @Value("${task.pool.path}")
     private String taskPoolPath;
@@ -47,9 +47,9 @@ public class TasksController {
                         LOGGER.trace("getting file {} to parse",el.getName());
                         InputStream fileInputStream = new FileInputStream(el);
                         Document schemaDoc = new SAXBuilder().build(fileInputStream);
-                        TasksSchema schema = TasksSchema.parseFromXml(schemaDoc);
+                        StudyScheme schema = StudySchemeImpl.parseFromXml(schemaDoc);
                         LOGGER.trace("putting schema to schemes,file:{}",el.getName());
-                        SCHEMAS.put(el.getName(),schema);
+                        SCHEMAS.put(schemesCount++,schema);
                     } catch (FileNotFoundException e) {
                         LOGGER.warn("file was deleted in initializing time");
                     } catch (JDOMException e) {
@@ -63,10 +63,6 @@ public class TasksController {
             tasksDir.mkdir();
         }
     }
-    @GetMapping("/admin/tasks")
-    public List<TasksSchema> schema(){
-        return new ArrayList<>(SCHEMAS.values());
-    }
 
     @GetMapping("/admin/tasksFiles")
     public List<Map<String,String>> fileTaskList() {
@@ -79,13 +75,13 @@ public class TasksController {
 
     @PostMapping("/admin/addTasks")
     @ResponseStatus(HttpStatus.OK)
-    public void newTasks(@RequestParam("file") MultipartFile file) throws IOException {
+    public void newScheme(@RequestParam("file") MultipartFile file) throws IOException {
         try {
             String[] fileNameAndType = Objects.requireNonNull(file.getOriginalFilename()).split("\\.", 2);
             LOGGER.trace("Receive file:{}",file.getOriginalFilename());
             if (confirmedFileTypes.contains(fileNameAndType[1])){
                 Document courseXml = new SAXBuilder().build(file.getInputStream());
-                TasksSchema.parseFromXml(courseXml);
+                StudySchemeImpl.parseFromXml(courseXml);
                 LOGGER.trace("Move file {} to directory {}",
                     file.getOriginalFilename(),taskPoolPath);
                 file.transferTo(new File(taskPoolPath+file.getOriginalFilename()));
@@ -96,9 +92,6 @@ public class TasksController {
         }catch (JDOMException ex){
             LOGGER.error("error with XML parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
             throw new IllegalXmlFormatException("загрузка файла не удалась,проверьте структуру своего XML файла");
-        }catch (NullPointerException ex){
-            //fixme
-            LOGGER.error("NPE with message:{}",ex.getMessage());
         }
     }
 }

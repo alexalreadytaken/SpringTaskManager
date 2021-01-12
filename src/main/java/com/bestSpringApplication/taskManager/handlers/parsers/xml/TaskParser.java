@@ -11,9 +11,9 @@ import org.jdom2.JDOMException;
 
 import java.util.*;
 
-public class TaskParserImpl {
+public class TaskParser {
 
-    public static List<Task> parse(Element element, List<TaskDependency> dependencyList) throws JDOMException {
+    public static List<Task> parseFromXml(Element element, List<TaskDependency> dependencyList) throws JDOMException {
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
         tasksStack.push(element);
@@ -31,14 +31,14 @@ public class TaskParserImpl {
             Optional<String> taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"));
 
             taskBuilder
-                .setTaskName(taskName.orElseThrow(()->new JDOMException("Task name is empty!")))
-                .setTaskId(taskId.orElseThrow(()-> new JDOMException("Task id is empty!")));
+                .taskName(taskName.orElseThrow(()->new JDOMException("Task name is empty!")))
+                .taskId(taskId.orElseThrow(()-> new JDOMException("Task id is empty!")));
 
             fieldListElem.ifPresent(fieldList ->
-                taskBuilder.setTaskFields(fieldToMap(fieldList, "field","field-no", "field-value"))
+                taskBuilder.taskFields(fieldToMap(fieldList, "field","field-no", "field-value"))
             );
             taskNotesElem.ifPresent(notes ->
-                taskBuilder.setNotes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
+                taskBuilder.notes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
             );
             taskListElem.ifPresent(tasksOpt->{
                 Optional<List<Element>> tasks = Optional.ofNullable(tasksOpt.getChildren("task"));

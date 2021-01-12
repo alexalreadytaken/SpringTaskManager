@@ -1,9 +1,8 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
 import com.bestSpringApplication.taskManager.handlers.TasksHandler;
+import com.bestSpringApplication.taskManager.models.xmlTask.implementations.StudySchemeImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TasksSchema;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
 import org.jdom2.Document;
@@ -15,14 +14,14 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class TasksSchemaParser {
+public class StudySchemaParser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TasksSchemaParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StudySchemaParser.class);
 
-    public static TasksSchema parseSchemaXml(Document mainDocument) throws JDOMException {
+    public static StudySchemeImpl parseSchemaXml(Document mainDocument) throws JDOMException {
 
         Element mainRootElement = mainDocument.getRootElement();
-        TasksSchema tasksSchema = new TasksSchema();
+        StudySchemeImpl studySchemeImpl = new StudySchemeImpl();
 
         Optional<Element> fieldListElem = Optional.ofNullable(mainRootElement.getChild("task-field-list"));
         Optional<Element> dependencyListElem = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
@@ -39,25 +38,25 @@ public class TasksSchemaParser {
         Map<String,String> schemeFields = new HashMap<>();
 
         fieldListElem.ifPresent(fields ->
-            schemeFields.putAll(TaskParserImpl.fieldToMap(fields, "field","no", "name"))
+            schemeFields.putAll(TaskParser.fieldToMap(fields, "field","no", "name"))
         );
         dependencyListElem.ifPresent(dependencyListElemOpt ->
             taskDependencies.addAll(parseDependenciesList(dependencyListElemOpt))
         );
 
-        List<Task> tasks = TaskParserImpl.parse(taskElem.get(), taskDependencies);
+        List<Task> tasks = TaskParser.parseFromXml(taskElem.get(), taskDependencies);
         if (schemeFields.size()!=0)TasksHandler.addTaskFields(tasks,schemeFields);
         Map<String,Task> completeTasksMap = new HashMap<>();
-        tasks.forEach(task -> completeTasksMap.put(((TaskImpl)task).getId(),task));
+        tasks.forEach(task -> completeTasksMap.put(task.getId(),task));
 
-        Map<Task, List<Task>> tasksGraph = TasksHandler.
-            makeTasksGraph(completeTasksMap,taskDependencies);
+        Map<Task, List<Task>> tasksGraph = TasksHandler
+            .makeTasksGraph(completeTasksMap,taskDependencies);
 
-        tasksSchema.setTasksMap(completeTasksMap);
-        tasksSchema.setTaskDependencies(taskDependencies);
-        tasksSchema.setTasksGraph(tasksGraph);
+        studySchemeImpl.setTasksMap(completeTasksMap);
+        studySchemeImpl.setTaskDependencies(taskDependencies);
+        studySchemeImpl.setTasksGraph(tasksGraph);
 
-        return tasksSchema;
+        return studySchemeImpl;
     }
 
     private static List<TaskDependency> parseDependenciesList(Element dependencyListElem) {
