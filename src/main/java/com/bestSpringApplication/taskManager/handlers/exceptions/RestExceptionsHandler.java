@@ -27,4 +27,10 @@ public class RestExceptionsHandler{
         return ErrorMessageFactory.newClientErrorMsg(ex);
     }
 
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static ErrorMessage EmailExistsHandle(EmailExistsException ex){
+        return ErrorMessageFactory.newClientErrorMsg(ex);
+    }
+
 }
