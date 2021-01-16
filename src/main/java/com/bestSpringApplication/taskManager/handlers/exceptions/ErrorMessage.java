@@ -15,8 +15,7 @@ public class ErrorMessage {
         this.result = result;
     }
 
-    public ErrorMessage() {
-    }
+    public ErrorMessage() {}
 
     public LocalDateTime getWhenHappen() {
         return whenHappen;

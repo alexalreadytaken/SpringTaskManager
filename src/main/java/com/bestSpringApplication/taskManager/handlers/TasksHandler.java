@@ -1,9 +1,8 @@
 package com.bestSpringApplication.taskManager.handlers;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
+import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Dependency;
 import org.jdom2.JDOMException;
 
 import java.util.HashMap;
@@ -14,13 +13,13 @@ import java.util.stream.Collectors;
 
 public class TasksHandler {
 
-    public static Map<Task, List<Task>> makeTasksGraph(Map<String, Task> taskMap, List<TaskDependency> taskDependencies) throws JDOMException {
+    public static Map<Task, List<Task>> makeTasksGraph(Map<String, Task> taskMap, List<Dependency> taskDependencies) throws JDOMException {
         Map<Task,List<Task>> tasksGraph = new HashMap<>();
-        TaskDependency rootTask = taskDependencies.stream().filter(el ->el.getTaskParentId().equals("root"))
+        Dependency rootTask = taskDependencies.stream().filter(el ->el.getParentId().equals("root"))
             .findFirst().orElseThrow(() -> new JDOMException("Root task element not found!"));
         Stack<Task> taskStack = new Stack<>();
 
-        taskStack.push(taskMap.get(rootTask.getTaskChildId()));
+        taskStack.push(taskMap.get(rootTask.getChildId()));
 
         while (!taskStack.empty()){
             TaskImpl task = ((TaskImpl) taskStack.pop());
@@ -28,8 +27,8 @@ public class TasksHandler {
 
             List<String> childesId =
                 taskDependencies.stream()
-                    .filter(el->el.getTaskParentId().equals(taskId))
-                    .map(TaskDependency::getTaskChildId)
+                    .filter(el->el.getParentId().equals(taskId))
+                    .map(Dependency::getChildId)
                     .collect(Collectors.toList());
 
             List<Task> childTasks =

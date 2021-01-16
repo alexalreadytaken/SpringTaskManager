@@ -25,11 +25,12 @@ public class TasksController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TasksController.class);
 
-    public static final Map<Integer,StudyScheme> SCHEMAS = new HashMap<>();
+    @Value("${task.pool.path}") private String taskPoolPath;
+
+    public final Map<Integer,StudyScheme> SCHEMAS = new HashMap<>();
     private int schemesCount = 0;
 
-    @Value("${task.pool.path}")
-    private String taskPoolPath;
+
 
     private static final Set<String> confirmedFileTypes =
         Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
@@ -68,7 +69,7 @@ public class TasksController {
     public List<Map<String,String>> fileTaskList() {
         return Arrays.stream(
             // doesn't really throw ?
-            new File(taskPoolPath).listFiles(el -> !el.isDirectory()))
+            Objects.requireNonNull(new File(taskPoolPath).listFiles(el -> !el.isDirectory())))
             .map(el->new HashMap<String,String>(){{put("filename",el.getName());}})
             .collect(Collectors.toList());
     }

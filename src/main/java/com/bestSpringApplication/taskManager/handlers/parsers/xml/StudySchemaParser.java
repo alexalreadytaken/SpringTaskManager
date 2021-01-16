@@ -1,10 +1,10 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
 import com.bestSpringApplication.taskManager.handlers.TasksHandler;
+import com.bestSpringApplication.taskManager.models.xmlTask.implementations.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.StudySchemeImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
+import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -34,7 +34,7 @@ public class StudySchemaParser {
         dependencyListElem.orElseThrow(()-> new JDOMException("Schema dependencyList is empty!"));
         taskElem.orElseThrow(()-> new JDOMException("Schema taskElem is empty!"));
 
-        List<TaskDependency> taskDependencies = new ArrayList<>();
+        List<Dependency> taskDependencies = new ArrayList<>();
         Map<String,String> schemeFields = new HashMap<>();
 
         fieldListElem.ifPresent(fields ->
@@ -59,12 +59,12 @@ public class StudySchemaParser {
         return studySchemeImpl;
     }
 
-    private static List<TaskDependency> parseDependenciesList(Element dependencyListElem) {
+    private static List<Dependency> parseDependenciesList(Element dependencyListElem) {
         List<Element> DependencyElements = dependencyListElem.getChildren("task-dependency");
         return DependencyElements.stream().map(DependencyChild ->{
             String parent = DependencyChild.getChildText("task-predecessor-id");
             String child = DependencyChild.getChildText("task-successor-id");
-            return new TaskDependencyImpl(parent,child);
+            return new DependencyImpl(parent,child);
         }).collect(Collectors.toList());
     }
 

@@ -1,9 +1,9 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskDependencyImpl;
+import com.bestSpringApplication.taskManager.models.xmlTask.implementations.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
+import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
@@ -13,7 +13,7 @@ import java.util.*;
 
 public class TaskParser {
 
-    public static List<Task> parseFromXml(Element element, List<TaskDependency> dependencyList) throws JDOMException {
+    public static List<Task> parseFromXml(Element element, List<Dependency> dependencyList) throws JDOMException {
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
         tasksStack.push(element);
@@ -50,7 +50,7 @@ public class TaskParser {
                 );
             });
             TaskImpl readyTask = taskBuilder.build();
-            dependencyList.add(new TaskDependencyImpl(parentId.orElse("root"),readyTask.getId()));
+            dependencyList.add(new DependencyImpl(parentId.orElse("root"),readyTask.getId()));
             taskList.add(readyTask);
         }
         return taskList;

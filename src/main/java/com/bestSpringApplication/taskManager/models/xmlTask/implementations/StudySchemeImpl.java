@@ -4,7 +4,7 @@ package com.bestSpringApplication.taskManager.models.xmlTask.implementations;
 import com.bestSpringApplication.taskManager.handlers.parsers.xml.StudySchemaParser;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.StudyScheme;
 import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.TaskDependency;
+import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Dependency;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 
@@ -15,13 +15,13 @@ public class StudySchemeImpl implements StudyScheme{
 
     private Map<String,Task> tasksMap;
     private Map<Task,List<Task>> tasksGraph;
-    private List<TaskDependency> taskDependencies;
+    private List<Dependency> taskDependencies;
 
     public StudySchemeImpl(){}
 
     public StudySchemeImpl(Map<String, Task> tasksMap,
                            Map<Task, List<Task>> tasksGraph,
-                           List<TaskDependency> taskDependencies) {
+                           List<Dependency> taskDependencies) {
         this.tasksMap = tasksMap;
         this.tasksGraph = tasksGraph;
         this.taskDependencies = taskDependencies;
@@ -35,11 +35,11 @@ public class StudySchemeImpl implements StudyScheme{
         return !tasksMap.isEmpty()&&!tasksGraph.isEmpty();
     }
 
-    public List<TaskDependency> getTaskDependencies() {
+    public List<Dependency> getTaskDependencies() {
         return taskDependencies;
     }
 
-    public void setTaskDependencies(List<TaskDependency> taskDependencies) {
+    public void setTaskDependencies(List<Dependency> taskDependencies) {
         this.taskDependencies = taskDependencies;
     }
 
