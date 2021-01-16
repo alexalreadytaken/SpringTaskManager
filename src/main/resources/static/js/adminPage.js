@@ -1,15 +1,14 @@
 
 
 
-fetch("/admin/tasksFiles").then(response => response.json()).then(response =>{
+fetch("/admin/schemas/files").then(response => response.json()).then(response =>{
     let tasksList = document.getElementById("tasksList");
-    response.forEach(el=>{
+    response.forEach(file=>{
         let div = document.createElement('div');
         div.style.margin='10px'
         let fileDownload = document.createElement('a')
-        let file = el.filename
         fileDownload.innerText=file
-        fileDownload.setAttribute('href',`admin/tasks/schema/${file}`)
+        fileDownload.setAttribute('href',`admin/schema/${file}`)
         fileDownload.setAttribute('download',file)
         div.append(fileDownload)
         tasksList.append(div)
@@ -35,7 +34,7 @@ document.querySelector('#file').addEventListener('change',evt => {
     let formData = new FormData()
     formData.append('file',fileData[0])
     evt.target.value=''
-    fetch('/admin/addTasks',{
+    fetch('/admin/schemas/add',{
         method:'POST',
         body:formData
     }).then(response=>
