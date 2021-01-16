@@ -49,4 +49,51 @@ document.querySelector('#file').addEventListener('change',evt => {
 })
 
 
+makeGraph = (jsonResponse) =>{
+    class Dependency{
+        constructor(parentId,childId) {
+            this.parentId=parentId
+            this.childId=childId
+        }
+    }
 
+    var dependencies = []
+
+    for (let i = 0; i < jsonResponse.length; i++) {
+        let parentId = jsonResponse[i].parentId;
+        let childId = jsonResponse[i].childId;
+        if (parentId !== childId) {
+            dependencies.push(new Dependency(Number(parentId),Number(childId)))
+        }
+    }
+    dependencies.sort((a,b)=>a.parentId-b.parentId)
+
+    var data = [{
+        type: "sankey",
+        arrangement: "snap",
+        node:{
+            label: [...new Set(dependencies.map(el=>el.parentId))],
+            pad:30},
+        link: {
+            source: [...dependencies.map(el=>el.parentId)],
+            target: [...dependencies.map(el=>el.childId)],
+            value: [...dependencies.map(()=>1)]
+        }
+    }]
+    Plotly.newPlot('graph', data)
+
+    let cl = document.querySelectorAll('rect.node-capture')
+
+    for (let i = 0; i < cl.length; i++) {
+        cl[i].setAttribute('id', 'elem' + data[0].node.label[i])
+    }
+
+    document.addEventListener('mouseup', (e) => {
+        if (e.target.id.includes('elem') === true) {
+            console.log('Zaebisc!')
+            /* for (let i = 0; i < data[0].node.label.length; i++ ) {
+                 console.log('12312321312')
+             }*/
+        }
+    })
+}
