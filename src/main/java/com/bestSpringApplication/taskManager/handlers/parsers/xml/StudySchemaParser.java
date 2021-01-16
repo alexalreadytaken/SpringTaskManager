@@ -1,10 +1,10 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
 import com.bestSpringApplication.taskManager.handlers.TasksHandler;
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.DependencyImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.StudySchemeImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.Study.implementations.DependencyImpl;
+import com.bestSpringApplication.taskManager.models.Study.implementations.StudySchemeImpl;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.Task;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;

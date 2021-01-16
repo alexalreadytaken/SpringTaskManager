@@ -1,6 +1,6 @@
-package com.bestSpringApplication.taskManager.models.xmlTask.implementations;
+package com.bestSpringApplication.taskManager.models.Study.implementations;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.Task;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

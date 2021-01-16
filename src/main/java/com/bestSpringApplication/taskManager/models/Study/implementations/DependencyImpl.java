@@ -1,6 +1,6 @@
-package com.bestSpringApplication.taskManager.models.xmlTask.implementations;
+package com.bestSpringApplication.taskManager.models.Study.implementations;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.Dependency;
 
 public class DependencyImpl implements Dependency{
 

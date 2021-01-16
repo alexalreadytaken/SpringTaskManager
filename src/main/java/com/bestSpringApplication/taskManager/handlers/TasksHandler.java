@@ -1,8 +1,8 @@
 package com.bestSpringApplication.taskManager.handlers;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.Study.implementations.TaskImpl;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.Dependency;
 import org.jdom2.JDOMException;
 
 import java.util.HashMap;

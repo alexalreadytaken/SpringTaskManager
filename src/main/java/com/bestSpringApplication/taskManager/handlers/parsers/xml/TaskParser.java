@@ -1,9 +1,9 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.DependencyImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.TaskImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.Study.implementations.DependencyImpl;
+import com.bestSpringApplication.taskManager.models.Study.implementations.TaskImpl;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.Task;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
@@ -50,7 +50,8 @@ public class TaskParser {
                 );
             });
             TaskImpl readyTask = taskBuilder.build();
-            dependencyList.add(new DependencyImpl(parentId.orElse("root"),readyTask.getId()));
+            String id = readyTask.getId();
+            dependencyList.add(new DependencyImpl(parentId.orElse(id), id));
             taskList.add(readyTask);
         }
         return taskList;

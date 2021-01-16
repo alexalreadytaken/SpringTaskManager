@@ -1,6 +1,10 @@
 
 
 
+fetch("/admin/schemas/tasks").then(response=>response.json()).then(response=>{
+    makeGraph(response)
+})
+
 fetch("/admin/schemas/files").then(response => response.json()).then(response =>{
     let tasksList = document.getElementById("tasksList");
     response.forEach(file=>{
@@ -16,7 +20,6 @@ fetch("/admin/schemas/files").then(response => response.json()).then(response =>
 })
 
 fetch("/admin/users").then(response => response.json()).then(response => {
-
     let userList = document.getElementById("UsersList")
     response.forEach(element => {
         let user ='<div style="border: 1px solid black">'
@@ -29,6 +32,7 @@ fetch("/admin/users").then(response => response.json()).then(response => {
         userList.innerHTML+=user
     })
 })
+
 document.querySelector('#file').addEventListener('change',evt => {
     let fileData = evt.target["files"]
     let formData = new FormData()
@@ -43,3 +47,6 @@ document.querySelector('#file').addEventListener('change',evt => {
         alert(response.result)
     })
 })
+
+
+

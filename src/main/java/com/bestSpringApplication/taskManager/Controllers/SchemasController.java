@@ -3,9 +3,9 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
-import com.bestSpringApplication.taskManager.models.xmlTask.implementations.StudySchemeImpl;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.models.xmlTask.interfaces.StudyScheme;
+import com.bestSpringApplication.taskManager.models.Study.implementations.StudySchemeImpl;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.Study.interfaces.StudyScheme;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -70,6 +70,15 @@ public class SchemasController {
         }else {
             tasksDir.mkdir();
         }
+    }
+
+    @GetMapping
+    public Map<Integer,StudyScheme> schemasMap(){
+        return schemas;
+    }
+    @GetMapping("/tasks")
+    public StudyScheme g(){
+        return schemas.get(0);
     }
 
     @GetMapping("files")
