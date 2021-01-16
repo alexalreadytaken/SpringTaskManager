@@ -77,8 +77,8 @@ public class SchemasController {
         return schemas;
     }
     @GetMapping("/tasks")
-    public StudyScheme g(){
-        return schemas.get(0);
+    public List<Dependency> g(){
+        return ((StudySchemeImpl)schemas.get(0)).getTaskDependencies();
     }
 
     @GetMapping("files")

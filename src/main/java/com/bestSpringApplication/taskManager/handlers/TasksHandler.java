@@ -15,28 +15,20 @@ public class TasksHandler {
 
     public static Map<Task, List<Task>> makeTasksGraph(Map<String, Task> taskMap, List<Dependency> taskDependencies) throws JDOMException {
         Map<Task,List<Task>> tasksGraph = new HashMap<>();
-        Dependency rootTask = taskDependencies.stream().filter(el ->el.getParentId().equals("root"))
-            .findFirst().orElseThrow(() -> new JDOMException("Root task element not found!"));
-        Stack<Task> taskStack = new Stack<>();
 
-        taskStack.push(taskMap.get(rootTask.getChildId()));
+        String[] strings = taskMap.keySet().toArray(new String[0]);
 
-        while (!taskStack.empty()){
-            TaskImpl task = ((TaskImpl) taskStack.pop());
-            String taskId = task.getId();
+        for (int i = 0; i < strings.length; i++) {
+            int i0 = i;
+            Task parentTask = taskMap.get(strings[i]);
+            List<Task> childesTasks = taskDependencies.stream()
+                .filter(el -> el.getParentId().equals(strings[i0]))
+                .map(Dependency::getChildId)
+                .filter(el->!el.equals(strings[i0]))
+                .map(taskMap::get)
+                .collect(Collectors.toList());
 
-            List<String> childesId =
-                taskDependencies.stream()
-                    .filter(el->el.getParentId().equals(taskId))
-                    .map(Dependency::getChildId)
-                    .collect(Collectors.toList());
-
-            List<Task> childTasks =
-                childesId.stream()
-                    .map(taskMap::get)
-                    .collect(Collectors.toList());
-            tasksGraph.put(task,childTasks);
-            childTasks.forEach(taskStack::push);
+            tasksGraph.put(parentTask,childesTasks);
         }
         return tasksGraph;
     }
