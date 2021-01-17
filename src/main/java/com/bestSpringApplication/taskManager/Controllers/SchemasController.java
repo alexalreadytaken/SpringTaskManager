@@ -1,6 +1,7 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 
+import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
 import com.bestSpringApplication.taskManager.models.Study.implementations.StudySchemeImpl;
@@ -76,9 +77,19 @@ public class SchemasController {
     public Map<Integer,StudyScheme> schemasMap(){
         return schemas;
     }
-    @GetMapping("/tasks")
-    public List<Dependency> g(){
-        return ((StudySchemeImpl)schemas.get(0)).getTaskDependencies();
+
+    @GetMapping("{id}")
+    //fixme: double ex
+    public StudyScheme schemeDetails(@PathVariable String id) {
+        String notFoundResponse = String.format("Схема с id=%s не найдена", id);
+        try {
+            int id0 = Integer.parseInt(id);
+            return Optional.ofNullable(schemas.get(id0))
+                .orElseThrow(
+                    ()->new ContentNotFoundException(notFoundResponse));
+        }catch (NumberFormatException ex){
+            throw new ContentNotFoundException(notFoundResponse);
+        }
     }
 
     @GetMapping("files")
