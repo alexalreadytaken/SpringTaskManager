@@ -1,7 +1,8 @@
 formElem.onsubmit =(e) => {
     e.preventDefault();
     let object = {};
-    new FormData(formElem).forEach((value, key) => object[key] = value);
+    new FormData(formElem)
+        .forEach((value, key) => object[key] = value);
     let json = JSON.stringify(object);
     fetch('/reg', {
         method: 'POST',

@@ -36,20 +36,20 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] permittedMappings = {"/favicon.ico","/js/**","/register","/reg","admin/**"};
+        String[] permittedMappings = {"/favicon.ico","/js/public/**","/register","/reg"};
         http
 //                    .cors().configurationSource(corsConfig())
 //                .and()
                     .csrf().disable()
                     .authorizeRequests()
                     .antMatchers(permittedMappings).permitAll()
-                    .antMatchers("/admin/**").hasAuthority("ADMIN")
+                    .antMatchers("/admin/**","/js/private/**").hasAuthority("ADMIN")
                     .anyRequest()
                     .authenticated()
                 .and()
                     .httpBasic()
                 .and()
-                    .formLogin().loginPage("/login").permitAll()
+                    .formLogin().loginPage("/page/login.html").permitAll()
                     .defaultSuccessUrl("/home", true)
                 .and()
                     .rememberMe()
