@@ -1,10 +1,10 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
 import com.bestSpringApplication.taskManager.handlers.TasksHandler;
-import com.bestSpringApplication.taskManager.models.Study.implementations.DependencyImpl;
-import com.bestSpringApplication.taskManager.models.Study.implementations.StudySchemeImpl;
-import com.bestSpringApplication.taskManager.models.Study.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.models.Study.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
+import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
@@ -46,14 +46,14 @@ public class StudySchemaParser {
 
         List<Task> tasks = TaskParser.parseFromXml(taskElem.get(), taskDependencies);
         if (schemeFields.size()!=0)TasksHandler.addTaskFields(tasks,schemeFields);
-        Map<String,Task> completeTasksMap = new HashMap<>();
+        Map<String, Task> completeTasksMap = new HashMap<>();
         tasks.forEach(task -> completeTasksMap.put(task.getId(),task));
 
         Map<Task, List<Task>> tasksGraph = TasksHandler
             .makeTasksGraph(completeTasksMap,taskDependencies);
 
         studySchemeImpl.setTasksMap(completeTasksMap);
-        studySchemeImpl.setTaskDependencies(taskDependencies);
+        studySchemeImpl.setTasksDependencies(taskDependencies);
         studySchemeImpl.setTasksGraph(tasksGraph);
 
         return studySchemeImpl;

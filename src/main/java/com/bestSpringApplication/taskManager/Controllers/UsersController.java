@@ -22,7 +22,7 @@ public class UsersController {
         this.userService = userService;
     }
 
-    @PostMapping("/reg")
+    @PostMapping("/register/new")
     @ResponseStatus(HttpStatus.OK)
     public void register(@RequestBody Map<String,String> body){
         if (userService.containsMail(body.get("mail"))){

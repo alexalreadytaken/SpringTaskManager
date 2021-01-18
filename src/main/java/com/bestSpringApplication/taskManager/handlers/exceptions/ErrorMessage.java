@@ -7,22 +7,22 @@ import java.time.LocalDateTime;
 public class ErrorMessage {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime whenHappen;
+    private LocalDateTime time;
     private String result;
 
-    public ErrorMessage(LocalDateTime whenHappen, String result) {
-        this.whenHappen = whenHappen;
+    public ErrorMessage(LocalDateTime time, String result) {
+        this.time = time;
         this.result = result;
     }
 
     public ErrorMessage() {}
 
-    public LocalDateTime getWhenHappen() {
-        return whenHappen;
+    public LocalDateTime getTime() {
+        return time;
     }
 
-    public void setWhenHappen(LocalDateTime whenHappen) {
-        this.whenHappen = whenHappen;
+    public void setTime(LocalDateTime time) {
+        this.time = time;
     }
 
     public String getResult() {

@@ -4,9 +4,13 @@ package com.bestSpringApplication.taskManager.Controllers;
 import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
-import com.bestSpringApplication.taskManager.models.Study.implementations.StudySchemeImpl;
-import com.bestSpringApplication.taskManager.models.Study.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.models.Study.interfaces.StudyScheme;
+import com.bestSpringApplication.taskManager.handlers.jsonViews.SchemeView;
+import com.bestSpringApplication.taskManager.handlers.jsonViews.TaskView;
+import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
+import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
@@ -22,7 +26,7 @@ import java.io.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/admin/schemas/")
+@RequestMapping("/admin/schemas")
 public class SchemasController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemasController.class);
@@ -31,7 +35,12 @@ public class SchemasController {
     private String taskPoolPath;
 
     public Map<Integer,StudyScheme> schemas;
-    private List<Dependency> schemasDependencies;
+    private List<Dependency> schemasDependencies = Arrays.asList(
+        new DependencyImpl("1","2"),
+        new DependencyImpl("1","3"),
+        new DependencyImpl("2","3"),
+        new DependencyImpl("3","4"));
+
     private int schemesCount;
     private List<String> fileNames;
 
@@ -41,7 +50,7 @@ public class SchemasController {
 
     @PostConstruct
     public void init(){
-        schemasDependencies = new ArrayList<>();
+//        schemasDependencies = new ArrayList<>();
         fileNames = new ArrayList<>();
         schemas = new HashMap<>();
         schemesCount = 0;
@@ -55,7 +64,10 @@ public class SchemasController {
                         LOGGER.trace("getting file {} to parse",file.getName());
                         InputStream fileInputStream = new FileInputStream(file);
                         Document schemaDoc = new SAXBuilder().build(fileInputStream);
-                        StudyScheme schema = StudySchemeImpl.parseFromXml(schemaDoc);
+                        StudySchemeImpl schema = StudySchemeImpl.parseFromXml(schemaDoc);
+                        //fixme
+                        schema.setName(file.getName());
+                        schema.setId(String.valueOf(schemesCount));
                         LOGGER.trace("putting schema to schemes,file:{}",file.getName());
                         schemas.put(schemesCount++,schema);
                         fileNames.add(file.getName());
@@ -74,36 +86,45 @@ public class SchemasController {
     }
 
     @GetMapping
+    @JsonView(SchemeView.InfoForGraph.class)
     public Map<Integer,StudyScheme> schemasMap(){
         return schemas;
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
+    @JsonView(SchemeView.FullInfo.class)
     //fixme: double ex
     public StudyScheme schemeDetails(@PathVariable String id) {
         String notFoundResponse = String.format("Схема с id=%s не найдена", id);
         try {
             int id0 = Integer.parseInt(id);
             return Optional.ofNullable(schemas.get(id0))
-                .orElseThrow(
-                    ()->new ContentNotFoundException(notFoundResponse));
+                .orElseThrow(()->
+                    new ContentNotFoundException(notFoundResponse));
         }catch (NumberFormatException ex){
             throw new ContentNotFoundException(notFoundResponse);
         }
     }
 
-    @GetMapping("files")
+    @GetMapping("/files")
     public List<String> schemasFileList() {
         return fileNames;
     }
 
-    @PostMapping("add/dependency")
+    @PostMapping("/add/dependency")
     @ResponseStatus(HttpStatus.OK)
     public void newSchemasDependency(@RequestBody Map<String,String> schemasId){
-        //todo
+        String parentId = schemasId.get("parentId");
+        String childId = schemasId.get("childId");
+        schemasDependencies.add(new DependencyImpl(parentId,childId));
     }
 
-    @PostMapping("add")
+    @GetMapping("/dependencies")
+    public List<Dependency> schemasDependencies(){
+        return schemasDependencies;
+    }
+
+    @PostMapping("/add")
     @ResponseStatus(HttpStatus.OK)
     public void newScheme(@RequestParam("file") MultipartFile file) throws IOException {
         try {

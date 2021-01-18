@@ -1,8 +1,10 @@
-package com.bestSpringApplication.taskManager.models.Study.implementations;
+package com.bestSpringApplication.taskManager.models.study.implementations;
 
-import com.bestSpringApplication.taskManager.models.Study.interfaces.Task;
+import com.bestSpringApplication.taskManager.handlers.jsonViews.TaskView;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -13,18 +15,28 @@ public class TaskImpl implements Task {
     @JsonIgnore
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    @JsonView(TaskView.InfoForGraph.class)
     private String id;
-    private Map<String, String> fields; //optional
+    @JsonView(TaskView.InfoForGraph.class)
     private String name;
+    @JsonView(TaskView.FullInfo.class)
+    private Map<String, String> fields;
+    @JsonView(TaskView.FullInfo.class)
+    private int duration;
+    @JsonView(TaskView.FullInfo.class)
+    private String notes;
+
     @JsonFormat(pattern = DATE_FORMAT)
+    @JsonView(TaskView.FullInfo.class)
     private LocalDateTime constraint;
     @JsonFormat(pattern = DATE_FORMAT)
+    @JsonView(TaskView.FullInfo.class)
     private LocalDateTime startDate;
     @JsonFormat(pattern = DATE_FORMAT)
+    @JsonView(TaskView.FullInfo.class)
     private LocalDateTime endDate;
-    private int duration;
 
-    private String notes; //optional
+
 
     public TaskImpl() {}
 

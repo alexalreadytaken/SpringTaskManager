@@ -1,10 +1,13 @@
-package com.bestSpringApplication.taskManager.models.Study.implementations;
+package com.bestSpringApplication.taskManager.models.study.implementations;
 
-import com.bestSpringApplication.taskManager.models.Study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.fasterxml.jackson.annotation.JsonView;
 
 public class DependencyImpl implements Dependency{
 
+    @JsonView(Object.class)
     private String parentId;
+    @JsonView(Object.class)
     private String childId;
 
     public DependencyImpl() { }

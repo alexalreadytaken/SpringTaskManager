@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.models.Study.interfaces;
+package com.bestSpringApplication.taskManager.models.study.interfaces;
 
 public interface Dependency {
     String getChildId();

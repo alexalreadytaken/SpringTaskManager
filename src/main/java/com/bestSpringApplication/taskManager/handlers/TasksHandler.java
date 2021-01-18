@@ -1,8 +1,8 @@
 package com.bestSpringApplication.taskManager.handlers;
 
-import com.bestSpringApplication.taskManager.models.Study.implementations.TaskImpl;
-import com.bestSpringApplication.taskManager.models.Study.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.models.Study.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.study.implementations.TaskImpl;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import org.jdom2.JDOMException;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class TasksHandler {
 
     public static Map<Task, List<Task>> makeTasksGraph(Map<String, Task> taskMap, List<Dependency> taskDependencies) throws JDOMException {
-        Map<Task,List<Task>> tasksGraph = new HashMap<>();
+        Map<Task, List<Task>> tasksGraph = new HashMap<>();
 
         String[] strings = taskMap.keySet().toArray(new String[0]);
 

@@ -1,6 +1,6 @@
-package com.bestSpringApplication.taskManager.models.Study.implementations;
+package com.bestSpringApplication.taskManager.models.study.implementations;
 
-import com.bestSpringApplication.taskManager.models.Study.interfaces.UserTaskRelation;
+import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
