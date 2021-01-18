@@ -1,21 +1,38 @@
+console.log('%cwe are using open source library https://plotly.com', 'color: yellow; background:black;font-size:15px');
 
 
+fetch("/admin/schemas/0").then(response=>response.json()).then(response=>{
 
-fetch("/admin/schemas/tasks").then(response=>response.json()).then(response=>{
-    makeGraph(response)
+    // Object.entries(response).map(el=>el[1])
+
+
+    let labels = Object.entries(response.tasksMap).map(el=>el[1]).map(el=>`${el.name} (${el.id})`);
+
+    makeGraph(labels,response.tasksDependencies)
+    let cl = document.querySelectorAll('rect.node-capture')
+
+    for (let i = 0; i < cl.length; i++) {
+        cl[i].setAttribute('id', 'elem')
+    }
+
+    document.addEventListener('mouseup', (e) => {
+        if (e.target.id.includes('elem') === true) {
+            console.log('Zaebisc!')
+        }
+    })
 })
 
 fetch("/admin/schemas/files").then(response => response.json()).then(response =>{
-    let tasksList = document.getElementById("tasksList");
+    let schemasFileList = document.getElementById("schemasFileList");
     response.forEach(file=>{
         let div = document.createElement('div');
         div.style.margin='10px'
         let fileDownload = document.createElement('a')
         fileDownload.innerText=file
-        fileDownload.setAttribute('href',`admin/schema/${file}`)
+        fileDownload.setAttribute('href',`admin/schemas/file/${file}`)
         fileDownload.setAttribute('download',file)
         div.append(fileDownload)
-        tasksList.append(div)
+        schemasFileList.append(div)
     })
 })
 
@@ -49,51 +66,28 @@ document.querySelector('#file').addEventListener('change',evt => {
 })
 
 
-makeGraph = (jsonResponse) =>{
-    class Dependency{
-        constructor(parentId,childId) {
-            this.parentId=parentId
-            this.childId=childId
-        }
+
+class Dependency {
+    constructor(parentId, childId) {
+        this.parentId = parentId
+        this.childId = childId
     }
+}
+makeGraph = (labels,jsonDependenciesArr) =>{
+    jsonDependenciesArr
+        .map(el=>new Dependency(Number(el.parentId),Number(el.childId)))
+        .sort((a,b)=>a.parentId-b.parentId)
 
-    var dependencies = []
-
-    for (let i = 0; i < jsonResponse.length; i++) {
-        let parentId = jsonResponse[i].parentId;
-        let childId = jsonResponse[i].childId;
-        if (parentId !== childId) {
-            dependencies.push(new Dependency(Number(parentId),Number(childId)))
-        }
-    }
-    dependencies.sort((a,b)=>a.parentId-b.parentId)
-
-    var data = [{
+    const data = [{
         type: "sankey",
-        arrangement: "snap",
-        node:{
-            label: [...new Set(dependencies.map(el=>el.parentId))],
-            pad:30},
+        node: {
+            label: [...labels]
+        },
         link: {
-            source: [...dependencies.map(el=>el.parentId)],
-            target: [...dependencies.map(el=>el.childId)],
-            value: [...dependencies.map(()=>1)]
+            source: [...jsonDependenciesArr.map(el=>el.parentId)],
+            target: [...jsonDependenciesArr.map(el=>el.childId)],
+            value: [...jsonDependenciesArr.map(()=>1)],
         }
-    }]
+    }];
     Plotly.newPlot('graph', data)
-
-    let cl = document.querySelectorAll('rect.node-capture')
-
-    for (let i = 0; i < cl.length; i++) {
-        cl[i].setAttribute('id', 'elem' + data[0].node.label[i])
-    }
-
-    document.addEventListener('mouseup', (e) => {
-        if (e.target.id.includes('elem') === true) {
-            console.log('Zaebisc!')
-            /* for (let i = 0; i < data[0].node.label.length; i++ ) {
-                 console.log('12312321312')
-             }*/
-        }
-    })
 }

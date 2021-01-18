@@ -4,7 +4,7 @@ formElem.onsubmit =(e) => {
     new FormData(formElem)
         .forEach((value, key) => object[key] = value);
     let json = JSON.stringify(object);
-    fetch('/reg', {
+    fetch('/register/new', {
         method: 'POST',
         body: json,
         headers:{'content-type': 'application/json'}
