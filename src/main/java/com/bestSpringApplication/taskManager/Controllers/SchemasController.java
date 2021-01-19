@@ -35,11 +35,8 @@ public class SchemasController {
     private String taskPoolPath;
 
     public Map<Integer,StudyScheme> schemas;
-    private List<Dependency> schemasDependencies = Arrays.asList(
-        new DependencyImpl("1","2"),
-        new DependencyImpl("1","3"),
-        new DependencyImpl("2","3"),
-        new DependencyImpl("3","4"));
+    private List<Dependency> schemasDependencies = Collections.singletonList(
+            new DependencyImpl("0", "1"));
 
     private int schemesCount;
     private List<String> fileNames;
@@ -87,8 +84,11 @@ public class SchemasController {
 
     @GetMapping
     @JsonView(SchemeView.InfoForGraph.class)
-    public Map<Integer,StudyScheme> schemasMap(){
-        return schemas;
+    public Map<String,Object> schemasMap(){
+        HashMap<String,Object> schemasAndDependencies = new HashMap<>();
+        schemasAndDependencies.put("schemas",schemas);
+        schemasAndDependencies.put("dependencies",schemasDependencies);
+        return schemasAndDependencies;
     }
 
     @GetMapping("/{id}")
@@ -117,11 +117,6 @@ public class SchemasController {
         String parentId = schemasId.get("parentId");
         String childId = schemasId.get("childId");
         schemasDependencies.add(new DependencyImpl(parentId,childId));
-    }
-
-    @GetMapping("/dependencies")
-    public List<Dependency> schemasDependencies(){
-        return schemasDependencies;
     }
 
     @PostMapping("/add")

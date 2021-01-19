@@ -1,28 +1,56 @@
 console.log('%cwe are using open source library https://plotly.com', 'color: yellow; background:black;font-size:15px');
 
+let actions = document.querySelector('#element-actions');
+let userList = document.getElementById("UsersList")
 
-fetch("/admin/schemas/0").then(response=>response.json()).then(response=>{
+universalfunc = (url) => {
+    fetch( url)
+        .then(response => response.json())
+        .then(result => {
+            switch ( url ) {
+                case '/admin/schemas/':
+                    firstGraph(result)
+                    break;
+                case '/admin/schemas/files':
+                    makeFileList(result)
+                    break;
+                case '/admin/users':
+                    makeUserList(result)
+                    break;
+            }
+        })
+}
 
-    // Object.entries(response).map(el=>el[1])
+universalfunc('/admin/schemas/')
+universalfunc('/admin/schemas/files')
+universalfunc('/admin/users')
 
+firstGraph = (response) => {
+    let labels = Object.entries(response.schemas).map(el=>el[1]).map(el=>`${el.name} id=${el.id}`);
 
-    let labels = Object.entries(response.tasksMap).map(el=>el[1]).map(el=>`${el.name} (${el.id})`);
+    makeGraph(labels,response.dependencies,'Схемы')
+    let cl = document.querySelectorAll('g.sankey-node')
+    cl.forEach(el=>{
+        let childText = el.querySelector(".node-label-text-path");
+        let schemeId = childText.innerHTML.split("=")[1];
 
-    makeGraph(labels,response.tasksDependencies)
-    let cl = document.querySelectorAll('rect.node-capture')
-
-    for (let i = 0; i < cl.length; i++) {
-        cl[i].setAttribute('id', 'elem')
-    }
-
-    document.addEventListener('mouseup', (e) => {
-        if (e.target.id.includes('elem') === true) {
-            console.log('Zaebisc!')
-        }
+        el.setAttribute('onmouseup', `schemeActions(${schemeId})`)
     })
-})
+}
 
-fetch("/admin/schemas/files").then(response => response.json()).then(response =>{
+schemeActions = (schemeId) => {
+    actions.innerHTML=`<button onclick="schemeInfo(${schemeId})">Подробности</button>`
+}
+schemeInfo = (schemeId) => {
+    actions.innerHTML=''
+    fetch(`/admin/schemas/${schemeId}`).then(response=>response.json()).then(response=>{
+
+        let labels = Object.entries(response.tasksMap).map(el=>el[1]).map(el=>`${el.name} id=${el.id}`);
+        makeGraph(labels,response.tasksDependencies,response.name)
+    })
+
+}
+makeFileList = (response) => {
     let schemasFileList = document.getElementById("schemasFileList");
     response.forEach(file=>{
         let div = document.createElement('div');
@@ -34,10 +62,9 @@ fetch("/admin/schemas/files").then(response => response.json()).then(response =>
         div.append(fileDownload)
         schemasFileList.append(div)
     })
-})
+}
 
-fetch("/admin/users").then(response => response.json()).then(response => {
-    let userList = document.getElementById("UsersList")
+makeUserList = (response) => {
     response.forEach(element => {
         let user ='<div style="border: 1px solid black">'
         let hrefToUser = ''
@@ -48,7 +75,7 @@ fetch("/admin/users").then(response => response.json()).then(response => {
         user+='</div>'
         userList.innerHTML+=user
     })
-})
+}
 
 document.querySelector('#file').addEventListener('change',evt => {
     let fileData = evt.target["files"]
@@ -65,15 +92,7 @@ document.querySelector('#file').addEventListener('change',evt => {
     })
 })
 
-
-
-class Dependency {
-    constructor(parentId, childId) {
-        this.parentId = parentId
-        this.childId = childId
-    }
-}
-makeGraph = (labels,jsonDependenciesArr) =>{
+makeGraph = (labels,jsonDependenciesArr,title) =>{
     jsonDependenciesArr
         .map(el=>new Dependency(Number(el.parentId),Number(el.childId)))
         .sort((a,b)=>a.parentId-b.parentId)
@@ -89,5 +108,13 @@ makeGraph = (labels,jsonDependenciesArr) =>{
             value: [...jsonDependenciesArr.map(()=>1)],
         }
     }];
-    Plotly.newPlot('graph', data)
+
+    const layout = {"title": title};
+    Plotly.newPlot('graph', data,layout)
+}
+class Dependency {
+    constructor(parentId, childId) {
+        this.parentId = parentId
+        this.childId = childId
+    }
 }
