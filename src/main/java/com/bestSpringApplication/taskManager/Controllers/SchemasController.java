@@ -86,7 +86,7 @@ public class SchemasController {
     @JsonView(SchemeView.InfoForGraph.class)
     public Map<String,Object> schemasMap(){
         HashMap<String,Object> schemasAndDependencies = new HashMap<>();
-        schemasAndDependencies.put("schemas",schemas);
+        schemasAndDependencies.put("values",schemas);
         schemasAndDependencies.put("dependencies",schemasDependencies);
         return schemasAndDependencies;
     }

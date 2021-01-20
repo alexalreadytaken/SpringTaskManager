@@ -32,7 +32,7 @@ public class StaticResolver implements WebMvcConfigurer {
         registry.addResourceHandler("favicon.ico")
                 .addResourceLocations("classpath:/static/favicon.ico");
         String filePath = "file:///".concat(taskPoolPath);
-        registry.addResourceHandler("admin/schemas/file/**")
+        registry.addResourceHandler("/admin/schemas/file/**")
                 .addResourceLocations(filePath);
     }
 

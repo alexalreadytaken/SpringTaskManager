@@ -7,6 +7,7 @@ import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -21,8 +22,10 @@ public class StudySchemeImpl implements StudyScheme{
     @JsonView(SchemeView.InfoForGraph.class)
     private String id;
     @JsonView(SchemeView.FullInfo.class)
+    @JsonProperty("values")
     private Map<String, Task> tasksMap;
     @JsonView(SchemeView.FullInfo.class)
+    @JsonProperty("dependencies")
     private List<Dependency> tasksDependencies;
     @JsonIgnore
     private Map<Task, List<Task>> tasksGraph;

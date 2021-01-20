@@ -3,7 +3,7 @@ console.log('%cwe are using open source library https://plotly.com', 'color: yel
 let actions = document.querySelector('#element-actions');
 let userList = document.getElementById("UsersList")
 
-universalfunc = (url) => {
+multiFetch = (url) => {
     fetch( url)
         .then(response => response.json())
         .then(result => {
@@ -21,19 +21,16 @@ universalfunc = (url) => {
         })
 }
 
-universalfunc('/admin/schemas/')
-universalfunc('/admin/schemas/files')
-universalfunc('/admin/users')
+multiFetch('/admin/schemas/')
+multiFetch('/admin/schemas/files')
+multiFetch('/admin/users')
 
 firstGraph = (response) => {
-    let labels = Object.entries(response.schemas).map(el=>el[1]).map(el=>`${el.name} id=${el.id}`);
-
-    makeGraph(labels,response.dependencies,'Схемы')
+    makeGraph(response,'Схемы')
     let cl = document.querySelectorAll('g.sankey-node')
     cl.forEach(el=>{
         let childText = el.querySelector(".node-label-text-path");
         let schemeId = childText.innerHTML.split("=")[1];
-
         el.setAttribute('onmouseup', `schemeActions(${schemeId})`)
     })
 }
@@ -44,36 +41,34 @@ schemeActions = (schemeId) => {
 schemeInfo = (schemeId) => {
     actions.innerHTML=''
     fetch(`/admin/schemas/${schemeId}`).then(response=>response.json()).then(response=>{
-
-        let labels = Object.entries(response.tasksMap).map(el=>el[1]).map(el=>`${el.name} id=${el.id}`);
-        makeGraph(labels,response.tasksDependencies,response.name)
+        makeGraph(response,response.name)
     })
 
 }
-makeFileList = (response) => {
+makeFileList = (fileNames) => {
     let schemasFileList = document.getElementById("schemasFileList");
-    response.forEach(file=>{
+    fileNames.forEach(file=>{
         let div = document.createElement('div');
         div.style.margin='10px'
         let fileDownload = document.createElement('a')
         fileDownload.innerText=file
-        fileDownload.setAttribute('href',`admin/schemas/file/${file}`)
+        fileDownload.setAttribute('href',`/admin/schemas/file/${file}`)
         fileDownload.setAttribute('download',file)
         div.append(fileDownload)
         schemasFileList.append(div)
     })
 }
 
-makeUserList = (response) => {
-    response.forEach(element => {
-        let user ='<div style="border: 1px solid black">'
+makeUserList = (users) => {
+    users.forEach(user => {
+        let userContainer ='<div style="border: 1px solid black">'
         let hrefToUser = ''
-        Object.entries(element).reverse().forEach(el=>{
-            user+='<h4>'+el[0]+':'+el[1]+'</h4>'
+        Object.entries(user).reverse().forEach(el=>{
+            userContainer+='<h4>'+el[0]+':'+el[1]+'</h4>'
         })
-        user+=hrefToUser
-        user+='</div>'
-        userList.innerHTML+=user
+        userContainer+=hrefToUser
+        userContainer+='</div>'
+        userList.innerHTML+=userContainer
     })
 }
 
@@ -92,10 +87,9 @@ document.querySelector('#file').addEventListener('change',evt => {
     })
 })
 
-makeGraph = (labels,jsonDependenciesArr,title) =>{
-    jsonDependenciesArr
-        .map(el=>new Dependency(Number(el.parentId),Number(el.childId)))
-        .sort((a,b)=>a.parentId-b.parentId)
+makeGraph = (jsonResponse,title) =>{
+    let labels = Object.entries(jsonResponse.values).map(el=>el[1]).map(el=>`${el.name} id=${el.id}`);
+    let dependencies = jsonResponse.dependencies;
 
     const data = [{
         type: "sankey",
@@ -103,15 +97,16 @@ makeGraph = (labels,jsonDependenciesArr,title) =>{
             label: [...labels]
         },
         link: {
-            source: [...jsonDependenciesArr.map(el=>el.parentId)],
-            target: [...jsonDependenciesArr.map(el=>el.childId)],
-            value: [...jsonDependenciesArr.map(()=>1)],
+            source: [...dependencies.map(el=>el.parentId)],
+            target: [...dependencies.map(el=>el.childId)],
+            value: [...dependencies.map(()=>1)],
         }
     }];
 
     const layout = {"title": title};
     Plotly.newPlot('graph', data,layout)
 }
+
 class Dependency {
     constructor(parentId, childId) {
         this.parentId = parentId
