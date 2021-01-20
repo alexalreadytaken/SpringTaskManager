@@ -4,7 +4,7 @@ let actions = document.querySelector('#element-actions');
 let userList = document.getElementById("UsersList")
 
 multiFetch = (url) => {
-    fetch( url)
+    fetch( url )
         .then(response => response.json())
         .then(result => {
             switch ( url ) {
@@ -38,6 +38,7 @@ firstGraph = (response) => {
 schemeActions = (schemeId) => {
     actions.innerHTML=`<button onclick="schemeInfo(${schemeId})">Подробности</button>`
 }
+
 schemeInfo = (schemeId) => {
     actions.innerHTML=''
     fetch(`/admin/schemas/${schemeId}`).then(response=>response.json()).then(response=>{
@@ -45,6 +46,7 @@ schemeInfo = (schemeId) => {
     })
 
 }
+
 makeFileList = (fileNames) => {
     let schemasFileList = document.getElementById("schemasFileList");
     fileNames.forEach(file=>{
@@ -107,9 +109,9 @@ makeGraph = (jsonResponse,title) =>{
     Plotly.newPlot('graph', data,layout)
 }
 
-class Dependency {
-    constructor(parentId, childId) {
-        this.parentId = parentId
-        this.childId = childId
-    }
-}
+// class Dependency {
+//     constructor(parentId, childId) {
+//         this.parentId = parentId
+//         this.childId = childId
+//     }
+// }
