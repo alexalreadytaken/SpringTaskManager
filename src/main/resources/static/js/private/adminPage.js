@@ -108,10 +108,3 @@ makeGraph = (jsonResponse,title) =>{
     const layout = {"title": title};
     Plotly.newPlot('graph', data,layout)
 }
-
-// class Dependency {
-//     constructor(parentId, childId) {
-//         this.parentId = parentId
-//         this.childId = childId
-//     }
-// }
