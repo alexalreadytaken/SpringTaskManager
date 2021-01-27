@@ -36,14 +36,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] permittedMappings = {"/favicon.ico","/js/public/**","/register/**"};
+        String[] permittedMappings = {"/favicon.ico","/js/public/**","/register/**","/admin/**"};
         http
 //                    .cors().configurationSource(corsConfig())
 //                .and()
                     .csrf().disable()
                     .authorizeRequests()
                     .antMatchers(permittedMappings).permitAll()
-                    .antMatchers("/admin/**","/js/private/**").hasAuthority("ADMIN")
+//                    .antMatchers("/admin/**","/js/private/**").hasAuthority("ADMIN")
                     .anyRequest()
                     .authenticated()
                 .and()
@@ -63,7 +63,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .deleteCookies("JSESSIONID","remember-me")
                     .logoutSuccessUrl("/login");
     }
-    /*@Bean
+    /* @Bean
     CorsConfigurationSource corsConfig(){
         CorsConfiguration config = new CorsConfiguration();
         config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));

@@ -1,10 +1,11 @@
 console.log('%cwe are using open source library https://plotly.com', 'color: yellow; background:black;font-size:15px');
+console.log('https://docs.anychart.com/Gantt_Chart/Project_Chart');
 
 let actions = document.querySelector('#element-actions');
 let userList = document.getElementById("UsersList")
 
 multiFetch = (url) => {
-    fetch( url )
+    fetch( url)
         .then(response => response.json())
         .then(result => {
             switch ( url ) {
@@ -38,7 +39,6 @@ firstGraph = (response) => {
 schemeActions = (schemeId) => {
     actions.innerHTML=`<button onclick="schemeInfo(${schemeId})">Подробности</button>`
 }
-
 schemeInfo = (schemeId) => {
     actions.innerHTML=''
     fetch(`/admin/schemas/${schemeId}`).then(response=>response.json()).then(response=>{
@@ -46,7 +46,6 @@ schemeInfo = (schemeId) => {
     })
 
 }
-
 makeFileList = (fileNames) => {
     let schemasFileList = document.getElementById("schemasFileList");
     fileNames.forEach(file=>{
@@ -108,10 +107,3 @@ makeGraph = (jsonResponse,title) =>{
     const layout = {"title": title};
     Plotly.newPlot('graph', data,layout)
 }
-
-// class Dependency {
-//     constructor(parentId, childId) {
-//         this.parentId = parentId
-//         this.childId = childId
-//     }
-// }

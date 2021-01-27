@@ -3,10 +3,9 @@ package com.bestSpringApplication.taskManager.models.study.implementations;
 
 import com.bestSpringApplication.taskManager.handlers.jsonViews.SchemeView;
 import com.bestSpringApplication.taskManager.handlers.parsers.xml.StudySchemaParser;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
@@ -27,7 +26,7 @@ public class StudySchemeImpl implements StudyScheme{
     @JsonView(SchemeView.FullInfo.class)
     @JsonProperty("dependencies")
     private List<Dependency> tasksDependencies;
-    @JsonIgnore
+    @JsonView(SchemeView.FullInfo.class)
     private Map<Task, List<Task>> tasksGraph;
 
     public StudySchemeImpl(){}

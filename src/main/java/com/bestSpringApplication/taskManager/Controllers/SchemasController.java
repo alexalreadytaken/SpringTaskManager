@@ -5,7 +5,6 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFound
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
 import com.bestSpringApplication.taskManager.handlers.jsonViews.SchemeView;
-import com.bestSpringApplication.taskManager.handlers.jsonViews.TaskView;
 import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
@@ -39,49 +38,46 @@ public class SchemasController {
             new DependencyImpl("0", "1"));
 
     private int schemesCount;
-    private List<String> fileNames;
 
     private static final Set<String> confirmedFileTypes =
-        Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-            "xml","mrp","txt")));
+            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+                    "xml","mrp","txt")));
 
     @PostConstruct
     public void init(){
-//        schemasDependencies = new ArrayList<>();
-        fileNames = new ArrayList<>();
         schemas = new HashMap<>();
         schemesCount = 0;
         File tasksDir = new File(taskPoolPath);
         if (tasksDir.exists()){
             Optional<File[]> files =
-                Optional.ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
+                    Optional.ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
             files.ifPresent(files0 ->
-                Arrays.stream(files0).forEach(file -> {
-                    try {
-                        LOGGER.trace("getting file {} to parse",file.getName());
-                        InputStream fileInputStream = new FileInputStream(file);
-                        Document schemaDoc = new SAXBuilder().build(fileInputStream);
-                        StudySchemeImpl schema = StudySchemeImpl.parseFromXml(schemaDoc);
-                        //fixme
-                        schema.setName(file.getName());
-                        schema.setId(String.valueOf(schemesCount));
-                        LOGGER.trace("putting schema to schemes,file:{}",file.getName());
-                        schemas.put(schemesCount++,schema);
-                        fileNames.add(file.getName());
-                    } catch (FileNotFoundException e) {
-                        LOGGER.warn("file was deleted in initializing time");
-                    } catch (JDOMException e) {
-                        LOGGER.error("error with parse XML:{},file:{}",e.getMessage(),file.getName());
-                    } catch (IOException e) {
-                        LOGGER.error(e.getMessage());
-                    }
-                })
+                    Arrays.stream(files0).forEach(file -> {
+                        try {
+                            LOGGER.trace("getting file {} to parse",file.getName());
+                            InputStream fileInputStream = new FileInputStream(file);
+                            Document schemaDoc = new SAXBuilder().build(fileInputStream);
+                            StudySchemeImpl schema = StudySchemeImpl.parseFromXml(schemaDoc);
+                            //fixme
+                            schema.setName(file.getName());
+                            schema.setId(String.valueOf(schemesCount));
+                            LOGGER.trace("putting schema to schemes,file:{}",file.getName());
+                            schemas.put(schemesCount++,schema);
+                        } catch (FileNotFoundException e) {
+                            LOGGER.warn("file was deleted in initializing time");
+                        } catch (JDOMException e) {
+                            LOGGER.error("error with parse XML:{},file:{}",e.getMessage(),file.getName());
+                        } catch (IOException e) {
+                            LOGGER.error(e.getMessage());
+                        }
+                    })
             );
         }else {
             tasksDir.mkdir();
         }
     }
 
+    //fixme
     @GetMapping
     @JsonView(SchemeView.InfoForGraph.class)
     public Map<String,Object> schemasMap(){
@@ -93,14 +89,13 @@ public class SchemasController {
 
     @GetMapping("/{id}")
     @JsonView(SchemeView.FullInfo.class)
-    //fixme: double ex
     public StudyScheme schemeDetails(@PathVariable String id) {
         String notFoundResponse = String.format("Схема с id=%s не найдена", id);
         try {
             int id0 = Integer.parseInt(id);
             return Optional.ofNullable(schemas.get(id0))
-                .orElseThrow(()->
-                    new ContentNotFoundException(notFoundResponse));
+                    .orElseThrow(()->
+                            new ContentNotFoundException(notFoundResponse));
         }catch (NumberFormatException ex){
             throw new ContentNotFoundException(notFoundResponse);
         }
@@ -108,6 +103,10 @@ public class SchemasController {
 
     @GetMapping("/files")
     public List<String> schemasFileList() {
+        File file = new File(taskPoolPath);
+        Optional<File[]> filesOpt = Optional.ofNullable(file.listFiles(File::isFile));
+        List<String> fileNames = new ArrayList<>();
+        filesOpt.ifPresent(files-> Arrays.stream(files).map(File::getName).forEach(fileNames::add));
         return fileNames;
     }
 
@@ -129,9 +128,8 @@ public class SchemasController {
                 Document courseXml = new SAXBuilder().build(file.getInputStream());
                 StudySchemeImpl.parseFromXml(courseXml);
                 LOGGER.trace("Move file {} to directory {}",
-                    file.getOriginalFilename(),taskPoolPath);
+                        file.getOriginalFilename(),taskPoolPath);
                 file.transferTo(new File(taskPoolPath+file.getOriginalFilename()));
-                fileNames.add(file.getOriginalFilename());
             }else {
                 LOGGER.warn("unsupported file type sent,file:{}",file.getOriginalFilename());
                 throw new IllegalFileFormatException(String.format("файл с расширением %s не поддерживается",fileNameAndType[1]));
@@ -142,60 +140,3 @@ public class SchemasController {
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
