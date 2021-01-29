@@ -61,5 +61,7 @@ anychart.onDocumentReady(() => {
 chart.listen('rowDblClick', e => {
 // e.preventDefault();
 console.log(e)
-});
+})
+
+document.getElementsByClassName('anychart-credits')[0].remove() // удаление информации о библиотеке
 })
