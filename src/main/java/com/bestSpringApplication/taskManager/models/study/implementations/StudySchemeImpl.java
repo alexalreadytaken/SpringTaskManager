@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
 
-import com.bestSpringApplication.taskManager.handlers.jsonViews.SchemeView;
+import com.bestSpringApplication.taskManager.handlers.jsonView.SchemasView;
 import com.bestSpringApplication.taskManager.handlers.parsers.xml.StudySchemaParser;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
@@ -17,11 +17,15 @@ import java.util.Map;
 
 public class StudySchemeImpl implements StudyScheme{
 
+    @JsonView(SchemasView.OverviewInfo.class)
     private String name;
+    @JsonView(SchemasView.OverviewInfo.class)
     private String id;
     @JsonProperty("values")
+    @JsonView(SchemasView.FullInfo.class)
     private Map<String, Task> tasksMap;
     @JsonProperty("dependencies")
+    @JsonView(SchemasView.FullInfo.class)
     private List<Dependency> tasksDependencies;
     @JsonIgnore
     private Map<Task, List<Task>> tasksGraph;

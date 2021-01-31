@@ -1,10 +1,8 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
-import com.bestSpringApplication.taskManager.handlers.jsonViews.TaskView;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -21,7 +19,9 @@ public class TaskImpl implements Task {
     private int duration;
     private String notes;
     private boolean isTheme = false;
+    @JsonFormat(locale = DATE_FORMAT)
     private LocalDateTime startDate;
+    @JsonFormat(locale = DATE_FORMAT)
     private LocalDateTime endDate;
     private LocalDateTime constraint;
 

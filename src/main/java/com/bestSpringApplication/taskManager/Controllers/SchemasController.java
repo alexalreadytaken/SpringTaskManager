@@ -4,7 +4,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
-import com.bestSpringApplication.taskManager.handlers.jsonViews.SchemeView;
+import com.bestSpringApplication.taskManager.handlers.jsonView.SchemasView;
 import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
@@ -80,7 +80,7 @@ public class SchemasController {
 
     //fixme
     @GetMapping
-    @JsonView(SchemeView.InfoForGraph.class)
+    @JsonView(SchemasView.OverviewInfo.class)
     public Map<String,Object> schemasMap(){
         Map<String,Object> schemasAndDependencies = new HashMap<>();
         schemasAndDependencies.put("values",schemas);
@@ -89,7 +89,6 @@ public class SchemasController {
     }
 
     @GetMapping("/{id}")
-//    @JsonView(SchemeView.FullInfo.class)
     public StudyScheme schemeDetails(@PathVariable String id) {
         String notFoundResponse = String.format("Схема с id=%s не найдена", id);
         try {
