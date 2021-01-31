@@ -1,5 +1,6 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
+import com.bestSpringApplication.taskManager.handlers.DateHandler;
 import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.study.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
@@ -26,13 +27,18 @@ public class TaskParser {
             Optional<Element> taskListElem = Optional.ofNullable(taskElemFromStack.getChild("task-list"));
             Optional<Element> taskNotesElem = Optional.ofNullable(taskElemFromStack.getChild("task-notes"));
 
+            String startDate = taskElemFromStack.getChildText("task-start-date");
+            String endDate = taskElemFromStack.getChildText("task-end-date");
+
             Optional<String> parentId = Optional.ofNullable(taskElemFromStack.getAttributeValue("parent-id"));
             Optional<String> taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"));
             Optional<String> taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"));
 
             taskBuilder
                 .taskName(taskName.orElseThrow(()->new JDOMException("Task name is empty!")))
-                .taskId(taskId.orElseThrow(()-> new JDOMException("Task id is empty!")));
+                .taskId(taskId.orElseThrow(()-> new JDOMException("Task id is empty!")))
+                .taskStartDate(DateHandler.parseDateFromFormat(startDate,"dd-MM-yyyy, HH:mm:ss"))
+                .taskEndDate(DateHandler.parseDateFromFormat(endDate,"dd-MM-yyyy, HH:mm:ss"));
 
             fieldListElem.ifPresent(fieldList ->
                 taskBuilder.taskFields(fieldToMap(fieldList, "field","field-no", "field-value"))
@@ -41,6 +47,7 @@ public class TaskParser {
                 taskBuilder.notes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
             );
             taskListElem.ifPresent(tasksOpt->{
+                taskBuilder.isTheme(true);
                 Optional<List<Element>> tasks = Optional.ofNullable(tasksOpt.getChildren("task"));
                 tasks.ifPresent(tasksListOpt->
                     tasksListOpt.forEach(el->{

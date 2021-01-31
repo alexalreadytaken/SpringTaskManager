@@ -15,28 +15,15 @@ public class TaskImpl implements Task {
     @JsonIgnore
     private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
-    @JsonView(TaskView.InfoForGraph.class)
     private String id;
-    @JsonView(TaskView.InfoForGraph.class)
     private String name;
-    @JsonView(TaskView.FullInfo.class)
     private Map<String, String> fields;
-    @JsonView(TaskView.FullInfo.class)
     private int duration;
-    @JsonView(TaskView.FullInfo.class)
     private String notes;
-
-    @JsonFormat(pattern = DATE_FORMAT)
-    @JsonView(TaskView.FullInfo.class)
-    private LocalDateTime constraint;
-    @JsonFormat(pattern = DATE_FORMAT)
-    @JsonView(TaskView.FullInfo.class)
+    private boolean isTheme = false;
     private LocalDateTime startDate;
-    @JsonFormat(pattern = DATE_FORMAT)
-    @JsonView(TaskView.FullInfo.class)
     private LocalDateTime endDate;
-
-
+    private LocalDateTime constraint;
 
     public TaskImpl() {}
 
@@ -44,16 +31,16 @@ public class TaskImpl implements Task {
         return new TaskImpl().new TaskBuilder();
     }
 
+    public Optional<Map<String, String>> getFields() { return Optional.ofNullable(fields); }
+    public Optional<String> getNotes() { return Optional.ofNullable(notes); }
+
     public LocalDateTime getConstraint() { return constraint; }
     public LocalDateTime getStartDate() { return startDate; }
     public LocalDateTime getEndDate() { return endDate; }
     public int getDuration() { return duration; }
+    public boolean isTheme() { return isTheme; }
     public String getName() { return name; }
     public String getId() { return id; }
-
-    public Optional<String> getNotes() { return Optional.ofNullable(notes); }
-
-    public Optional<Map<String, String>> getFields() { return Optional.ofNullable(fields); }
 
     public void setFields(Map<String, String> fields) { this.fields = fields; }
 
@@ -61,6 +48,10 @@ public class TaskImpl implements Task {
         TaskBuilder(){}
         public TaskBuilder notes(String notes){
             TaskImpl.this.notes=notes;
+            return this;
+        }
+        public TaskBuilder isTheme(boolean isTheme){
+            TaskImpl.this.isTheme=isTheme;
             return this;
         }
         public TaskBuilder taskFields(Map<String,String> taskFields) {

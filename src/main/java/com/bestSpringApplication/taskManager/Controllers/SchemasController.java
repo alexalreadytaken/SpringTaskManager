@@ -53,20 +53,21 @@ public class SchemasController {
                     Optional.ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
             files.ifPresent(files0 ->
                     Arrays.stream(files0).forEach(file -> {
+                        String fileName = file.getName();
                         try {
-                            LOGGER.trace("getting file {} to parse",file.getName());
+                            LOGGER.trace("getting file {} to parse", fileName);
                             InputStream fileInputStream = new FileInputStream(file);
                             Document schemaDoc = new SAXBuilder().build(fileInputStream);
                             StudySchemeImpl schema = StudySchemeImpl.parseFromXml(schemaDoc);
                             //fixme
-                            schema.setName(file.getName());
+                            schema.setName(fileName);
                             schema.setId(String.valueOf(schemesCount));
-                            LOGGER.trace("putting schema to schemes,file:{}",file.getName());
+                            LOGGER.trace("putting schema to schemes,file:{}", fileName);
                             schemas.put(schemesCount++,schema);
                         } catch (FileNotFoundException e) {
-                            LOGGER.warn("file was deleted in initializing time");
+                            LOGGER.warn("file {} was deleted in initializing time",file);
                         } catch (JDOMException e) {
-                            LOGGER.error("error with parse XML:{},file:{}",e.getMessage(),file.getName());
+                            LOGGER.error("error with parse XML:{},file:{}",e.getMessage(), fileName);
                         } catch (IOException e) {
                             LOGGER.error(e.getMessage());
                         }
@@ -81,14 +82,14 @@ public class SchemasController {
     @GetMapping
     @JsonView(SchemeView.InfoForGraph.class)
     public Map<String,Object> schemasMap(){
-        HashMap<String,Object> schemasAndDependencies = new HashMap<>();
+        Map<String,Object> schemasAndDependencies = new HashMap<>();
         schemasAndDependencies.put("values",schemas);
         schemasAndDependencies.put("dependencies",schemasDependencies);
         return schemasAndDependencies;
     }
 
     @GetMapping("/{id}")
-    @JsonView(SchemeView.FullInfo.class)
+//    @JsonView(SchemeView.FullInfo.class)
     public StudyScheme schemeDetails(@PathVariable String id) {
         String notFoundResponse = String.format("Схема с id=%s не найдена", id);
         try {

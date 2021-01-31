@@ -11,3 +11,4 @@ formElem.onsubmit =(e) => {
     }).then(response=>response.json())
         .then(response=>console.log(response))
 };
+some = ()=>{}
