@@ -19,9 +19,9 @@ public class TaskImpl implements Task {
     private int duration;
     private String notes;
     private boolean isTheme = false;
-    @JsonFormat(locale = DATE_FORMAT)
+    @JsonFormat(pattern = DATE_FORMAT)
     private LocalDateTime startDate;
-    @JsonFormat(locale = DATE_FORMAT)
+    @JsonFormat(pattern = DATE_FORMAT)
     private LocalDateTime endDate;
     private LocalDateTime constraint;
 
