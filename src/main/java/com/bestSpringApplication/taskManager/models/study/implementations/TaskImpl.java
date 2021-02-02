@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,11 +20,15 @@ public class TaskImpl implements Task {
     private int duration;
     private String notes;
     private boolean isTheme = false;
+    private List<String> parentsId;
+    private List<String> childrenId;
+
     @JsonFormat(pattern = DATE_FORMAT)
     private LocalDateTime startDate;
     @JsonFormat(pattern = DATE_FORMAT)
     private LocalDateTime endDate;
     private LocalDateTime constraint;
+
 
     public TaskImpl() {}
 
@@ -35,7 +40,9 @@ public class TaskImpl implements Task {
     public Optional<String> getNotes() { return Optional.ofNullable(notes); }
 
     public LocalDateTime getConstraint() { return constraint; }
+    public List<String> getChildrenId() { return childrenId; }
     public LocalDateTime getStartDate() { return startDate; }
+    public List<String> getParentsId() { return parentsId; }
     public LocalDateTime getEndDate() { return endDate; }
     public int getDuration() { return duration; }
     public boolean isTheme() { return isTheme; }
@@ -48,6 +55,14 @@ public class TaskImpl implements Task {
         TaskBuilder(){}
         public TaskBuilder notes(String notes){
             TaskImpl.this.notes=notes;
+            return this;
+        }
+        public TaskBuilder parentsId(List<String> parentsId){
+            TaskImpl.this.parentsId=parentsId;
+            return this;
+        }
+        public TaskBuilder childrenId(List<String> childrenId){
+            TaskImpl.this.childrenId=childrenId;
             return this;
         }
         public TaskBuilder isTheme(boolean isTheme){

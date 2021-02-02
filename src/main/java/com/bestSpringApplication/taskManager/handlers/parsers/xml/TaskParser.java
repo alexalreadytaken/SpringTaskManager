@@ -11,6 +11,7 @@ import org.jdom2.Element;
 import org.jdom2.JDOMException;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TaskParser {
 
@@ -26,40 +27,57 @@ public class TaskParser {
             Optional<Element> fieldListElem = Optional.ofNullable(taskElemFromStack.getChild("field-list"));
             Optional<Element> taskListElem = Optional.ofNullable(taskElemFromStack.getChild("task-list"));
             Optional<Element> taskNotesElem = Optional.ofNullable(taskElemFromStack.getChild("task-notes"));
+            Optional<String> parentId = Optional.ofNullable(taskElemFromStack.getAttributeValue("parent-id"));
+
 
             String startDate = taskElemFromStack.getChildText("task-start-date");
             String endDate = taskElemFromStack.getChildText("task-end-date");
+            String taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"))
+                    .orElseThrow(()-> new JDOMException("Task id is empty!"));
+            String taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"))
+                    .orElseThrow(()->new JDOMException("Task name is empty!"));
 
-            Optional<String> parentId = Optional.ofNullable(taskElemFromStack.getAttributeValue("parent-id"));
-            Optional<String> taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"));
-            Optional<String> taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"));
+            List<String> parentsId = dependencyList.stream()
+                    .filter(el -> el.getChildId().equals(taskId))
+                    .map(Dependency::getParentId)
+                    .collect(Collectors.toList());
 
-            taskBuilder
-                .taskName(taskName.orElseThrow(()->new JDOMException("Task name is empty!")))
-                .taskId(taskId.orElseThrow(()-> new JDOMException("Task id is empty!")))
-                .taskStartDate(DateHandler.parseDateFromFormat(startDate,"dd-MM-yyyy, HH:mm:ss"))
-                .taskEndDate(DateHandler.parseDateFromFormat(endDate,"dd-MM-yyyy, HH:mm:ss"));
+            List<String> childrenId = dependencyList.stream()
+                    .filter(el -> el.getParentId().equals(taskId))
+                    .map(Dependency::getChildId)
+                    .collect(Collectors.toList());
+
+            parentId.ifPresent(parentsId::add);
 
             fieldListElem.ifPresent(fieldList ->
-                taskBuilder.taskFields(fieldToMap(fieldList, "field","field-no", "field-value"))
+                    taskBuilder.taskFields(fieldToMap(fieldList, "field","field-no", "field-value"))
             );
             taskNotesElem.ifPresent(notes ->
-                taskBuilder.notes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
+                    taskBuilder.notes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
             );
             taskListElem.ifPresent(tasksOpt->{
                 taskBuilder.isTheme(true);
                 Optional<List<Element>> tasks = Optional.ofNullable(tasksOpt.getChildren("task"));
                 tasks.ifPresent(tasksListOpt->
-                    tasksListOpt.forEach(el->{
-                        el.setAttribute("parent-id",taskBuilder.build().getId());
-                        tasksStack.push(el);
-                    })
+                        tasksListOpt.forEach(el->{
+                            String taskElemId = el.getChildText("task-id");
+                            childrenId.add(taskElemId);
+                            el.setAttribute("parent-id",taskId);
+                            tasksStack.push(el);
+                        })
                 );
             });
-            TaskImpl readyTask = taskBuilder.build();
-            String id = readyTask.getId();
-            dependencyList.add(new DependencyImpl(parentId.orElse(id), id));
-            taskList.add(readyTask);
+
+            taskBuilder
+                    .taskName(taskName)
+                    .taskId(taskId)
+                    .parentsId(parentsId)
+                    .childrenId(childrenId)
+                    .taskStartDate(DateHandler.parseDateFromFormat(startDate,"dd-MM-yyyy, HH:mm:ss"))
+                    .taskEndDate(DateHandler.parseDateFromFormat(endDate,"dd-MM-yyyy, HH:mm:ss"));
+
+            dependencyList.add(new DependencyImpl(parentId.orElse(taskId), taskId));
+            taskList.add(taskBuilder.build());
         }
         return taskList;
     }

@@ -36,7 +36,6 @@ public class SchemasController {
     public Map<Integer,StudyScheme> schemas;
     private List<Dependency> schemasDependencies = Collections.singletonList(
             new DependencyImpl("0", "1"));
-
     private int schemesCount;
 
     private static final Set<String> confirmedFileTypes =

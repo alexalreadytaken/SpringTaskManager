@@ -49,12 +49,7 @@ public class StudySchemaParser {
         Map<String, Task> completeTasksMap = new HashMap<>();
         tasks.forEach(task -> completeTasksMap.put(task.getId(),task));
 
-        Map<Task, List<Task>> tasksGraph = TasksHandler
-            .makeTasksGraph(completeTasksMap,taskDependencies);
-
         studySchemeImpl.setTasksMap(completeTasksMap);
-        studySchemeImpl.setTasksDependencies(taskDependencies);
-        studySchemeImpl.setTasksGraph(tasksGraph);
 
         return studySchemeImpl;
     }

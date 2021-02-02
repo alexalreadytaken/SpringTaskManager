@@ -6,7 +6,6 @@ import com.bestSpringApplication.taskManager.handlers.parsers.xml.StudySchemaPar
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
@@ -21,14 +20,9 @@ public class StudySchemeImpl implements StudyScheme{
     private String name;
     @JsonView(SchemasView.OverviewInfo.class)
     private String id;
-    @JsonProperty("values")
+    @JsonProperty("tasks")
     @JsonView(SchemasView.FullInfo.class)
     private Map<String, Task> tasksMap;
-    @JsonProperty("dependencies")
-    @JsonView(SchemasView.FullInfo.class)
-    private List<Dependency> tasksDependencies;
-    @JsonIgnore
-    private Map<Task, List<Task>> tasksGraph;
 
     public StudySchemeImpl(){}
 
@@ -36,16 +30,10 @@ public class StudySchemeImpl implements StudyScheme{
                            Map<Task, List<Task>> tasksGraph,
                            List<Dependency> tasksDependencies) {
         this.tasksMap = tasksMap;
-        this.tasksGraph = tasksGraph;
-        this.tasksDependencies = tasksDependencies;
     }
 
     public static StudySchemeImpl parseFromXml(Document document) throws JDOMException {
         return StudySchemaParser.parseSchemaXml(document);
-    }
-
-    public boolean isValid(){
-        return !tasksMap.isEmpty()&&!tasksGraph.isEmpty();
     }
 
     public String getName() {
@@ -64,14 +52,6 @@ public class StudySchemeImpl implements StudyScheme{
         this.id = id;
     }
 
-    public List<Dependency> getTasksDependencies() {
-        return tasksDependencies;
-    }
-
-    public void setTasksDependencies(List<Dependency> tasksDependencies) {
-        this.tasksDependencies = tasksDependencies;
-    }
-
     public Map<String, Task> getTasksMap() {
         return tasksMap;
     }
@@ -80,19 +60,10 @@ public class StudySchemeImpl implements StudyScheme{
         this.tasksMap = tasksMap;
     }
 
-    public Map<Task, List<Task>> getTasksGraph() {
-        return tasksGraph;
-    }
-
-    public void setTasksGraph(Map<Task, List<Task>> tasksGraph) {
-        this.tasksGraph = tasksGraph;
-    }
-
     @Override
     public String toString() {
         return "TasksSchema{" +
             "tasks=" + tasksMap +
-            ", taskDependencyList=" + tasksGraph +
             '}';
     }
 }
