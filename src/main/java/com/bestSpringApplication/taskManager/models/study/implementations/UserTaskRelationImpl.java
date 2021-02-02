@@ -1,50 +1,42 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
+import com.bestSpringApplication.taskManager.models.customId.IdRelation;
 import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.time.LocalDateTime;
 
 @Entity
 public class UserTaskRelationImpl implements UserTaskRelation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-    private String userId;
-    private String taskId;
-    private LocalDateTime startDate;
-    private LocalDateTime completeDate;
+    private Integer bd_id;
+//    private IdRelation userRelation;
+//    private IdRelation taskRelation;
     private boolean userIsFinishTask;
     private boolean confirmTask;
     private String grade;
 
     public UserTaskRelationImpl(){}
 
-    public static UserTaskInfoBuilder newRelation(){
-        return new UserTaskRelationImpl().new UserTaskInfoBuilder();
+    public UserTaskRelationImpl(Integer bd_id,
+                                IdRelation userRelation,
+                                IdRelation taskRelation,
+                                boolean userIsFinishTask,
+                                boolean confirmTask,
+                                String grade) {
+        this.bd_id = bd_id;
+//        this.userRelation = userRelation;
+//        this.taskRelation = taskRelation;
+        this.userIsFinishTask = userIsFinishTask;
+        this.confirmTask = confirmTask;
+        this.grade = grade;
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public String getTaskId() {
-        return taskId;
-    }
-
-    public LocalDateTime getStartDate() {
-        return startDate;
-    }
-
-    public LocalDateTime getCompleteDate() {
-        return completeDate;
+    public Integer getBd_id() {
+        return bd_id;
     }
 
     public boolean isUserIsFinishTask() {
@@ -59,46 +51,37 @@ public class UserTaskRelationImpl implements UserTaskRelation {
         return grade;
     }
 
-    public class UserTaskInfoBuilder{
+    @Override
+    public IdRelation getUserRelation() {
+        return null;
+    }
 
-        UserTaskInfoBuilder(){}
+    @Override
+    public IdRelation getTaskRelation() {
+        return null;
+    }
 
-        public UserTaskInfoBuilder userId(String user) {
-            UserTaskRelationImpl.this.userId = user;
-            return this;
-        }
+    public void setBd_id(Integer bd_id) {
+        this.bd_id = bd_id;
+    }
 
-        public UserTaskInfoBuilder taskId(String taskId) {
-            UserTaskRelationImpl.this.taskId = taskId;
-            return this;
-        }
+//    public void setUserRelation(IdRelation userRelation) {
+//        this.userRelation = userRelation;
+//    }
 
-        public UserTaskInfoBuilder startDate(LocalDateTime startDate) {
-            UserTaskRelationImpl.this.startDate = startDate;
-            return this;
-        }
+//    public void setTaskRelation(IdRelation taskRelation) {
+//        this.taskRelation = taskRelation;
+//    }
 
-        public UserTaskInfoBuilder completeDate(LocalDateTime completeDate) {
-            UserTaskRelationImpl.this.completeDate = completeDate;
-            return this;
-        }
+    public void setUserIsFinishTask(boolean userIsFinishTask) {
+        this.userIsFinishTask = userIsFinishTask;
+    }
 
-        public UserTaskInfoBuilder UserIsFinishTask(boolean userIsFinishTask) {
-            UserTaskRelationImpl.this.userIsFinishTask = userIsFinishTask;
-            return this;
-        }
+    public void setConfirmTask(boolean confirmTask) {
+        this.confirmTask = confirmTask;
+    }
 
-        public UserTaskInfoBuilder confirmTask(boolean confirmTask) {
-            UserTaskRelationImpl.this.confirmTask = confirmTask;
-            return this;
-        }
-
-        public UserTaskInfoBuilder grade(String grade) {
-            UserTaskRelationImpl.this.grade = grade;
-            return this;
-        }
-        public UserTaskRelationImpl build(){
-            return UserTaskRelationImpl.this;
-        }
+    public void setGrade(String grade) {
+        this.grade = grade;
     }
 }

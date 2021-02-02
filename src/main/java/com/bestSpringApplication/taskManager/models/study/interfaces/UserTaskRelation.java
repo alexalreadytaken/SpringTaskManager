@@ -1,4 +1,10 @@
 package com.bestSpringApplication.taskManager.models.study.interfaces;
 
-public interface UserTaskRelation {
+import com.bestSpringApplication.taskManager.models.customId.IdRelation;
+
+public interface UserTaskRelation{
+
+    IdRelation getUserRelation();
+    IdRelation getTaskRelation();
+
 }
