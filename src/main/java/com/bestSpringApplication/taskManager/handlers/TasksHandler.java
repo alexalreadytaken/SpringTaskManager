@@ -1,36 +1,13 @@
 package com.bestSpringApplication.taskManager.handlers;
 
 import com.bestSpringApplication.taskManager.models.study.implementations.TaskImpl;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
-import org.jdom2.JDOMException;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class TasksHandler {
-
-    public static Map<Task, List<Task>> makeTasksGraph(Map<String, Task> taskMap, List<Dependency> taskDependencies) throws JDOMException {
-        Map<Task, List<Task>> tasksGraph = new HashMap<>();
-
-        String[] strings = taskMap.keySet().toArray(new String[0]);
-
-        for (int i = 0; i < strings.length; i++) {
-            int i0 = i;
-            Task parentTask = taskMap.get(strings[i]);
-            List<Task> childesTasks = taskDependencies.stream()
-                .filter(el -> el.getParentId().equals(strings[i0]))
-                .map(Dependency::getChildId)
-                .filter(el->!el.equals(strings[i0]))
-                .map(taskMap::get)
-                .collect(Collectors.toList());
-
-            tasksGraph.put(parentTask,childesTasks);
-        }
-        return tasksGraph;
-    }
 
     public static void addTaskFields(List<Task> tasks, Map<String, String> schemeFields) {
         tasks.forEach(task -> {
