@@ -7,35 +7,38 @@ import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRel
 
 import javax.persistence.*;
 
-@Entity
+@Entity(name = "user_task_relation")
 public class UserTaskRelationImpl implements UserTaskRelation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer bd_id;
-//    private IdRelationImpl userRelation;
-//    private IdRelationImpl taskRelation;
+    private Integer id;
+    @OneToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "db_id")
+    private IdRelationImpl userRelation;
+    @OneToOne(fetch = FetchType.EAGER)
+//    @JoinColumn(name = "db_id")
+    private IdRelationImpl taskRelation;
     private boolean isFinished;
     private boolean finishConfirmed;
     private Grade grade;
 
     public UserTaskRelationImpl(){}
 
-    public UserTaskRelationImpl(Integer bd_id,
-                                IdRelationImpl userRelation,
+    public UserTaskRelationImpl(IdRelationImpl userRelation,
                                 IdRelationImpl taskRelation,
                                 boolean isFinished,
                                 boolean finishConfirmed,
                                 Grade grade) {
-        this.bd_id = bd_id;
-//        this.userRelation = userRelation;
-//        this.taskRelation = taskRelation;
+        this.id = id;
+        this.userRelation = userRelation;
+        this.taskRelation = taskRelation;
         this.isFinished = isFinished;
         this.finishConfirmed = finishConfirmed;
         this.grade = grade;
     }
 
-    public Integer getBd_id() {
-        return bd_id;
+    public Integer getId() {
+        return id;
     }
 
     public boolean isIsFinished() {
@@ -52,25 +55,25 @@ public class UserTaskRelationImpl implements UserTaskRelation {
 
     @Override
     public IdRelation getUserRelation() {
-        return null;
+        return userRelation;
     }
 
     @Override
     public IdRelation getTaskRelation() {
-        return null;
+        return taskRelation;
     }
 
-    public void setBd_id(Integer bd_id) {
-        this.bd_id = bd_id;
+    public void setId(Integer bd_id) {
+        this.id = bd_id;
     }
 
-//    public void setUserRelation(IdRelation userRelation) {
-//        this.userRelation = userRelation;
-//    }
+    public void setUserRelation(IdRelationImpl userRelation) {
+        this.userRelation = userRelation;
+    }
 
-//    public void setTaskRelation(IdRelation taskRelation) {
-//        this.taskRelation = taskRelation;
-//    }
+    public void setTaskRelation(IdRelationImpl taskRelation) {
+        this.taskRelation = taskRelation;
+    }
 
     public void setIsFinished(boolean userIsFinishTask) {
         this.isFinished = userIsFinishTask;

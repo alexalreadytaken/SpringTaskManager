@@ -3,6 +3,7 @@ package com.bestSpringApplication.taskManager.models.study.implementations;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,8 +25,10 @@ public class TaskImpl implements Task {
     private List<String> childrenId;
 
     @JsonFormat(pattern = DATE_FORMAT)
+    @JsonProperty("actualStart")
     private LocalDateTime startDate;
     @JsonFormat(pattern = DATE_FORMAT)
+    @JsonProperty("actualEnd")
     private LocalDateTime endDate;
     private LocalDateTime constraint;
 
