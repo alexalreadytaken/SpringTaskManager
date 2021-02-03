@@ -29,7 +29,6 @@ let user = {"name":"Задачка1.mrp","id":"0","tasks":{"11":{"id":"11","name
     document.getElementsByClassName('anychart-credits')[0].remove() // удаление информации о библиотеке
   })
   // }
-  
   // xhr.send()
 
 

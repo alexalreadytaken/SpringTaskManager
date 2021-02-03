@@ -27,23 +27,6 @@ function makeUserList (users) {
     })
 }
 
-document.getElementById('file')
-    .addEventListener('change', evt => { // #file in future maybe change (fixed...)
-        let fileData = evt.target["files"]
-        let formData = new FormData()
-        formData.append('file',fileData[0])
-        evt.target.value = ''
-        fetch('/',{ // TODO ИЗМЕНИТЬ URL 
-            method:'POST',
-            body: formData
-        })  
-        .then(response=>
-            response.status!==200 ? response.json():{result:'загружено успешно'})
-        .then(response=>{
-            alert(response.result)
-    })
-})
-
 makeGraph = (arrData) => {
     let arrRes = Object.entries(arrData.tasks).map(el=>el[1])
   
@@ -61,13 +44,33 @@ multiFetch = (url) => {
             switch ( url ) {
                 case '/admin/schemas/files':
                     makeFileList(result)
-                    break;
+                    break
                 case '/admin/users':
                     makeUserList(result)
-                    break;
+                    break
+                case '/admin/schemas/0':
+                    makeGraph(result)
+                    break
             }
         })
 }
+
+document.getElementById('file')
+    .addEventListener('change', evt => { // #file in future maybe change (fixed...)
+        let fileData = evt.target["files"]
+        let formData = new FormData()
+        formData.append('file',fileData[0])
+        evt.target.value = ''
+        fetch('/',{ // TODO ИЗМЕНИТЬ URL 
+            method:'POST',
+            body: formData
+        })  
+        .then(response=>
+            response.status!==200 ? response.json():{result:'загружено успешно'})
+        .then(response=>{
+            alert(response.result)
+    })
+})
 
 console.log('%cwe are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px');
 
