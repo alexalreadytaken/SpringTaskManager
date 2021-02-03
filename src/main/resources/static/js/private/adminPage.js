@@ -6,15 +6,25 @@ multiFetch('http://10.1.0.64:2000/admin/schemas/0')
 
 makeGraph = (arrData) => {
   let arrRes = Object.entries(arrData.tasks).map(el=>el[1])
-  console.log(arrData) // вывод всех элементов (Json)
+  console.log(arrRes) // вывод всех элементов (Json)
+
+  arrRes.splice(0,1)
   
   for (let i = 0; i < arrRes.length; i++) {
     if (arrRes[i].theme) {
-      newArr.push(arrRes[i])
+      infoList.push(arrRes[i])
     }
   }
 
-  makeAnyChart() // построение графа
+  makeAnyChart() // построение графа  
+  for (let i = 0; i < infoList.length; i++) {
+    // addiction = 
+
+    // chilHeadParent.addication$[i] = infoList[i].childrenId 
+
+  }
+  
 }
+
 
 // console.log(Object.entries(user.tasks).map(el=>el[1]))

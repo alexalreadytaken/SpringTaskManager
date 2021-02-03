@@ -2,11 +2,9 @@ console.log('%cwe are using open source library https://www.anychart.com', 'colo
 
 makeAnyChart = () => {
     anychart.onDocumentReady(() => {
-      console.log(newArr)
-
-      newArr.splice(0,1)
+      console.log(infoList)
   
-      let data = [...newArr]
+      let data = [...infoList]
   
       var treeData = anychart.data.tree (data, 'as-tree')
   

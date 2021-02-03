@@ -1,4 +1,5 @@
-var newArr = []
+var infoList = [], chilHeadParent = {}
+
 function makeFileList (fileNames) {
     let schemasFileList = document.getElementById("schemasFileList");
     fileNames.forEach(file=>{
