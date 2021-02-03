@@ -1,17 +1,17 @@
 var newArr = []
 function makeFileList (fileNames) {
-        let schemasFileList = document.getElementById("schemasFileList");
-        fileNames.forEach(file=>{
-            let div = document.createElement('div');
-            div.style.margin='10px'
-            let fileDownload = document.createElement('a')
-            fileDownload.innerText=file
-            fileDownload.setAttribute('href',`/admin/schemas/file/${file}`)
-            fileDownload.setAttribute('download',file)
-            div.append(fileDownload)
-            schemasFileList.append(div)
-        })
-    }
+    let schemasFileList = document.getElementById("schemasFileList");
+    fileNames.forEach(file=>{
+        let div = document.createElement('div');
+        div.style.margin='10px'
+        let fileDownload = document.createElement('a')
+        fileDownload.innerText=file
+        fileDownload.setAttribute('href',`/admin/schemas/file/${file}`)
+        fileDownload.setAttribute('download',file)
+        div.append(fileDownload)
+        schemasFileList.append(div)
+    })
+}
     
 function makeUserList (users) {
     let userList = document.getElementById("UsersList")
@@ -27,32 +27,23 @@ function makeUserList (users) {
     })
 }
 
-makeGraph = (arrData) => {
-    let arrRes = Object.entries(arrData.tasks).map(el=>el[1])
-  
-    for (let i = 0; i < arrRes.length; i++) {
-      if (arrRes[i].theme) {
-        newArr.push(arrRes[i])
-      }
-    }
-  }
-
 multiFetch = (url) => {
     fetch( url )
-        .then(response => response.json())
-        .then(result => {
-            switch ( url ) {
-                case '/admin/schemas/files':
-                    makeFileList(result)
-                    break
-                case '/admin/users':
-                    makeUserList(result)
-                    break
-                case '/admin/schemas/0':
-                    makeGraph(result)
-                    break
-            }
-        })
+    .then(response => response.json())
+    .then(result => {
+        switch ( url ) {
+            case '/admin/schemas/files':
+                makeFileList(result)
+                break
+            case '/admin/users':
+                makeUserList(result)
+                break
+                // case '/admin/schemas/0': // TODO local ip
+                case 'http://10.1.0.64:2000/admin/schemas/0':
+                makeGraph(result)
+                break
+        }
+    })
 }
 
 document.getElementById('file')
@@ -71,6 +62,3 @@ document.getElementById('file')
             alert(response.result)
     })
 })
-
-console.log('%cwe are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px');
-
