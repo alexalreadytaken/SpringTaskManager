@@ -1,3 +1,4 @@
+var newArr = []
 function makeFileList (fileNames) {
         let schemasFileList = document.getElementById("schemasFileList");
         fileNames.forEach(file=>{
@@ -43,6 +44,15 @@ document.getElementById('file')
     })
 })
 
+makeGraph = (arrData) => {
+    let arrRes = Object.entries(arrData.tasks).map(el=>el[1])
+  
+    for (let i = 0; i < arrRes.length; i++) {
+      if (arrRes[i].theme) {
+        newArr.push(arrRes[i])
+      }
+    }
+  }
 
 multiFetch = (url) => {
     fetch( url )
