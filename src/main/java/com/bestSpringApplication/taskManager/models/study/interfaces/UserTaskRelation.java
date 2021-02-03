@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.models.study.interfaces;
 
-import com.bestSpringApplication.taskManager.models.customId.IdRelation;
+import com.bestSpringApplication.taskManager.models.idRelation.IdRelation;
 
 public interface UserTaskRelation{
 

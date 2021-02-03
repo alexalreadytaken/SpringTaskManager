@@ -1,37 +1,36 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
-import com.bestSpringApplication.taskManager.models.customId.IdRelation;
+import com.bestSpringApplication.taskManager.models.idRelation.IdRelation;
+import com.bestSpringApplication.taskManager.models.idRelation.IdRelationImpl;
+import com.bestSpringApplication.taskManager.models.study.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class UserTaskRelationImpl implements UserTaskRelation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer bd_id;
-//    private IdRelation userRelation;
-//    private IdRelation taskRelation;
-    private boolean userIsFinishTask;
-    private boolean confirmTask;
-    private String grade;
+//    private IdRelationImpl userRelation;
+//    private IdRelationImpl taskRelation;
+    private boolean isFinished;
+    private boolean finishConfirmed;
+    private Grade grade;
 
     public UserTaskRelationImpl(){}
 
     public UserTaskRelationImpl(Integer bd_id,
-                                IdRelation userRelation,
-                                IdRelation taskRelation,
-                                boolean userIsFinishTask,
-                                boolean confirmTask,
-                                String grade) {
+                                IdRelationImpl userRelation,
+                                IdRelationImpl taskRelation,
+                                boolean isFinished,
+                                boolean finishConfirmed,
+                                Grade grade) {
         this.bd_id = bd_id;
 //        this.userRelation = userRelation;
 //        this.taskRelation = taskRelation;
-        this.userIsFinishTask = userIsFinishTask;
-        this.confirmTask = confirmTask;
+        this.isFinished = isFinished;
+        this.finishConfirmed = finishConfirmed;
         this.grade = grade;
     }
 
@@ -39,15 +38,15 @@ public class UserTaskRelationImpl implements UserTaskRelation {
         return bd_id;
     }
 
-    public boolean isUserIsFinishTask() {
-        return userIsFinishTask;
+    public boolean isIsFinished() {
+        return isFinished;
     }
 
-    public boolean isConfirmTask() {
-        return confirmTask;
+    public boolean isFinishConfirmed() {
+        return finishConfirmed;
     }
 
-    public String getGrade() {
+    public Grade getGrade() {
         return grade;
     }
 
@@ -73,15 +72,15 @@ public class UserTaskRelationImpl implements UserTaskRelation {
 //        this.taskRelation = taskRelation;
 //    }
 
-    public void setUserIsFinishTask(boolean userIsFinishTask) {
-        this.userIsFinishTask = userIsFinishTask;
+    public void setIsFinished(boolean userIsFinishTask) {
+        this.isFinished = userIsFinishTask;
     }
 
-    public void setConfirmTask(boolean confirmTask) {
-        this.confirmTask = confirmTask;
+    public void setFinishConfirmed(boolean confirmTask) {
+        this.finishConfirmed = confirmTask;
     }
 
-    public void setGrade(String grade) {
+    public void setGrade(Grade grade) {
         this.grade = grade;
     }
 }

@@ -3,7 +3,6 @@ package com.bestSpringApplication.taskManager.models.study.implementations;
 
 import com.bestSpringApplication.taskManager.handlers.jsonView.SchemasView;
 import com.bestSpringApplication.taskManager.handlers.parsers.xml.StudySchemaParser;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -11,7 +10,6 @@ import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 
-import java.util.List;
 import java.util.Map;
 
 public class StudySchemeImpl implements StudyScheme{
@@ -26,9 +24,7 @@ public class StudySchemeImpl implements StudyScheme{
 
     public StudySchemeImpl(){}
 
-    public StudySchemeImpl(Map<String, Task> tasksMap,
-                           Map<Task, List<Task>> tasksGraph,
-                           List<Dependency> tasksDependencies) {
+    public StudySchemeImpl(Map<String, Task> tasksMap) {
         this.tasksMap = tasksMap;
     }
 

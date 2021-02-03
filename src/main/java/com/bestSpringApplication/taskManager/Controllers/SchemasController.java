@@ -5,16 +5,20 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFound
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
 import com.bestSpringApplication.taskManager.handlers.jsonView.SchemasView;
+import com.bestSpringApplication.taskManager.models.study.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
+import com.bestSpringApplication.taskManager.models.study.implementations.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
+import com.bestSpringApplication.taskManager.servises.UserTaskRelationService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -26,12 +30,15 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/admin/schemas")
+@CrossOrigin
 public class SchemasController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SchemasController.class);
 
     @Value("${task.pool.path}")
     private String taskPoolPath;
+
+    private final UserTaskRelationService utrService;
 
     public Map<Integer,StudyScheme> schemas;
     private List<Dependency> schemasDependencies = Collections.singletonList(
@@ -41,6 +48,11 @@ public class SchemasController {
     private static final Set<String> confirmedFileTypes =
             Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                     "xml","mrp","txt")));
+
+    @Autowired
+    public SchemasController(UserTaskRelationService utrService) {
+        this.utrService = utrService;
+    }
 
     @PostConstruct
     public void init(){
@@ -139,3 +151,4 @@ public class SchemasController {
         }
     }
 }
+

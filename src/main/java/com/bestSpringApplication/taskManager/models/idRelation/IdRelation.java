@@ -1,4 +1,5 @@
-package com.bestSpringApplication.taskManager.models.customId;
+package com.bestSpringApplication.taskManager.models.idRelation;
+
 
 public interface IdRelation {
 
