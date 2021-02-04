@@ -6,22 +6,35 @@ let user = {"name":"Задачка1.mrp","id":"0","tasks":{"11":{"id":"11","name
 
 makeGraph = (arrData) => {
   let arrRes = Object.entries(arrData.tasks).map(el=>el[1])
+
+  arrRes.splice(0,1) // в дальнейшем можно будет удалить  TODO
+
   console.log(arrRes) // вывод всех элементов (Json)
 
-  arrRes.splice(0,1) // в дальнейшем можно будет удалить 
+  arrRes.forEach(el => { if ( el.theme ) {infoList.push(el)}}) // создание отцов
 
   arrRes.forEach(el => {
-    if (el.theme) {
-      infoList.push(el)
-    }
+    allAddiction.push({
+      id: el.id,
+      name: el.name,
+      actualStart: el.actualStart,
+      actualEnd: el.actualEnd
+      // children: el.childrenId, // связь к детям
+    })
   })
 
-  makeAnyChart() // построение графа
 
-  infoList.forEach(el => {
-    el.children = el.childrenId
-    delete(el.childrenId)
+  allAddiction.forEach( el1 => { // ищем совместимость родителей и детей
+    infoList.forEach(el2 => {
+      if (el1.id === el2.id){
+        el2.children = el1, // TODO неверная загрузка данных пофиксить 
+        delete(el2.childrenId)      
+      }
+    })
   })
+
+
+  console.log(allAddiction)
 
 }
 
