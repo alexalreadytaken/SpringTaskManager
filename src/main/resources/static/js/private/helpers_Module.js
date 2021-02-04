@@ -1,4 +1,4 @@
-var infoList = [], chilHeadParent = {}
+var infoList = [], chilHeadParent = []
 
 function makeFileList (fileNames) {
     let schemasFileList = document.getElementById("schemasFileList");
