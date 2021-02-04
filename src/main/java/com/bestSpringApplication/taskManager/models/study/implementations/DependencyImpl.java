@@ -5,9 +5,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 public class DependencyImpl implements Dependency{
 
-    @JsonView(Object.class)
     private String parentId;
-    @JsonView(Object.class)
     private String childId;
 
     public DependencyImpl() { }

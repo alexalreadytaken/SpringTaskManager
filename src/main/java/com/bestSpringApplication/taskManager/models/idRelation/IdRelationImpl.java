@@ -6,6 +6,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import java.util.Map;
 
 @Entity(name = "id_relation")
 public class IdRelationImpl implements IdRelation {
@@ -17,8 +18,7 @@ public class IdRelationImpl implements IdRelation {
     private String id0;
     private String id1;
 
-//    private Map<String,String> some = new HashMap<>(1);
-
+//    private Map<String,String> relation;
 
     public IdRelationImpl(String id0, String id1) {
         this.id0 = id0;

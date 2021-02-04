@@ -9,12 +9,8 @@ import javax.persistence.Converter;
 public class GradeToDbConverter implements AttributeConverter<Grade,Integer> {
 
     @Override
-    public Integer convertToDatabaseColumn(Grade grade) {
-        return grade==null?null:grade.getIntValue();
-    }
+    public Integer convertToDatabaseColumn(Grade grade) { return grade==null?null:grade.getIntValue(); }
 
     @Override
-    public Grade convertToEntityAttribute(Integer integer) {
-        return integer==null?null:Grade.getInstanceFromInt(integer);
-    }
+    public Grade convertToEntityAttribute(Integer integer) { return integer==null?null:Grade.getInstanceFromInt(integer); }
 }
