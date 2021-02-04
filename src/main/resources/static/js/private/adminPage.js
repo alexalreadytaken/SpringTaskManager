@@ -24,11 +24,11 @@ makeGraph = (arrData) => {
   })
 
 
-  allAddiction.forEach( el1 => { // ищем совместимость родителей и детей
+  allAddiction.forEach( (el1, i) => { // ищем совместимость родителей и детей
     infoList.forEach(el2 => {
-      if (el1.id === el2.id){
-        el2.children = el1, // TODO неверная загрузка данных пофиксить 
-        delete(el2.childrenId)      
+      console.log(el2.childrenId[2] == el1.id) 
+      if (el1.id === el2.childrenId[0]){  // баг с нахождением связи детей "el2.childreId[0]" TODO
+        el2.children = [el1]
       }
     })
   })
