@@ -9,6 +9,5 @@ formElem.onsubmit =(e) => {
         body: json,
         headers:{'content-type': 'application/json'}
     }).then(response=>response.json())
-        .then(response=>console.log(response))
+        .then(response=>alert(response))
 };
-some = ()=>{}

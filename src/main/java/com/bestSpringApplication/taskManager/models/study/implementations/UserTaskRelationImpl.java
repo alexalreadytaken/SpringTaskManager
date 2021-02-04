@@ -1,9 +1,11 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
+import com.bestSpringApplication.taskManager.handlers.GradeToDbConverter;
 import com.bestSpringApplication.taskManager.models.idRelation.IdRelation;
 import com.bestSpringApplication.taskManager.models.idRelation.IdRelationImpl;
 import com.bestSpringApplication.taskManager.models.study.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 
@@ -11,15 +13,15 @@ import javax.persistence.*;
 public class UserTaskRelationImpl implements UserTaskRelation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @JsonIgnore
+    private Integer db_id;
     @OneToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "db_id")
     private IdRelationImpl userRelation;
     @OneToOne(fetch = FetchType.EAGER)
-//    @JoinColumn(name = "db_id")
     private IdRelationImpl taskRelation;
     private boolean isFinished;
     private boolean finishConfirmed;
+    @Convert(converter = GradeToDbConverter.class)
     private Grade grade;
 
     public UserTaskRelationImpl(){}
@@ -29,7 +31,6 @@ public class UserTaskRelationImpl implements UserTaskRelation {
                                 boolean isFinished,
                                 boolean finishConfirmed,
                                 Grade grade) {
-        this.id = id;
         this.userRelation = userRelation;
         this.taskRelation = taskRelation;
         this.isFinished = isFinished;
@@ -37,8 +38,8 @@ public class UserTaskRelationImpl implements UserTaskRelation {
         this.grade = grade;
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getDb_id() {
+        return db_id;
     }
 
     public boolean isIsFinished() {
@@ -63,8 +64,8 @@ public class UserTaskRelationImpl implements UserTaskRelation {
         return taskRelation;
     }
 
-    public void setId(Integer bd_id) {
-        this.id = bd_id;
+    public void setDb_id(Integer bd_id) {
+        this.db_id = bd_id;
     }
 
     public void setUserRelation(IdRelationImpl userRelation) {

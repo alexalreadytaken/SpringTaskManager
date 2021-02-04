@@ -1,5 +1,7 @@
 package com.bestSpringApplication.taskManager.models.idRelation;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +12,7 @@ public class IdRelationImpl implements IdRelation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Integer db_id;
     private String id0;
     private String id1;

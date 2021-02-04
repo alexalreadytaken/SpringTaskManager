@@ -12,6 +12,7 @@ import com.bestSpringApplication.taskManager.models.study.implementations.StudyS
 import com.bestSpringApplication.taskManager.models.study.implementations.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
+import com.bestSpringApplication.taskManager.repos.IdRelationRepo;
 import com.bestSpringApplication.taskManager.servises.UserTaskRelationService;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
@@ -40,6 +41,7 @@ public class SchemasController {
     private String taskPoolPath;
 
     private final UserTaskRelationService utrService;
+    private final IdRelationRepo idRelationRepo;
 
     public Map<Integer,StudyScheme> schemas;
     private List<Dependency> schemasDependencies = Collections.singletonList(
@@ -51,17 +53,24 @@ public class SchemasController {
                     "xml","mrp","txt")));
 
     @Autowired
-    public SchemasController(UserTaskRelationService utrService) {
+    public SchemasController(UserTaskRelationService utrService, IdRelationRepo idRelationRepo) {
         this.utrService = utrService;
+        this.idRelationRepo = idRelationRepo;
+    }
+
+    @GetMapping("/test/{some}")
+    public UserTaskRelationImpl some(@PathVariable int some){
+        return utrService.getRelationById(some)
+            .orElseThrow(()->new ContentNotFoundException("relation not found"));
     }
 
     @PostConstruct
     public void init(){
-        IdRelationImpl test1 = new IdRelationImpl("test1", "test1-1");
-        IdRelationImpl test2 = new IdRelationImpl("test2", "test2-2");
-        UserTaskRelationImpl userTaskRelation = new UserTaskRelationImpl(test1, test2, true, true, Grade.FIVE);
+        IdRelationImpl idRelation = new IdRelationImpl("sowjdo", "xswojdw");
+        IdRelationImpl tgr = new IdRelationImpl("sjytjytjowjdo", "xsfrfewojdw");
+        UserTaskRelationImpl userTaskRelation = new UserTaskRelationImpl(idRelation, tgr, true, true, Grade.FOUR);
 
-//        utrService.saveRelation(userTaskRelation);
+        utrService.saveRelation(userTaskRelation);
 
         schemas = new HashMap<>();
         schemesCount = 0;
