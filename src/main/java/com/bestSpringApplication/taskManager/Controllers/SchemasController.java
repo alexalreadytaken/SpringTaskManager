@@ -5,7 +5,7 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFound
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
 import com.bestSpringApplication.taskManager.handlers.jsonView.SchemasView;
-import com.bestSpringApplication.taskManager.models.idRelation.IdRelationImpl;
+import com.bestSpringApplication.taskManager.models.idRelation.IdRelation;
 import com.bestSpringApplication.taskManager.models.study.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
@@ -66,8 +66,8 @@ public class SchemasController {
 
     @PostConstruct
     public void init(){
-        IdRelationImpl idRelation = new IdRelationImpl("sowjdo", "xswojdw");
-        IdRelationImpl tgr = new IdRelationImpl("sjytjytjowjdo", "xsfrfewojdw");
+        IdRelation idRelation = new IdRelation("sowjdo", "xswojdw");
+        IdRelation tgr = new IdRelation("sjytjytjowjdo", "xsfrfewojdw");
         UserTaskRelationImpl userTaskRelation = new UserTaskRelationImpl(idRelation, tgr, true, true, Grade.FOUR);
 
         utrService.saveRelation(userTaskRelation);

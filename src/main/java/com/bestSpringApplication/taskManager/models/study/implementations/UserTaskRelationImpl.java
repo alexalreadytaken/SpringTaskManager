@@ -2,7 +2,6 @@ package com.bestSpringApplication.taskManager.models.study.implementations;
 
 import com.bestSpringApplication.taskManager.handlers.GradeToDbConverter;
 import com.bestSpringApplication.taskManager.models.idRelation.IdRelation;
-import com.bestSpringApplication.taskManager.models.idRelation.IdRelationImpl;
 import com.bestSpringApplication.taskManager.models.study.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,9 +15,9 @@ public class UserTaskRelationImpl implements UserTaskRelation {
     @JsonIgnore
     private Integer db_id;
     @OneToOne(fetch = FetchType.EAGER)
-    private IdRelationImpl userRelation;
+    private IdRelation userRelation;
     @OneToOne(fetch = FetchType.EAGER)
-    private IdRelationImpl taskRelation;
+    private IdRelation taskRelation;
     private boolean isFinished;
     private boolean finishConfirmed;
     @Convert(converter = GradeToDbConverter.class)
@@ -26,8 +25,8 @@ public class UserTaskRelationImpl implements UserTaskRelation {
 
     public UserTaskRelationImpl(){}
 
-    public UserTaskRelationImpl(IdRelationImpl userRelation,
-                                IdRelationImpl taskRelation,
+    public UserTaskRelationImpl(IdRelation userRelation,
+                                IdRelation taskRelation,
                                 boolean isFinished,
                                 boolean finishConfirmed,
                                 Grade grade) {
@@ -68,11 +67,11 @@ public class UserTaskRelationImpl implements UserTaskRelation {
         this.db_id = bd_id;
     }
 
-    public void setUserRelation(IdRelationImpl userRelation) {
+    public void setUserRelation(IdRelation userRelation) {
         this.userRelation = userRelation;
     }
 
-    public void setTaskRelation(IdRelationImpl taskRelation) {
+    public void setTaskRelation(IdRelation taskRelation) {
         this.taskRelation = taskRelation;
     }
 
