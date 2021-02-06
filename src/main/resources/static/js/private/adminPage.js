@@ -18,24 +18,35 @@ makeGraph = (arrData) => {
       id: el.id,
       name: el.name,
       actualStart: el.actualStart,
-      actualEnd: el.actualEnd
+      actualEnd: el.actualEnd,
       // children: el.childrenId, // связь к детям
     })
   })
 
 
-  allAddiction.forEach( (el1, i) => { // ищем совместимость родителей и детей
-    infoList.forEach(el2 => {
-      console.log(el2.childrenId[2] == el1.id) 
-      if (el1.id === el2.childrenId[0]){  // баг с нахождением связи детей "el2.childreId[0]" TODO
-        el2.children = [el1]
-      }
+    allAddiction.forEach(el => {
+      infoList.forEach(el1=> {
+        for (let i = 0; i <= el1.childrenId.length; i++) {
+          if (el1.childrenId[i] === el.id) {
+            el1.children = [el] // fix this в объект записывается только последние элементы а надо все 
+          }
+        }
+      })
     })
-  })
+  
+
+
+  // allAddiction.forEach( (el1, i) => { // ищем совместимость родителей и детей
+  //   infoList.forEach(el2 => {
+  //     console.log(el2.childrenId[2] == el1.id) 
+  //     if (el1.id === el2.childrenId[0]){  // баг с нахождением связи детей "el2.childreId[0]" TODO
+  //       el2.children = [el1]
+  //     }
+  //   })
+  // })
 
 
   console.log(allAddiction)
-
 }
 
 makeGraph(user)
