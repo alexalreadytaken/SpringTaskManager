@@ -1,8 +1,6 @@
-
 anychart.onDocumentReady(() => {
-  console.log(infoList)
 
-  let data = [...infoList]
+  console.log(data)
 
   var treeData = anychart.data.tree (data, 'as-tree')
 

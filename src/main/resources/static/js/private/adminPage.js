@@ -11,7 +11,7 @@ makeGraph = (arrData) => {
 
   console.log(arrRes) // вывод всех элементов (Json)
 
-  arrRes.forEach(el => { if ( el.theme ) {infoList.push(el)}}) // создание отцов
+  arrRes.forEach(el => { if ( el.theme ) {data.push(el)}}) // создание отцов
 
   arrRes.forEach(el => {
     allAddiction.push({
@@ -23,21 +23,17 @@ makeGraph = (arrData) => {
     })
   })
 
-
-    allAddiction.forEach(el => {
-      infoList.forEach(el1=> {
-        for (let i = 0; i <= el1.childrenId.length; i++) {
-          if (el1.childrenId[i] === el.id) {
-            el1.children = [el] // fix this в объект записывается только последние элементы а надо все 
-          }
-        }
-      })
-    })
-  
+  data.forEach((el, i) => {
+    console.log(el.childrenId[i])
+    if (el.childrenId[i] === allAddiction.id) {
+      console.log(el.childrenId) // добавить прохождение по циклу еще 17 раз
+      el.children = [allAddiction[i]]
+    }
+  })
 
 
   // allAddiction.forEach( (el1, i) => { // ищем совместимость родителей и детей
-  //   infoList.forEach(el2 => {
+  //   data.forEach(el2 => {
   //     console.log(el2.childrenId[2] == el1.id) 
   //     if (el1.id === el2.childrenId[0]){  // баг с нахождением связи детей "el2.childreId[0]" TODO
   //       el2.children = [el1]
