@@ -14,6 +14,7 @@ import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
 import com.bestSpringApplication.taskManager.repos.IdRelationRepo;
 import com.bestSpringApplication.taskManager.servises.UserTaskRelationService;
+import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
@@ -44,8 +45,6 @@ public class SchemasController {
     private final IdRelationRepo idRelationRepo;
 
     public Map<Integer,StudyScheme> schemas;
-    private List<Dependency> schemasDependencies = Collections.singletonList(
-            new DependencyImpl("0", "1"));
     private int schemesCount;
 
     private static final Set<String> confirmedFileTypes =
@@ -66,12 +65,6 @@ public class SchemasController {
 
     @PostConstruct
     public void init(){
-        IdRelation idRelation = new IdRelation("sowjdo", "xswojdw");
-        IdRelation tgr = new IdRelation("sjytjytjowjdo", "xsfrfewojdw");
-        UserTaskRelationImpl userTaskRelation = new UserTaskRelationImpl(idRelation, tgr, true, true, Grade.FOUR);
-
-        utrService.saveRelation(userTaskRelation);
-
         schemas = new HashMap<>();
         schemesCount = 0;
         File tasksDir = new File(taskPoolPath);
@@ -105,14 +98,10 @@ public class SchemasController {
         }
     }
 
-    //fixme
     @GetMapping
     @JsonView(SchemasView.OverviewInfo.class)
-    public Map<String,Object> schemasMap(){
-        Map<String,Object> schemasAndDependencies = new HashMap<>();
-        schemasAndDependencies.put("values",schemas);
-        schemasAndDependencies.put("dependencies",schemasDependencies);
-        return schemasAndDependencies;
+    public Map<Integer,StudyScheme> schemasMap(){
+        return schemas;
     }
 
     @GetMapping("/{id}")
@@ -137,13 +126,13 @@ public class SchemasController {
         return fileNames;
     }
 
-    @PostMapping("/add/dependency")
-    @ResponseStatus(HttpStatus.OK)
-    public void newSchemasDependency(@RequestBody Map<String,String> schemasId){
-        String parentId = schemasId.get("parentId");
-        String childId = schemasId.get("childId");
-        schemasDependencies.add(new DependencyImpl(parentId,childId));
-    }
+//    @PostMapping("/add/dependency")
+//    @ResponseStatus(HttpStatus.OK)
+//    public void newSchemasDependency(@RequestBody Map<String,String> schemasId){
+//        String parentId = schemasId.get("parentId");
+//        String childId = schemasId.get("childId");
+//        schemasDependencies.add(new DependencyImpl(parentId,childId));
+//    }
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.OK)

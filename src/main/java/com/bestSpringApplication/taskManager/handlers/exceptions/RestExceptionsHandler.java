@@ -11,25 +11,25 @@ public class RestExceptionsHandler{
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public static ErrorMessage notFoundHandle(ContentNotFoundException ex){
+    public static ErrorMessage notFound(ContentNotFoundException ex){
         return ErrorMessageFactory.newClientErrorMsg(ex);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-    public static ErrorMessage illegalFileHandle(IllegalFileFormatException ex){
+    public static ErrorMessage illegalFile(IllegalFileFormatException ex){
         return ErrorMessageFactory.newClientErrorMsg(ex);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public static ErrorMessage illegalXmlHandle(IllegalXmlFormatException ex){
+    public static ErrorMessage illegalXml(IllegalXmlFormatException ex){
         return ErrorMessageFactory.newClientErrorMsg(ex);
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public static ErrorMessage EmailExistsHandle(EmailExistsException ex){
+    public static ErrorMessage emailExists(EmailExistsException ex){
         return ErrorMessageFactory.newClientErrorMsg(ex);
     }
 

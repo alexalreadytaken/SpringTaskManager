@@ -24,7 +24,7 @@ public class UserTaskRelationImpl implements UserTaskRelation {
     private Grade grade;
 
     public UserTaskRelationImpl(){}
-
+    
     public UserTaskRelationImpl(IdRelation userRelation,
                                 IdRelation taskRelation,
                                 boolean isFinished,
@@ -35,6 +35,21 @@ public class UserTaskRelationImpl implements UserTaskRelation {
         this.isFinished = isFinished;
         this.finishConfirmed = finishConfirmed;
         this.grade = grade;
+    }
+
+    @Override
+    public String getUserId() {
+        return null;
+    }
+
+    @Override
+    public String getTaskId() {
+        return null;
+    }
+
+    @Override
+    public String getSchemeId() {
+        return null;
     }
 
     public Integer getDb_id() {
@@ -51,16 +66,6 @@ public class UserTaskRelationImpl implements UserTaskRelation {
 
     public Grade getGrade() {
         return grade;
-    }
-
-    @Override
-    public IdRelation getUserRelation() {
-        return userRelation;
-    }
-
-    @Override
-    public IdRelation getTaskRelation() {
-        return taskRelation;
     }
 
     public void setDb_id(Integer bd_id) {

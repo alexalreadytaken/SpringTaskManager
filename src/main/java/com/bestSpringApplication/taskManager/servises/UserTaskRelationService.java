@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.models.idRelation.IdRelationImpl;
+import com.bestSpringApplication.taskManager.models.idRelation.IdRelation;
 import com.bestSpringApplication.taskManager.models.study.implementations.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.repos.IdRelationRepo;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
@@ -23,8 +23,8 @@ public class UserTaskRelationService {
     }
 
     public boolean saveRelation(UserTaskRelationImpl relation){
-        idRelationRepo.save((IdRelationImpl) relation.getTaskRelation());
-        idRelationRepo.save((IdRelationImpl) relation.getUserRelation());
+//        idRelationRepo.save((IdRelation) relation.getTaskId());
+//        idRelationRepo.save((IdRelation) relation.getUserId());
         utrRepo.save(relation);
         return true;
     }
@@ -41,6 +41,7 @@ public class UserTaskRelationService {
     public Optional<UserTaskRelationImpl> getRelationById(int id){
         return utrRepo.findById(id);
     }
+
 
     public Optional<UserTaskRelationImpl> getRelationById(String id){
         try {
