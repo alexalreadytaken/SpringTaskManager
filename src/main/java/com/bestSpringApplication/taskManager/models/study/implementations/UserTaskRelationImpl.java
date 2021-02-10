@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
-import com.bestSpringApplication.taskManager.handlers.GradeToDbConverter;
-import com.bestSpringApplication.taskManager.models.study.enums.Grade;
+import com.bestSpringApplication.taskManager.handlers.enumConverters.GradeConverter;
+import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -18,7 +18,7 @@ public class UserTaskRelationImpl implements UserTaskRelation {
     private String userId;
     private String schemeId;
     private String taskId;
-    @Convert(converter = GradeToDbConverter.class)
+    @Convert(converter = GradeConverter.class)
     private Grade grade;
 
     public UserTaskRelationImpl(){}

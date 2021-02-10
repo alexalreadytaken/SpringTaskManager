@@ -1,14 +1,13 @@
 package com.bestSpringApplication.taskManager.models.user;
 
+import com.bestSpringApplication.taskManager.handlers.enumConverters.RoleConverter;
+import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -21,9 +20,10 @@ public class User implements UserDetails {
     private String name;
     @JsonIgnore
     private String password;
-    private String role;
+    @Convert(converter = RoleConverter.class)
+    private Role role;
 
-    public User(String mail, String name, String password, String role) {
+    public User(String mail, String name, String password, Role role) {
         this.mail = mail;
         this.name = name;
         this.password = password;
@@ -60,7 +60,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String getRole() {
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Role getRole() {
         return role;
     }
 
@@ -73,7 +77,7 @@ public class User implements UserDetails {
     @Override
     @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        final SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role);
+        SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(role.getStrValue());
         return Collections.singletonList(simpleGrantedAuthority);
     }
 

@@ -32,7 +32,9 @@ public class SchemasController {
     @Value("${task.pool.path}")
     private String taskPoolPath;
 
-    public Map<Integer,StudyScheme> schemas;
+    public Map<Integer,StudyScheme> masterSchemas;
+    public Map<String ,StudyScheme> clonedSchemas;
+
     private int schemesCount;
 
     private static final Set<String> confirmedFileTypes =
@@ -41,7 +43,7 @@ public class SchemasController {
 
     @PostConstruct
     public void init(){
-        schemas = new HashMap<>();
+        masterSchemas = new HashMap<>();
         schemesCount = 0;
         File tasksDir = new File(taskPoolPath);
         if (tasksDir.exists()){
@@ -59,7 +61,7 @@ public class SchemasController {
                             schema.setName(fileName);
                             schema.setId(String.valueOf(schemesCount));
                             LOGGER.trace("putting schema to schemes,file:{}", fileName);
-                            schemas.put(schemesCount++,schema);
+                            masterSchemas.put(schemesCount++,schema);
                         } catch (FileNotFoundException e) {
                             LOGGER.warn("file {} was deleted in initializing time",file);
                         } catch (JDOMException e) {
@@ -70,6 +72,7 @@ public class SchemasController {
                     })
             );
         }else {
+            LOGGER.trace("make directory {}",taskPoolPath);
             tasksDir.mkdir();
         }
     }
@@ -77,7 +80,7 @@ public class SchemasController {
     @GetMapping
     @JsonView(SchemasView.OverviewInfo.class)
     public Map<Integer,StudyScheme> schemasMap(){
-        return schemas;
+        return masterSchemas;
     }
 
     @GetMapping("/{id}")
@@ -85,7 +88,7 @@ public class SchemasController {
         String notFoundResponse = String.format("Схема с id=%s не найдена", id);
         try {
             int id0 = Integer.parseInt(id);
-            return Optional.ofNullable(schemas.get(id0))
+            return Optional.ofNullable(masterSchemas.get(id0))
                     .orElseThrow(()->
                             new ContentNotFoundException(notFoundResponse));
         }catch (NumberFormatException ex){

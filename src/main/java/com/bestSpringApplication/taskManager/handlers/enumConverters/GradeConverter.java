@@ -1,12 +1,12 @@
-package com.bestSpringApplication.taskManager.handlers;
+package com.bestSpringApplication.taskManager.handlers.enumConverters;
 
-import com.bestSpringApplication.taskManager.models.study.enums.Grade;
+import com.bestSpringApplication.taskManager.models.enums.Grade;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter
-public class GradeToDbConverter implements AttributeConverter<Grade,Integer> {
+public class GradeConverter implements AttributeConverter<Grade,Integer> {
 
     @Override
     public Integer convertToDatabaseColumn(Grade grade) { return grade==null?null:grade.getIntValue(); }

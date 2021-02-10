@@ -1,6 +1,7 @@
 package com.bestSpringApplication.taskManager.configuration;
 
 
+import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -43,7 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .csrf().disable()
                     .authorizeRequests()
                     .antMatchers(permittedMappings).permitAll()
-//                    .antMatchers("/admin/**","/js/private/**").hasAuthority("ADMIN")
+//                    .antMatchers("/admin/**","/js/private/**")
+//                        .hasAnyAuthority(Role.ADMIN.getStrValue(),Role.TEACHER.getStrValue())
                     .anyRequest()
                     .authenticated()
                 .and()

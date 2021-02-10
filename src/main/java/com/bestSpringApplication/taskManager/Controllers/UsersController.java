@@ -3,6 +3,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.EmailExistsException;
+import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,7 @@ public class UsersController {
             String mail = body.get("mail");
             String name = body.get("name");
             String password = body.get("password");
-            userService.saveUser(new User(mail,name,password, "USER"));
+            userService.saveUser(new User(mail,name,password, Role.STUDENT));
         }
     }
 

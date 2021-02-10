@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.models.study.enums;
+package com.bestSpringApplication.taskManager.models.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
