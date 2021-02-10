@@ -5,23 +5,14 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFound
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
 import com.bestSpringApplication.taskManager.handlers.jsonView.SchemasView;
-import com.bestSpringApplication.taskManager.models.idRelation.IdRelation;
-import com.bestSpringApplication.taskManager.models.study.enums.Grade;
-import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
-import com.bestSpringApplication.taskManager.models.study.implementations.UserTaskRelationImpl;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
-import com.bestSpringApplication.taskManager.repos.IdRelationRepo;
-import com.bestSpringApplication.taskManager.servises.UserTaskRelationService;
-import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -41,27 +32,12 @@ public class SchemasController {
     @Value("${task.pool.path}")
     private String taskPoolPath;
 
-    private final UserTaskRelationService utrService;
-    private final IdRelationRepo idRelationRepo;
-
     public Map<Integer,StudyScheme> schemas;
     private int schemesCount;
 
     private static final Set<String> confirmedFileTypes =
             Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                     "xml","mrp","txt")));
-
-    @Autowired
-    public SchemasController(UserTaskRelationService utrService, IdRelationRepo idRelationRepo) {
-        this.utrService = utrService;
-        this.idRelationRepo = idRelationRepo;
-    }
-
-    @GetMapping("/test/{some}")
-    public UserTaskRelationImpl some(@PathVariable int some){
-        return utrService.getRelationById(some)
-            .orElseThrow(()->new ContentNotFoundException("relation not found"));
-    }
 
     @PostConstruct
     public void init(){
@@ -125,14 +101,6 @@ public class SchemasController {
         filesOpt.ifPresent(files-> Arrays.stream(files).map(File::getName).forEach(fileNames::add));
         return fileNames;
     }
-
-//    @PostMapping("/add/dependency")
-//    @ResponseStatus(HttpStatus.OK)
-//    public void newSchemasDependency(@RequestBody Map<String,String> schemasId){
-//        String parentId = schemasId.get("parentId");
-//        String childId = schemasId.get("childId");
-//        schemasDependencies.add(new DependencyImpl(parentId,childId));
-//    }
 
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.OK)

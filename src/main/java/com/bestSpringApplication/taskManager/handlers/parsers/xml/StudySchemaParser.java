@@ -19,36 +19,25 @@ public class StudySchemaParser {
     private static final Logger LOGGER = LoggerFactory.getLogger(StudySchemaParser.class);
 
     public static StudySchemeImpl parseSchemaXml(Document mainDocument) throws JDOMException {
-
-        Element mainRootElement = mainDocument.getRootElement();
+        Element rootElement = mainDocument.getRootElement();
         StudySchemeImpl studySchemeImpl = new StudySchemeImpl();
 
-        Optional<Element> fieldListElem = Optional.ofNullable(mainRootElement.getChild("task-field-list"));
-        Optional<Element> dependencyListElem = Optional.ofNullable(mainRootElement.getChild("task-dependency-list"));
-        Optional<Element> taskElem = Optional.ofNullable(mainRootElement.getChild("task"));
+        LOGGER.trace("Start parse root element:\n{}",rootElement.getContent());
 
-        LOGGER.trace("Start parse: dependencyList exist={}, task exist={}",
-            dependencyListElem.isPresent(),
-            taskElem.isPresent());
+        Element fieldListElem = Optional.ofNullable(rootElement.getChild("task-field-list"))
+                .orElseThrow(()-> new JDOMException("fieldListElem is empty!"));;
+        Element dependencyListElem = Optional.ofNullable(rootElement.getChild("task-dependency-list"))
+                .orElseThrow(()-> new JDOMException("dependencyListElement is empty!"));
+        Element taskElem = Optional.ofNullable(rootElement.getChild("task"))
+                .orElseThrow(()-> new JDOMException("taskElement is empty!"));
 
-        dependencyListElem.orElseThrow(()-> new JDOMException("Schema dependencyList is empty!"));
-        taskElem.orElseThrow(()-> new JDOMException("Schema taskElem is empty!"));
-
-        List<Dependency> taskDependencies = new ArrayList<>();
-        Map<String,String> schemeFields = new HashMap<>();
-
-        fieldListElem.ifPresent(fields ->
-            schemeFields.putAll(TaskParser.fieldToMap(fields, "field","no", "name"))
-        );
-        dependencyListElem.ifPresent(dependencyListElemOpt ->
-            taskDependencies.addAll(parseDependenciesList(dependencyListElemOpt))
-        );
-
-        List<Task> tasks = TaskParser.parseFromXml(taskElem.get(), taskDependencies);
-        if (schemeFields.size()!=0)TasksHandler.addTaskFields(tasks,schemeFields);
+        Map<String, String> fieldsMap = TaskParser.fieldToMap(fieldListElem, "field", "no", "name");
+        List<Dependency> taskDependenciesList = parseDependenciesList(dependencyListElem);
+        List<Task> tasks = TaskParser.parseFromXml(taskElem, new ArrayList<>(taskDependenciesList));
+        TasksHandler.addTaskFields(tasks,fieldsMap);
         Map<String, Task> completeTasksMap = new HashMap<>();
         tasks.forEach(task -> completeTasksMap.put(task.getId(),task));
-
+        studySchemeImpl.setDependencies(taskDependenciesList);
         studySchemeImpl.setTasksMap(completeTasksMap);
 
         return studySchemeImpl;
