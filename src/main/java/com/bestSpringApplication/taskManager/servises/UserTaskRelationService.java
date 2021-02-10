@@ -1,8 +1,6 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.models.idRelation.IdRelation;
 import com.bestSpringApplication.taskManager.models.study.implementations.UserTaskRelationImpl;
-import com.bestSpringApplication.taskManager.repos.IdRelationRepo;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,17 +12,13 @@ import java.util.Optional;
 public class UserTaskRelationService {
 
     private final UserTaskRelationRepo utrRepo;
-    private final IdRelationRepo idRelationRepo;
 
     @Autowired
-    public UserTaskRelationService(UserTaskRelationRepo utrRepo, IdRelationRepo idRelationRepo) {
+    public UserTaskRelationService(UserTaskRelationRepo utrRepo) {
         this.utrRepo = utrRepo;
-        this.idRelationRepo = idRelationRepo;
     }
 
     public boolean saveRelation(UserTaskRelationImpl relation){
-//        idRelationRepo.save((IdRelation) relation.getTaskId());
-//        idRelationRepo.save((IdRelation) relation.getUserId());
         utrRepo.save(relation);
         return true;
     }

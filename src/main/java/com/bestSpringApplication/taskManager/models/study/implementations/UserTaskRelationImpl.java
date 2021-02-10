@@ -1,7 +1,6 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
 import com.bestSpringApplication.taskManager.handlers.GradeToDbConverter;
-import com.bestSpringApplication.taskManager.models.idRelation.IdRelation;
 import com.bestSpringApplication.taskManager.models.study.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -14,42 +13,43 @@ public class UserTaskRelationImpl implements UserTaskRelation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Integer db_id;
-    @OneToOne(fetch = FetchType.EAGER)
-    private IdRelation userRelation;
-    @OneToOne(fetch = FetchType.EAGER)
-    private IdRelation taskRelation;
     private boolean isFinished;
     private boolean finishConfirmed;
+    private String userId;
+    private String schemeId;
+    private String taskId;
     @Convert(converter = GradeToDbConverter.class)
     private Grade grade;
 
     public UserTaskRelationImpl(){}
-    
-    public UserTaskRelationImpl(IdRelation userRelation,
-                                IdRelation taskRelation,
-                                boolean isFinished,
+
+    public UserTaskRelationImpl(boolean isFinished,
                                 boolean finishConfirmed,
+                                String userId,
+                                String schemeId,
+                                String taskId,
                                 Grade grade) {
-        this.userRelation = userRelation;
-        this.taskRelation = taskRelation;
         this.isFinished = isFinished;
         this.finishConfirmed = finishConfirmed;
+        this.userId = userId;
+        this.schemeId = schemeId;
+        this.taskId = taskId;
         this.grade = grade;
     }
 
     @Override
     public String getUserId() {
-        return null;
+        return userId;
     }
 
     @Override
     public String getTaskId() {
-        return null;
+        return taskId;
     }
 
     @Override
     public String getSchemeId() {
-        return null;
+        return schemeId;
     }
 
     public Integer getDb_id() {
@@ -72,12 +72,24 @@ public class UserTaskRelationImpl implements UserTaskRelation {
         this.db_id = bd_id;
     }
 
-    public void setUserRelation(IdRelation userRelation) {
-        this.userRelation = userRelation;
+    public boolean isFinished() {
+        return isFinished;
     }
 
-    public void setTaskRelation(IdRelation taskRelation) {
-        this.taskRelation = taskRelation;
+    public void setFinished(boolean finished) {
+        isFinished = finished;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public void setSchemeId(String schemeId) {
+        this.schemeId = schemeId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
     }
 
     public void setIsFinished(boolean userIsFinishTask) {
