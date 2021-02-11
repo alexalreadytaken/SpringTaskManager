@@ -23,7 +23,7 @@ import java.io.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/admin/schemas")
+@RequestMapping("/schemas")
 @CrossOrigin
 public class SchemasController {
 
@@ -85,6 +85,8 @@ public class SchemasController {
         return masterSchemas;
     }
 
+
+    //todo: different response by role
     @GetMapping("/{id}")
     public StudyScheme schemeDetails(@PathVariable String id) {
         String notFoundResponse = String.format("Схема с id=%s не найдена", id);
@@ -102,6 +104,7 @@ public class SchemasController {
         return fileNames;
     }
 
+    // FIXME: 2/11/2021 upload permission by role
     @PostMapping("/add")
     @ResponseStatus(HttpStatus.OK)
     public void newScheme(@RequestParam("file") MultipartFile file) throws IOException {
@@ -122,6 +125,6 @@ public class SchemasController {
             LOGGER.error("error with XML parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
             throw new IllegalXmlFormatException("загрузка файла не удалась,проверьте структуру своего XML файла");
         }
-    }
+  }
 }
 

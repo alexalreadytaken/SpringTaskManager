@@ -8,22 +8,22 @@ multiFetch = (url) => {
         .then(response => response.json())
         .then(result => {
             switch ( url ) {
-                case '/admin/schemas/':
+                case '/schemas/':
                     firstGraph(result)
                     break;
-                case '/admin/schemas/files':
+                case '/schemas/files':
                     makeFileList(result)
                     break;
-                case '/admin/users':
+                case '/admin/users/':
                     makeUserList(result)
                     break;
             }
         })
 }
 
-multiFetch('/admin/schemas/')
-multiFetch('/admin/schemas/files')
-multiFetch('/admin/users')
+multiFetch('/schemas/')
+multiFetch('/schemas/files')
+multiFetch('/admin/users/')
 
 firstGraph = (response) => {
     makeGraph(response,'Схемы')
@@ -41,7 +41,7 @@ schemeActions = (schemeId) => {
 
 schemeInfo = (schemeId) => {
     actions.innerHTML=''
-    fetch(`/admin/schemas/${schemeId}`).then(response=>response.json()).then(response=>{
+    fetch(`/schemas/${schemeId}`).then(response=>response.json()).then(response=>{
         makeGraph(response,response.name)
     })
 
@@ -54,7 +54,7 @@ makeFileList = (fileNames) => {
         div.style.margin='10px'
         let fileDownload = document.createElement('a')
         fileDownload.innerText=file
-        fileDownload.setAttribute('href',`/admin/schemas/file/${file}`)
+        fileDownload.setAttribute('href',`/schemas/file/${file}`)
         fileDownload.setAttribute('download',file)
         div.append(fileDownload)
         schemasFileList.append(div)
@@ -79,7 +79,7 @@ document.querySelector('#file').addEventListener('change',evt => {
     let formData = new FormData()
     formData.append('file',fileData[0])
     evt.target.value=''
-    fetch('/admin/schemas/add',{
+    fetch('/schemas/add',{
         method:'POST',
         body:formData
     }).then(response=>
