@@ -32,44 +32,46 @@ public class SchemasController {
     @Value("${task.pool.path}")
     private String taskPoolPath;
 
-    public Map<Integer,StudyScheme> masterSchemas;
+    public Map<String, StudyScheme> masterSchemas;
     public Map<String ,StudyScheme> clonedSchemas;
 
     private int schemesCount;
 
     private static final Set<String> confirmedFileTypes =
-            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-                    "xml","mrp","txt")));
+        Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+            "xml","mrp","txt")));
 
     @PostConstruct
     public void init(){
         masterSchemas = new HashMap<>();
+        clonedSchemas = new HashMap<>();
         schemesCount = 0;
         File tasksDir = new File(taskPoolPath);
         if (tasksDir.exists()){
             Optional<File[]> files =
-                    Optional.ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
+                Optional.ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
             files.ifPresent(files0 ->
-                    Arrays.stream(files0).forEach(file -> {
-                        String fileName = file.getName();
-                        try {
-                            LOGGER.trace("getting file {} to parse", fileName);
-                            InputStream fileInputStream = new FileInputStream(file);
-                            Document schemaDoc = new SAXBuilder().build(fileInputStream);
-                            StudySchemeImpl schema = StudySchemeImpl.parseFromXml(schemaDoc);
-                            //fixme
-                            schema.setName(fileName);
-                            schema.setId(String.valueOf(schemesCount));
-                            LOGGER.trace("putting schema to schemes,file:{}", fileName);
-                            masterSchemas.put(schemesCount++,schema);
-                        } catch (FileNotFoundException e) {
-                            LOGGER.warn("file {} was deleted in initializing time",file);
-                        } catch (JDOMException e) {
-                            LOGGER.error("error with parse XML:{},file:{}",e.getMessage(), fileName);
-                        } catch (IOException e) {
-                            LOGGER.error(e.getMessage());
-                        }
-                    })
+                Arrays.stream(files0).forEach(file -> {
+                    String fileName = file.getName();
+                    try {
+                        LOGGER.trace("getting file {} to parse", fileName);
+                        InputStream fileInputStream = new FileInputStream(file);
+                        Document schemaDoc = new SAXBuilder().build(fileInputStream);
+                        StudySchemeImpl schema = StudySchemeImpl.parseFromXml(schemaDoc);
+                        //fixme
+                        schema.setName(fileName);
+                        String id = String.valueOf(schemesCount);
+                        schema.setId(id);
+                        LOGGER.trace("putting schema to schemes,file:{}", fileName);
+                        masterSchemas.put(id,schema);
+                    } catch (FileNotFoundException e) {
+                        LOGGER.warn("file {} was deleted in initializing time",file);
+                    } catch (JDOMException e) {
+                        LOGGER.error("error with parse XML:{},file:{}",e.getMessage(), fileName);
+                    } catch (IOException e) {
+                        LOGGER.error(e.getMessage());
+                    }
+                })
             );
         }else {
             LOGGER.trace("make directory {}",taskPoolPath);
@@ -79,21 +81,16 @@ public class SchemasController {
 
     @GetMapping
     @JsonView(SchemasView.OverviewInfo.class)
-    public Map<Integer,StudyScheme> schemasMap(){
+    public Map<String, StudyScheme> schemasMap(){
         return masterSchemas;
     }
 
     @GetMapping("/{id}")
     public StudyScheme schemeDetails(@PathVariable String id) {
         String notFoundResponse = String.format("Схема с id=%s не найдена", id);
-        try {
-            int id0 = Integer.parseInt(id);
-            return Optional.ofNullable(masterSchemas.get(id0))
-                    .orElseThrow(()->
-                            new ContentNotFoundException(notFoundResponse));
-        }catch (NumberFormatException ex){
-            throw new ContentNotFoundException(notFoundResponse);
-        }
+        return Optional.ofNullable(masterSchemas.get(id))
+            .orElseThrow(()->
+                new ContentNotFoundException(notFoundResponse));
     }
 
     @GetMapping("/files")
@@ -115,7 +112,7 @@ public class SchemasController {
                 Document courseXml = new SAXBuilder().build(file.getInputStream());
                 StudySchemeImpl.parseFromXml(courseXml);
                 LOGGER.trace("Move file {} to directory {}",
-                        file.getOriginalFilename(),taskPoolPath);
+                    file.getOriginalFilename(),taskPoolPath);
                 file.transferTo(new File(taskPoolPath+file.getOriginalFilename()));
             }else {
                 LOGGER.warn("unsupported file type sent,file:{}",file.getOriginalFilename());

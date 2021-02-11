@@ -21,7 +21,7 @@ public class TaskImpl implements Task {
     private int duration;
     private String notes;
     private boolean isTheme = false;
-    private List<String> parentsId;
+    private String parentsId;
     private List<String> childrenId;
 
     @JsonFormat(pattern = DATE_FORMAT)
@@ -45,7 +45,7 @@ public class TaskImpl implements Task {
     public LocalDateTime getConstraint() { return constraint; }
     public List<String> getChildrenId() { return childrenId; }
     public LocalDateTime getStartDate() { return startDate; }
-    public List<String> getParentsId() { return parentsId; }
+    public String getParentsId() { return parentsId; }
     public LocalDateTime getEndDate() { return endDate; }
     public int getDuration() { return duration; }
     public boolean isTheme() { return isTheme; }
@@ -60,8 +60,8 @@ public class TaskImpl implements Task {
             TaskImpl.this.notes=notes;
             return this;
         }
-        public TaskBuilder parentsId(List<String> parentsId){
-            TaskImpl.this.parentsId=parentsId;
+        public TaskBuilder parentsId(String parentId){
+            TaskImpl.this.parentsId=parentId;
             return this;
         }
         public TaskBuilder childrenId(List<String> childrenId){

@@ -23,6 +23,7 @@ public class StudySchemeImpl implements StudyScheme{
     @JsonProperty("tasks")
     @JsonView(SchemasView.FullInfo.class)
     private Map<String, Task> tasksMap;
+    @JsonView(SchemasView.FullInfo.class)
     private List<Dependency> dependencies;
 
     public StudySchemeImpl(){}
@@ -63,10 +64,4 @@ public class StudySchemeImpl implements StudyScheme{
         this.dependencies = dependencies;
     }
 
-    @Override
-    public String toString() {
-        return "TasksSchema{" +
-            "tasks=" + tasksMap +
-            '}';
-    }
 }
