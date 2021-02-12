@@ -1,5 +1,5 @@
 console.log('%cwe are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px')
-var data = [], chilHeadParent = [], allAddiction = []
+var data = [], chilHeadParent = []
 
 function makeFileList (fileNames) {
     let schemasFileList = document.getElementById("schemasFileList");
