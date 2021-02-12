@@ -1,5 +1,6 @@
 package com.bestSpringApplication.taskManager;
 
+import com.bestSpringApplication.taskManager.models.enums.Grade;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

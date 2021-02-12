@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-public class UsersController {
+public class UsersController{
 
     private final UserService userService;
 

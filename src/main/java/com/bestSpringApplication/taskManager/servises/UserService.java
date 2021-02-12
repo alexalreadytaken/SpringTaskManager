@@ -54,6 +54,18 @@ public class UserService implements UserDetailsService {
         return userRepo.findAll();
     }
 
+    public boolean existsUserById(String id){
+        try {
+            long id0 = Long.parseLong(id);
+            return existsUserById(id0);
+        }catch (NumberFormatException ex){
+            return false;
+        }
+    }
+    public boolean existsUserById(Long id){
+        return userRepo.existsById(id);
+    }
+
     public Optional<User> getUserById(Long id){
         return userRepo.findById(id);
     }
