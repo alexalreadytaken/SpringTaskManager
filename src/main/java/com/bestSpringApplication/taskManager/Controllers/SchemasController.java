@@ -46,13 +46,6 @@ public class SchemasController {
             Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                     "xml","mrp","txt")));
 
-    private UserService userService;
-
-    @Autowired
-    public SchemasController(UserService userService) {
-        this.userService = userService;
-    }
-
     @PostConstruct
     public void init(){
         masterSchemas = new HashMap<>();
@@ -69,7 +62,7 @@ public class SchemasController {
                             LOGGER.trace("getting file {} to parse", fileName);
                             InputStream fileInputStream = new FileInputStream(file);
                             Document schemaDoc = new SAXBuilder().build(fileInputStream);
-                            StudySchemeImpl schema = StudySchemeImpl.parseFromXml(schemaDoc);
+                            StudySchemeImpl schema = (StudySchemeImpl) StudySchemeImpl.parseFromXml(schemaDoc);
                             //fixme
                             schema.setName(fileName);
                             String id = String.valueOf(masterSchemasCount++);
@@ -91,7 +84,19 @@ public class SchemasController {
         }
     }
 
-    @GetMapping("/files")
+    @GetMapping("/master")
+    @JsonView(SchemasView.OverviewInfo.class)
+    public Collection<StudyScheme> masterSchemas(){
+        return masterSchemas.values();
+    }
+
+    @GetMapping("/master/{schemaId}")
+    public StudyScheme masterSchemeById(@PathVariable String schemaId){
+        return Optional.ofNullable(masterSchemas.get(schemaId))
+                .orElseThrow(()-> new ContentNotFoundException("Курс не найден"));
+    }
+
+    @GetMapping("master/files")
     public List<String> schemasFileList() {
         File file = new File(taskPoolPath);
         Optional<File[]> filesOpt = Optional.ofNullable(file.listFiles(File::isFile));
@@ -101,7 +106,7 @@ public class SchemasController {
     }
 
     // TODO: 2/11/2021 upload permission by role
-    @PostMapping("/add")
+    @PostMapping("/master/add")
     @ResponseStatus(HttpStatus.OK)
     public void newScheme(@RequestParam("file") MultipartFile file) throws IOException {
         try {
@@ -109,7 +114,8 @@ public class SchemasController {
             LOGGER.trace("Receive file:{}",file.getOriginalFilename());
             if (confirmedFileTypes.contains(fileNameAndType[1])){
                 Document courseXml = new SAXBuilder().build(file.getInputStream());
-                StudySchemeImpl.parseFromXml(courseXml);
+                StudyScheme studyScheme = StudySchemeImpl.parseFromXml(courseXml);
+
                 LOGGER.trace("Move file {} to directory {}",
                         file.getOriginalFilename(),taskPoolPath);
                 file.transferTo(new File(taskPoolPath+file.getOriginalFilename()));

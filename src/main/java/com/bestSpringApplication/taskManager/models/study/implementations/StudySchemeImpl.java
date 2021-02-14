@@ -28,7 +28,7 @@ public class StudySchemeImpl implements StudyScheme{
 
     public StudySchemeImpl(){}
 
-    public static StudySchemeImpl parseFromXml(Document document) throws JDOMException {
+    public static StudyScheme parseFromXml(Document document) throws JDOMException {
         return StudySchemaParser.parseSchemaXml(document);
     }
 
