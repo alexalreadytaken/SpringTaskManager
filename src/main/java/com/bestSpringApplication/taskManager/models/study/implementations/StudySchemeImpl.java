@@ -1,13 +1,11 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
 
-import com.bestSpringApplication.taskManager.handlers.jsonView.SchemasView;
 import com.bestSpringApplication.taskManager.handlers.parsers.xml.StudySchemaParser;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 
@@ -16,14 +14,8 @@ import java.util.Map;
 
 public class StudySchemeImpl implements StudyScheme{
 
-    @JsonView(SchemasView.OverviewInfo.class)
-    private String name;
-    @JsonView(SchemasView.OverviewInfo.class)
-    private String id;
     @JsonProperty("tasks")
-    @JsonView(SchemasView.FullInfo.class)
     private Map<String, Task> tasksMap;
-    @JsonView(SchemasView.FullInfo.class)
     private List<Dependency> dependencies;
 
     public StudySchemeImpl(){}
@@ -36,22 +28,11 @@ public class StudySchemeImpl implements StudyScheme{
         return dependencies;
     }
 
-    public String getName() {
-        return name;
+    @Override
+    public Task getRootTask() {
+        return this.tasksMap.get("root");
     }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
+    @Override
     public Map<String, Task> getTasksMap() {
         return tasksMap;
     }

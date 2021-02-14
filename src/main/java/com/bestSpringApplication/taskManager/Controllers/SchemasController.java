@@ -4,22 +4,15 @@ package com.bestSpringApplication.taskManager.Controllers;
 import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
-import com.bestSpringApplication.taskManager.handlers.jsonView.SchemasView;
-import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
-import com.bestSpringApplication.taskManager.models.user.User;
-import com.bestSpringApplication.taskManager.servises.UserService;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,7 +33,6 @@ public class SchemasController {
     public Map<String, StudyScheme> masterSchemas;
     public Map<String ,Map<String,StudyScheme>> clonedSchemas;
 
-    private int masterSchemasCount;
 
     private static final Set<String> confirmedFileTypes =
             Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
@@ -50,7 +42,6 @@ public class SchemasController {
     public void init(){
         masterSchemas = new HashMap<>();
         clonedSchemas = new HashMap<>();
-        masterSchemasCount = 0;
         File tasksDir = new File(taskPoolPath);
         if (tasksDir.exists()){
             Optional<File[]> files =
@@ -62,13 +53,10 @@ public class SchemasController {
                             LOGGER.trace("getting file {} to parse", fileName);
                             InputStream fileInputStream = new FileInputStream(file);
                             Document schemaDoc = new SAXBuilder().build(fileInputStream);
-                            StudySchemeImpl schema = (StudySchemeImpl) StudySchemeImpl.parseFromXml(schemaDoc);
-                            //fixme
-                            schema.setName(fileName);
-                            String id = String.valueOf(masterSchemasCount++);
-                            schema.setId(id);
+                            StudyScheme schema = StudySchemeImpl.parseFromXml(schemaDoc);
                             LOGGER.trace("putting schema to Schemas,file:{}", fileName);
-                            masterSchemas.put(id,schema);
+                            String rootTaskName = schema.getRootTask().getName();
+                            masterSchemas.put(rootTaskName,schema);
                         } catch (FileNotFoundException e) {
                             LOGGER.warn("file {} was deleted in initializing time",file);
                         } catch (JDOMException e) {
@@ -85,8 +73,7 @@ public class SchemasController {
     }
 
     @GetMapping("/master")
-    @JsonView(SchemasView.OverviewInfo.class)
-    public Collection<StudyScheme> masterSchemas(){
+    public Collection<StudyScheme> masterSchemasOverview(){
         return masterSchemas.values();
     }
 

@@ -34,10 +34,13 @@ public class StudySchemaParser {
 
         Map<String, String> fieldsMap = TaskParser.fieldToMap(fieldListElem, "field", "no", "name");
         List<Dependency> taskDependenciesList = parseDependenciesList(dependencyListElem);
-        List<Task> tasks = TaskParser.parseFromXml(taskElem);
-        TasksHandler.addTaskFields(tasks,fieldsMap);
+        List<Task> tasksList = TaskParser.parseFromXml(taskElem);
+        TasksHandler.addTaskFields(tasksList,fieldsMap);
         Map<String, Task> completeTasksMap = new HashMap<>();
-        tasks.forEach(task -> completeTasksMap.put(task.getId(),task));
+
+        completeTasksMap.put("root",tasksList.get(0)); // experimental
+
+        tasksList.forEach(task -> completeTasksMap.put(task.getId(),task));
         studySchemeImpl.setDependencies(taskDependenciesList);
         studySchemeImpl.setTasksMap(completeTasksMap);
 
