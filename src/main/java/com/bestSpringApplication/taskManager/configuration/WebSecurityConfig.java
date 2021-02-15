@@ -1,6 +1,7 @@
 package com.bestSpringApplication.taskManager.configuration;
 
 
+import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -35,7 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .csrf().disable()
                     .authorizeRequests()
                     .antMatchers(permittedMappings).permitAll()
-//                    .antMatchers("/schemas/master/add/**","/js/private/**")
+//                    .antMatchers("/schemas/master/**","/js/private/**")
 //                        .hasAnyAuthority(Role.ADMIN.getStrValue(),Role.TEACHER.getStrValue())
                     .anyRequest()
                     .authenticated()
@@ -50,7 +51,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .key("superKey")
                 .and()
                     .logout().logoutUrl("/logout")
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))//need?
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID","remember-me")

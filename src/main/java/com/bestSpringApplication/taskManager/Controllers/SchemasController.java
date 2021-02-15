@@ -4,13 +4,17 @@ package com.bestSpringApplication.taskManager.Controllers;
 import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
-import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
-import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
+import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemaImpl;
+import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.user.User;
+import com.bestSpringApplication.taskManager.servises.UserService;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -19,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/schemas")
@@ -30,13 +35,19 @@ public class SchemasController {
     @Value("${task.pool.path}")
     private String taskPoolPath;
 
-    public Map<String, StudyScheme> masterSchemas;
-    public Map<String ,Map<String,StudyScheme>> clonedSchemas;
-
+    public Map<String, StudySchema> masterSchemas;
+    public Map<String ,Map<String, StudySchema>> clonedSchemas;
 
     private static final Set<String> confirmedFileTypes =
             Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
                     "xml","mrp","txt")));
+
+    private UserService userService;
+
+    @Autowired
+    public SchemasController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostConstruct
     public void init(){
@@ -53,12 +64,11 @@ public class SchemasController {
                             LOGGER.trace("getting file {} to parse", fileName);
                             InputStream fileInputStream = new FileInputStream(file);
                             Document schemaDoc = new SAXBuilder().build(fileInputStream);
-                            StudyScheme schema = StudySchemeImpl.parseFromXml(schemaDoc);
+                            StudySchema schemaFromDir = StudySchemaImpl.parseFromXml(schemaDoc);
                             LOGGER.trace("putting schema to Schemas,file:{}", fileName);
-                            String rootTaskName = schema.getRootTask().getName();
-                            masterSchemas.put(rootTaskName,schema);
+                            putToMasterSchemas(schemaFromDir);
                         } catch (FileNotFoundException e) {
-                            LOGGER.warn("file {} was deleted in initializing time",file);
+                            LOGGER.warn("file {} was deleted in initializing time",fileName);
                         } catch (JDOMException e) {
                             LOGGER.error("error with parse XML:{},file:{}",e.getMessage(), fileName);
                         } catch (IOException e) {
@@ -72,37 +82,31 @@ public class SchemasController {
         }
     }
 
-    @GetMapping("/master")
-    public Collection<StudyScheme> masterSchemasOverview(){
-        return masterSchemas.values();
+    @GetMapping("/master/{schemaKey}")
+    public StudySchema masterSchemaById(@PathVariable String schemaKey){
+        return getMasterSchemaById(schemaKey);
     }
 
-    @GetMapping("/master/{schemaId}")
-    public StudyScheme masterSchemeById(@PathVariable String schemaId){
-        return Optional.ofNullable(masterSchemas.get(schemaId))
-                .orElseThrow(()-> new ContentNotFoundException("Курс не найден"));
-    }
 
-    @GetMapping("master/files")
-    public List<String> schemasFileList() {
-        File file = new File(taskPoolPath);
-        Optional<File[]> filesOpt = Optional.ofNullable(file.listFiles(File::isFile));
-        List<String> fileNames = new ArrayList<>();
-        filesOpt.ifPresent(files-> Arrays.stream(files).map(File::getName).forEach(fileNames::add));
-        return fileNames;
-    }
-
-    // TODO: 2/11/2021 upload permission by role
-    @PostMapping("/master/add")
+    // TODO: 2/15/2021
+    @GetMapping("/master/{schemaKey}/addTo/{studentId}")
     @ResponseStatus(HttpStatus.OK)
-    public void newScheme(@RequestParam("file") MultipartFile file) throws IOException {
+    public void addSchemaToStudent(@PathVariable String schemaKey, @PathVariable String studentId){
+//        StudySchema masterSchema = getMasterSchemaById(schemaKey);
+//
+//        if(!userService.existsUserById(studentId))throw new ContentNotFoundException("Студент не найден");
+    }
+
+    @PostMapping("/master/files/add")
+    @ResponseStatus(HttpStatus.OK)
+    public void newSchema(@RequestParam("file") MultipartFile file) throws IOException {
         try {
             String[] fileNameAndType = Objects.requireNonNull(file.getOriginalFilename()).split("\\.", 2);
             LOGGER.trace("Receive file:{}",file.getOriginalFilename());
             if (confirmedFileTypes.contains(fileNameAndType[1])){
                 Document courseXml = new SAXBuilder().build(file.getInputStream());
-                StudyScheme studyScheme = StudySchemeImpl.parseFromXml(courseXml);
-
+                StudySchema studySchema = StudySchemaImpl.parseFromXml(courseXml);
+                putToMasterSchemas(studySchema);
                 LOGGER.trace("Move file {} to directory {}",
                         file.getOriginalFilename(),taskPoolPath);
                 file.transferTo(new File(taskPoolPath+file.getOriginalFilename()));
@@ -116,5 +120,33 @@ public class SchemasController {
         }
     }
 
+    @GetMapping("/master")
+    public List<Task> masterSchemasOverview(){
+        return masterSchemas
+                .values()
+                .stream()
+                .map(StudySchema::getRootTask)
+                .collect(Collectors.toList());
+    }
+
+    @GetMapping("master/files")
+    public List<String> schemasFileList() {
+        File file = new File(taskPoolPath);
+        Optional<File[]> filesOpt = Optional.ofNullable(file.listFiles(File::isFile));
+        List<String> fileNames = new ArrayList<>();
+        filesOpt.ifPresent(files-> Arrays.stream(files).map(File::getName).forEach(fileNames::add));
+        return fileNames;
+    }
+
+    private void putToMasterSchemas(StudySchema studySchema){
+        String key = studySchema.getRootTask().getName();
+        masterSchemas.put(key,studySchema);
+    }
+
+    // FIXME: 2/15/2021 return optional or throw ?
+    private StudySchema getMasterSchemaById(String schemaKey) {
+        return Optional.ofNullable(masterSchemas.get(schemaKey))
+                .orElseThrow(()-> new ContentNotFoundException("Курс не найден"));
+    }
 }
 

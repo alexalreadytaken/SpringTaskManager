@@ -34,6 +34,7 @@ public class TaskParser {
             String startDate = taskElemFromStack.getChildText("task-start-date");
             String endDate = taskElemFromStack.getChildText("task-end-date");
 
+
             List<String> childrenId = new ArrayList<>();
 
             fieldListElem.ifPresent(fieldList ->
@@ -54,9 +55,10 @@ public class TaskParser {
                         })
                 );
             });
+            String optimizedName = StringUtils.normalizeSpace(taskName).replaceAll(" ", "_");
 
             taskBuilder
-                    .taskName(taskName)
+                    .taskName(optimizedName)
                     .taskId(taskId)
                     .parentsId(parentId.orElse(null))
                     .childrenId(childrenId)

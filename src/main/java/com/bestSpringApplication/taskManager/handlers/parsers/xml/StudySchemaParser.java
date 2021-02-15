@@ -2,9 +2,9 @@ package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
 import com.bestSpringApplication.taskManager.handlers.TasksHandler;
 import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
-import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemeImpl;
+import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemaImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.models.study.interfaces.StudyScheme;
+import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -19,9 +19,9 @@ public class StudySchemaParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StudySchemaParser.class);
 
-    public static StudyScheme parseSchemaXml(Document mainDocument) throws JDOMException {
+    public static StudySchema parseSchemaXml(Document mainDocument) throws JDOMException {
         Element rootElement = mainDocument.getRootElement();
-        StudySchemeImpl studySchemeImpl = new StudySchemeImpl();
+        StudySchemaImpl studySchema = new StudySchemaImpl();
 
         LOGGER.trace("Start parse root element:\n{}",rootElement.getContent());
 
@@ -38,13 +38,14 @@ public class StudySchemaParser {
         TasksHandler.addTaskFields(tasksList,fieldsMap);
         Map<String, Task> completeTasksMap = new HashMap<>();
 
-        completeTasksMap.put("root",tasksList.get(0)); // experimental
+        completeTasksMap.put("root",tasksList.remove(0)); // experimental
 
         tasksList.forEach(task -> completeTasksMap.put(task.getId(),task));
-        studySchemeImpl.setDependencies(taskDependenciesList);
-        studySchemeImpl.setTasksMap(completeTasksMap);
 
-        return studySchemeImpl;
+        studySchema.setDependencies(taskDependenciesList);
+        studySchema.setTasksMap(completeTasksMap);
+
+        return studySchema;
     }
 
     private static List<Dependency> parseDependenciesList(Element dependencyListElem) {

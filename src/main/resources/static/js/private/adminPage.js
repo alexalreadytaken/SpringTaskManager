@@ -21,8 +21,8 @@ multiFetch = (url) => {
         })
 }
 
-multiFetch('/schemas/')
-multiFetch('/schemas/files')
+// multiFetch('/schemas/')
+multiFetch('/schemas/master/files')
 multiFetch('/admin/users/')
 
 firstGraph = (response) => {
@@ -79,7 +79,7 @@ document.querySelector('#file').addEventListener('change',evt => {
     let formData = new FormData()
     formData.append('file',fileData[0])
     evt.target.value=''
-    fetch('/schemas/add',{
+    fetch('/schemas/master/files/add',{
         method:'POST',
         body:formData
     }).then(response=>

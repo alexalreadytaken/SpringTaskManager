@@ -1,7 +1,6 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
-import com.fasterxml.jackson.annotation.JsonView;
 
 public class DependencyImpl implements Dependency{
 
@@ -24,12 +23,12 @@ public class DependencyImpl implements Dependency{
     }
 
     @Override
-    public String getChildId() {
+    public String getId0() {
         return childId;
     }
 
     @Override
-    public String getParentId() {
+    public String getId1() {
         return parentId;
     }
 }
