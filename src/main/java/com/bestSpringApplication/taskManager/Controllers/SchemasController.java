@@ -7,7 +7,6 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlForma
 import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemaImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
-import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import org.jdom2.Document;
 import org.jdom2.JDOMException;

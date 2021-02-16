@@ -1,7 +1,6 @@
 package com.bestSpringApplication.taskManager.configuration;
 
 
-import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;

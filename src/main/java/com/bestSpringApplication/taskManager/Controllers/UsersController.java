@@ -9,6 +9,7 @@ import com.bestSpringApplication.taskManager.servises.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,11 +29,14 @@ public class UsersController{
     public void register(@RequestBody Map<String,String> body){
         if (userService.containsMail(body.get("mail"))){
             throw new EmailExistsException("Пользователь с такой почтой уже существует");
-        }else {
-            String mail = body.get("mail");
-            String name = body.get("name");
-            String password = body.get("password");
-            userService.saveUser(new User(mail,name,password, Role.STUDENT));
+        }else{
+            User user = User.builder()
+                    .mail(body.get("mail"))
+                    .name(body.get("name"))
+                    .password(body.get("password"))
+                    .role(Role.STUDENT)
+                    .build();
+            userService.saveUser(user);
         }
     }
 

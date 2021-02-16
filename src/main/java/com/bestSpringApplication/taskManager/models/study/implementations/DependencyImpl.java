@@ -1,34 +1,22 @@
 package com.bestSpringApplication.taskManager.models.study.implementations;
 
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
+@Data
+@AllArgsConstructor
 public class DependencyImpl implements Dependency{
-
-    private String parentId;
-    private String childId;
-
-    public DependencyImpl() { }
-
-    public DependencyImpl(String parentId, String childId) {
-        this.parentId = parentId;
-        this.childId = childId;
-    }
-
-    public void setParentId(String parentId) {
-        this.parentId = parentId;
-    }
-
-    public void setChildId(String childId) {
-        this.childId = childId;
-    }
+    private String id0;
+    private String id1;
 
     @Override
     public String getId0() {
-        return childId;
+        return id0;
     }
 
     @Override
     public String getId1() {
-        return parentId;
+        return id1;
     }
 }
