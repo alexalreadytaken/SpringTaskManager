@@ -19,7 +19,7 @@ public class TaskParser {
 
         while (!tasksStack.empty()) {
             Element taskElemFromStack = tasksStack.pop();
-            TaskImpl.TaskBuilder taskBuilder = TaskImpl.startBuildTask();
+            TaskImpl.TaskImplBuilder taskBuilder = TaskImpl.builder();
 
             String taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"))
                     .orElseThrow(()-> new JDOMException("Task id is empty!"));
@@ -38,7 +38,7 @@ public class TaskParser {
             List<String> childrenId = new ArrayList<>();
 
             fieldListElem.ifPresent(fieldList ->
-                    taskBuilder.taskFields(fieldToMap(fieldList, "field","field-no", "field-value"))
+                    taskBuilder.fields(fieldToMap(fieldList, "field","field-no", "field-value"))
             );
             taskNotesElem.ifPresent(notes ->
                     taskBuilder.notes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
@@ -58,12 +58,12 @@ public class TaskParser {
             String optimizedName = StringUtils.normalizeSpace(taskName).replaceAll(" ", "_");
 
             taskBuilder
-                    .taskName(optimizedName)
-                    .taskId(taskId)
+                    .name(optimizedName)
+                    .id(taskId)
                     .parentsId(parentId.orElse(null))
                     .childrenId(childrenId)
-                    .taskStartDate(DateHandler.parseDateFromFormat(startDate,"dd-MM-yyyy, HH:mm:ss"))
-                    .taskEndDate(DateHandler.parseDateFromFormat(endDate,"dd-MM-yyyy, HH:mm:ss"));
+                    .startDate(DateHandler.parseDateFromFormat(startDate,"dd-MM-yyyy, HH:mm:ss"))
+                    .endDate(DateHandler.parseDateFromFormat(endDate,"dd-MM-yyyy, HH:mm:ss"));
 
             taskList.add(taskBuilder.build());
         }

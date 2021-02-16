@@ -26,7 +26,7 @@ public class StudySchemaParser {
         LOGGER.trace("Start parse root element:\n{}",rootElement.getContent());
 
         Element fieldListElem = Optional.ofNullable(rootElement.getChild("task-field-list"))
-                .orElseThrow(()-> new JDOMException("fieldListElem is empty!"));;
+                .orElseThrow(()-> new JDOMException("fieldListElem is empty!"));
         Element dependencyListElem = Optional.ofNullable(rootElement.getChild("task-dependency-list"))
                 .orElseThrow(()-> new JDOMException("dependencyListElement is empty!"));
         Element taskElem = Optional.ofNullable(rootElement.getChild("task"))
@@ -36,14 +36,14 @@ public class StudySchemaParser {
         List<Dependency> taskDependenciesList = parseDependenciesList(dependencyListElem);
         List<Task> tasksList = TaskParser.parseFromXml(taskElem);
         TasksHandler.addTaskFields(tasksList,fieldsMap);
-        Map<String, Task> completeTasksMap = new HashMap<>();
+        Map<String, Task> completedTasksMap = new HashMap<>();
 
-        completeTasksMap.put("root",tasksList.remove(0)); // experimental
+        completedTasksMap.put("root",tasksList.remove(0)); // experimental
 
-        tasksList.forEach(task -> completeTasksMap.put(task.getId(),task));
+        tasksList.forEach(task -> completedTasksMap.put(task.getId(),task));
 
         studySchema.setDependencies(taskDependenciesList);
-        studySchema.setTasksMap(completeTasksMap);
+        studySchema.setTasksMap(completedTasksMap);
 
         return studySchema;
     }
