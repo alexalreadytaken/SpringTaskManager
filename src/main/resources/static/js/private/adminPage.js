@@ -85,7 +85,11 @@ document.querySelector('#file').addEventListener('change',evt => {
     }).then(response=>
         response.status!==200? response.json():{result:'загружено успешно'}
     ).then(response=>{
-        alert(response.result)
+        let responseEntries = Object.entries(response);
+        let beautifulResponse = responseEntries
+            .map(el=>`${el[0]}:${el[1]}\n`)
+            .reduce((el,accum)=>accum+=el);
+        alert(beautifulResponse)
     })
 })
 

@@ -4,10 +4,11 @@ import java.time.LocalDateTime;
 
 public class ErrorMessageFactory {
 
-    public static <T extends ClientException> ErrorMessage newClientErrorMsg(T ex){
+    public static <T extends RestControllerAdviceScopeException> ErrorMessage newErrorMsg(T ex){
         return new ErrorMessage(
             LocalDateTime.now(),
-            ex.getMessage()
+            ex.getMessage(),
+            ex.getPath()
         );
     }
 
