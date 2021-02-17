@@ -6,24 +6,33 @@ import com.bestSpringApplication.taskManager.models.study.implementations.StudyS
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.apachecommons.CommonsLog;
+import lombok.extern.slf4j.Slf4j;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
+@Component
+@RequiredArgsConstructor
 public class StudySchemaParser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(StudySchemaParser.class);
+    @NonNull private final TaskParser taskParser;
 
-    public static StudySchema parseSchemaXml(Document mainDocument) throws JDOMException {
+    public StudySchema parseSchemaXml(Document mainDocument) throws JDOMException {
         Element rootElement = mainDocument.getRootElement();
         StudySchemaImpl studySchema = new StudySchemaImpl();
 
-        LOGGER.trace("Start parse root element:\n{}",rootElement.getContent());
+        log.trace("Start parse root element:\n{}",rootElement.getContent());
 
         Element fieldListElem = Optional.ofNullable(rootElement.getChild("task-field-list"))
                 .orElseThrow(()-> new JDOMException("fieldListElem is empty!"));
@@ -32,9 +41,9 @@ public class StudySchemaParser {
         Element taskElem = Optional.ofNullable(rootElement.getChild("task"))
                 .orElseThrow(()-> new JDOMException("taskElement is empty!"));
 
-        Map<String, String> fieldsMap = TaskParser.fieldToMap(fieldListElem, "field", "no", "name");
+        Map<String, String> fieldsMap = taskParser.fieldToMap(fieldListElem, "field", "no", "name");
         List<Dependency> taskDependenciesList = parseDependenciesList(dependencyListElem);
-        List<Task> tasksList = TaskParser.parseFromXml(taskElem);
+        List<Task> tasksList = taskParser.parseFromXml(taskElem);
         TasksHandler.addTaskFields(tasksList,fieldsMap);
         Map<String, Task> completedTasksMap = new HashMap<>();
 
@@ -48,7 +57,7 @@ public class StudySchemaParser {
         return studySchema;
     }
 
-    private static List<Dependency> parseDependenciesList(Element dependencyListElem) {
+    private List<Dependency> parseDependenciesList(Element dependencyListElem) {
         List<Element> DependencyElements = dependencyListElem.getChildren("task-dependency");
         return DependencyElements.stream().map(DependencyChild ->{
             String parent = DependencyChild.getChildText("task-predecessor-id");

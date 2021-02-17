@@ -7,12 +7,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
+@Component
 public class TaskParser {
 
-    public static List<Task> parseFromXml(Element element) throws JDOMException {
+    public List<Task> parseFromXml(Element element) throws JDOMException {
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
         tasksStack.push(element);
@@ -70,7 +72,7 @@ public class TaskParser {
         taskList.remove(0);
         return taskList;
     }
-    public static Map<String,String> fieldToMap(Element element, String field, String key, String value){
+    public Map<String,String> fieldToMap(Element element, String field, String key, String value){
         List<Element> fields = element.getChildren(field);
         Map<String,String> fieldsMap = new HashMap<>();
         fields.forEach(el ->fieldsMap.put(el.getChildText(key), el.getChildText(value)));

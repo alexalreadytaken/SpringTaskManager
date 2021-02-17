@@ -24,9 +24,9 @@ public class StudySchemaImpl implements StudySchema {
     private Map<String, Task> tasksMap;
     private List<Dependency> dependencies;
 
-    public static StudySchema parseFromXml(Document document) throws JDOMException {
+    /*public static StudySchema parseFromXml(Document document) throws JDOMException {
         return StudySchemaParser.parseSchemaXml(document);
-    }
+    }*/
 
     @Override
     public Task getRootTask() {

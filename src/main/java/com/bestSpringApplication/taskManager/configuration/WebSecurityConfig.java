@@ -28,7 +28,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] permittedMappings = {"/favicon.ico","/js/**","/register/**","/schemas/**"};
+        String[] permittedMappings = {"/favicon.ico","/js/**","/register/**","/schemas/**","/admin/**"};
         http
 //                    .cors().configurationSource(corsConfig())
 //                .and()
