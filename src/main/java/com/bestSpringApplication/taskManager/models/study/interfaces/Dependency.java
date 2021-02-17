@@ -1,6 +1,8 @@
 package com.bestSpringApplication.taskManager.models.study.interfaces;
 
-public interface Dependency {
+import java.io.Serializable;
+
+public interface Dependency extends Serializable {
     String getId0();
     String getId1();
 }

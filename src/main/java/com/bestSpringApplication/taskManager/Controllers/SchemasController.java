@@ -1,10 +1,7 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 
-import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalFileFormatException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.ServerException;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import com.bestSpringApplication.taskManager.servises.MasterSchemasService;
@@ -12,12 +9,10 @@ import com.bestSpringApplication.taskManager.servises.StudentSchemasService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jdom2.JDOMException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.*;
 
 @RestController
@@ -33,6 +28,8 @@ public class SchemasController {
     private final String MASTER_SCHEMA_BY_KEY_MAPPING =         "/master/{schemaKey}";
     private final String ADD_MASTER_SCHEMA_TO_STUDENT_MAPPING = "/master/{schemaKey}/addTo/{studentId}";
 
+    private final String STUDENT_SCHEMAS_MAPPING = "/student/{studentId}";
+
 
     @NonNull private final MasterSchemasService masterSchemasService;
     @NonNull private final StudentSchemasService studentSchemasService;
@@ -46,14 +43,11 @@ public class SchemasController {
         return masterSchemasService.schemaByKey(schemaKey);
     }
 
-
-    // TODO: 2/15/2021
     @GetMapping(ADD_MASTER_SCHEMA_TO_STUDENT_MAPPING)
     @ResponseStatus(HttpStatus.OK)
     public void addSchemaToStudent(@PathVariable String schemaKey, @PathVariable String studentId){
-//        StudySchema masterSchema = getMasterSchemaById(schemaKey);
-//
-//        if(!userService.existsUserById(studentId))throw new ContentNotFoundException("Студент не найден");
+        log.trace("new relation student to schema;schemaKey = {},studentId = {} ",schemaKey,studentId);
+        studentSchemasService.setSchemaToStudent(studentId,schemaKey);
     }
 
     @PostMapping(MASTER_FILES_ADD_MAPPING)
@@ -67,6 +61,11 @@ public class SchemasController {
             log.warn("unsupported file type sent,file:{}", file.getOriginalFilename());
             throw new IllegalFileFormatException(String.format("файл с расширением %s не поддерживается", fileNameAndType[1]));
         }
+    }
+
+    @GetMapping(STUDENT_SCHEMAS_MAPPING)
+    public List<Task> studentSchemas(@PathVariable String studentId){
+        return studentSchemasService.studentSchemasOverview(studentId);
     }
 
     // TODO: 2/17/2021 what logging here?

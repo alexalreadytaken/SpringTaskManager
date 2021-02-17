@@ -26,10 +26,4 @@ public class StudySchemaImpl implements StudySchema {
         return this.tasksMap.get("root");
     }
 
-    // TODO: 2/15/2021
-    @Override
-    public StudySchema clone(){
-        return null;
-    }
-
 }

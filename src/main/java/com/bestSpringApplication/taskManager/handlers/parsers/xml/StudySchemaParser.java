@@ -29,6 +29,7 @@ public class StudySchemaParser {
 
     public StudySchema parseSchemaXml(Document mainDocument) throws JDOMException {
         Element rootElement = mainDocument.getRootElement();
+        // FIXME: 2/17/2021 somehow use interface
         StudySchemaImpl studySchema = new StudySchemaImpl();
 
         log.trace("Start parse root element:\n{}",rootElement.getContent());

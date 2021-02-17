@@ -9,14 +9,4 @@ import lombok.Data;
 public class DependencyImpl implements Dependency{
     private String id0;
     private String id1;
-
-    @Override
-    public String getId0() {
-        return id0;
-    }
-
-    @Override
-    public String getId1() {
-        return id1;
-    }
 }

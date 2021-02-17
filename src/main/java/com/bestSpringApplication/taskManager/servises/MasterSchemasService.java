@@ -89,7 +89,7 @@ public class MasterSchemasService {
     public StudySchema schemaByKey(String schemaKey) {
         return Optional.ofNullable(masterSchemas.get(schemaKey))
                 .orElseThrow(()->{
-                    log.error("schema with key = {} not found",schemaKey);
+                    log.error("schema with key = '{}' not found",schemaKey);
                     return new ContentNotFoundException("Курс не найден");
                 });
     }

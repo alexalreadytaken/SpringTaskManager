@@ -14,7 +14,6 @@ public class StaticResolver implements WebMvcConfigurer {
     @Value("${task.pool.path}")
     private String taskPoolPath;
 
-    // TODO: 2/11/2021 move view to template or frontend
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         registry.addViewController("/register").setViewName("register");
