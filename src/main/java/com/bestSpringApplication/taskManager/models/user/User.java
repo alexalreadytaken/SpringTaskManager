@@ -20,7 +20,7 @@ import java.util.Collections;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "user")
+@Entity(name = "user_entity")
 public class User implements UserDetails {
 
     @Id

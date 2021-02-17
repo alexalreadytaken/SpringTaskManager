@@ -11,7 +11,7 @@ multiFetch = (url) => {
                 case '/schemas/':
                     firstGraph(result)
                     break;
-                case '/schemas/files':
+                case '/schemas/master/files':
                     makeFileList(result)
                     break;
                 case '/admin/users/':
