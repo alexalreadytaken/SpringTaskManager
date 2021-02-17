@@ -8,5 +8,5 @@ public interface StudySchema extends Cloneable {
     @JsonIgnore
     Task getRootTask();
     Map<String,Task> getTasksMap();
-    StudySchema clone() throws CloneNotSupportedException;
+    StudySchema clone();
 }

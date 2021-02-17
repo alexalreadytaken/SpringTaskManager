@@ -32,7 +32,7 @@ public class UsersController{
     @ResponseStatus(HttpStatus.OK)
     public void register(@RequestBody Map<String,String> body){
         if (userService.containsMail(body.get("mail"))){
-            throw new EmailExistsException(REGISTER_MAPPING,"Пользователь с такой почтой уже существует");
+            throw new EmailExistsException("Пользователь с такой почтой уже существует");
         }else{
             User user = User.builder()
                     .mail(body.get("mail"))
@@ -70,7 +70,7 @@ public class UsersController{
 
     private User findUserById(String id){
         return userService.getUserById(id).orElseThrow(
-            ()->new ContentNotFoundException(USER_BY_ID_MAPPING,
+            ()->new ContentNotFoundException(
                 String.format("user with id=%s not found",id)));
     }
 }

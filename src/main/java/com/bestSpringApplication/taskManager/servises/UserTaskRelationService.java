@@ -2,6 +2,8 @@ package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.study.implementations.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -9,14 +11,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserTaskRelationService {
 
-    private final UserTaskRelationRepo utrRepo;
-
-    @Autowired
-    public UserTaskRelationService(UserTaskRelationRepo utrRepo) {
-        this.utrRepo = utrRepo;
-    }
+    @NonNull private final UserTaskRelationRepo utrRepo;
 
     public boolean saveRelation(UserTaskRelationImpl relation){
         utrRepo.save(relation);
@@ -35,7 +33,6 @@ public class UserTaskRelationService {
     public Optional<UserTaskRelationImpl> getRelationById(int id){
         return utrRepo.findById(id);
     }
-
 
     public Optional<UserTaskRelationImpl> getRelationById(String id){
         try {

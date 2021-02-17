@@ -6,19 +6,18 @@ import com.bestSpringApplication.taskManager.models.study.implementations.StudyS
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.apachecommons.CommonsLog;
 import lombok.extern.slf4j.Slf4j;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -54,10 +53,13 @@ public class StudySchemaParser {
         studySchema.setDependencies(taskDependenciesList);
         studySchema.setTasksMap(completedTasksMap);
 
+        log.trace("Return study schema = {}",studySchema);
+
         return studySchema;
     }
 
     private List<Dependency> parseDependenciesList(Element dependencyListElem) {
+        log.trace("Received dependencies list xml element = {}",dependencyListElem.getContent());
         List<Element> DependencyElements = dependencyListElem.getChildren("task-dependency");
         return DependencyElements.stream().map(DependencyChild ->{
             String parent = DependencyChild.getChildText("task-predecessor-id");

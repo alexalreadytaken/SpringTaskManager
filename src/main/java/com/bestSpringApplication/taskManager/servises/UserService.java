@@ -1,7 +1,10 @@
 package com.bestSpringApplication.taskManager.servises;
 
+import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.repos.UserRepo;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,16 +16,12 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
-    private final UserRepo userRepo;
-    private final PasswordEncoder encoder;
+    @NonNull private final UserRepo userRepo;
+    @NonNull private final PasswordEncoder encoder;
 
-    @Autowired
-    public UserService(UserRepo userRepo, PasswordEncoder encoder) {
-        this.userRepo = userRepo;
-        this.encoder = encoder;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String str) throws UsernameNotFoundException {
@@ -37,6 +36,10 @@ public class UserService implements UserDetailsService {
         }catch (UsernameNotFoundException ex){
             return false;
         }
+    }
+
+    public int countByRole(Role role){
+        return userRepo.countByRole(role);
     }
 
     public void saveUser(User user){
