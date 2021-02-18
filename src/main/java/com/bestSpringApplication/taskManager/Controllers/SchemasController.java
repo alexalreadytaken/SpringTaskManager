@@ -6,6 +6,7 @@ import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import com.bestSpringApplication.taskManager.servises.MasterSchemasService;
 import com.bestSpringApplication.taskManager.servises.StudentSchemasService;
+import com.bestSpringApplication.taskManager.servises.UserTaskRelationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ public class SchemasController {
 
     @NonNull private final MasterSchemasService masterSchemasService;
     @NonNull private final StudentSchemasService studentSchemasService;
+    @NonNull private final UserTaskRelationService utrService;
 
     private static final Set<String> confirmedFileTypes =
             Collections.unmodifiableSet(new HashSet<>(Arrays.asList(

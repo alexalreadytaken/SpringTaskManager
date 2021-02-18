@@ -47,10 +47,9 @@ public class StudySchemaParser {
         TasksHandler.addTaskFields(tasksList,fieldsMap);
         Map<String, Task> completedTasksMap = new HashMap<>();
 
-        completedTasksMap.put("root",tasksList.remove(0)); // experimental
-
         tasksList.forEach(task -> completedTasksMap.put(task.getId(),task));
 
+        studySchema.setRootTask(tasksList.get(0));
         studySchema.setDependencies(taskDependenciesList);
         studySchema.setTasksMap(completedTasksMap);
 

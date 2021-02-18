@@ -46,7 +46,7 @@ public class TaskParser {
                     taskBuilder.notes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
             );
             taskListElem.ifPresent(tasksOpt->{
-                taskBuilder.isTheme(true);
+                taskBuilder.theme(true);
                 Optional<List<Element>> tasks = Optional.ofNullable(tasksOpt.getChildren("task"));
                 tasks.ifPresent(tasksListOpt->
                         tasksListOpt.forEach(el->{
@@ -62,7 +62,7 @@ public class TaskParser {
             taskBuilder
                     .name(optimizedName)
                     .id(taskId)
-                    .parentsId(parentId.orElse(null))
+                    .parentId(parentId.orElse(null))
                     .childrenId(childrenId)
                     .startDate(DateHandler.parseDateFromFormat(startDate,"dd-MM-yyyy, HH:mm:ss"))
                     .endDate(DateHandler.parseDateFromFormat(endDate,"dd-MM-yyyy, HH:mm:ss"));

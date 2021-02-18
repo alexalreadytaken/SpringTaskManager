@@ -42,7 +42,9 @@ public class StudentSchemasService {
 
         StudySchema clonedMasterSchema = SerializationUtils.clone(masterSchema);
 
-        studentsWithSchemas.get(studentId).put(schemaKey, clonedMasterSchema);
+        studentsWithSchemas.get(studentId).put(schemaKey,clonedMasterSchema);
+
+        utrService.prepareFirstTasks(clonedMasterSchema,studentId);
     }
 
     public List<Task> studentSchemasOverview(String studentId){

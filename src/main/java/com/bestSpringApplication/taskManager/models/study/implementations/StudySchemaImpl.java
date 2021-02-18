@@ -18,12 +18,8 @@ import java.util.Map;
 public class StudySchemaImpl implements StudySchema {
 
     @JsonProperty("tasks")
-    private Map<String, Task> tasksMap;
+    private Map<String,Task> tasksMap;
     private List<Dependency> dependencies;
-
-    @Override
-    public Task getRootTask() {
-        return this.tasksMap.get("root");
-    }
+    private Task rootTask;
 
 }

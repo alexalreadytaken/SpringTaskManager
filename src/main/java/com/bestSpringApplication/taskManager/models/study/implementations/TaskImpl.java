@@ -20,14 +20,14 @@ public class TaskImpl implements Task {
     private Map<String, String> fields;
     private int duration;
     private String notes;
-    private boolean isTheme = false;
-    private String parentsId;
+    private boolean theme = false;
+    private String parentId;
     private List<String> childrenId;
 
-    @JsonFormat(pattern = DateHandler.MYSQL_DATE_FORMAT)
+    @JsonFormat(pattern = DateHandler.SQL_DATE_FORMAT)
     @JsonProperty("actualStart")
     private LocalDateTime startDate;
-    @JsonFormat(pattern = DateHandler.MYSQL_DATE_FORMAT)
+    @JsonFormat(pattern = DateHandler.SQL_DATE_FORMAT)
     @JsonProperty("actualEnd")
     private LocalDateTime endDate;
     private LocalDateTime constraint;
