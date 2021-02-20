@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.handlers.exceptions;
+package com.bestSpringApplication.taskManager.handlers.exceptions.forClient;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;

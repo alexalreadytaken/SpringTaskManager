@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.handlers.exceptions;
+package com.bestSpringApplication.taskManager.handlers.exceptions.forClient;
 
 
 import org.springframework.http.HttpStatus;

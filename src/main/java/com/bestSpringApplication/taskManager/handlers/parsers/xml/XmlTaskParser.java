@@ -1,20 +1,28 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
 import com.bestSpringApplication.taskManager.handlers.DateHandler;
+import com.bestSpringApplication.taskManager.handlers.StudyParseHandler;
+import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.internal.TaskParseException;
+import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
 import com.bestSpringApplication.taskManager.models.study.implementations.TaskImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-public class TaskParser {
+public class XmlTaskParser implements TaskParser {
 
-    public List<Task> parseFromXml(Element element) throws JDOMException {
+    @Override
+    public List<Task> parse(Object parsable) throws ParseException {
+        return parseFromXml((Element) parsable);
+    }
+
+    public List<Task> parseFromXml(Element element){
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
         tasksStack.push(element);
@@ -24,9 +32,9 @@ public class TaskParser {
             TaskImpl.TaskImplBuilder taskBuilder = TaskImpl.builder();
 
             String taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"))
-                    .orElseThrow(()-> new JDOMException("Task id is empty!"));
+                    .orElseThrow(()-> new TaskParseException("Task id is empty!"));
             String taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"))
-                    .orElseThrow(()->new JDOMException("Task name is empty!"));
+                    .orElseThrow(()->new TaskParseException("Task name is empty!"));
 
             Optional<Element> fieldListElem = Optional.ofNullable(taskElemFromStack.getChild("field-list"));
             Optional<Element> taskListElem = Optional.ofNullable(taskElemFromStack.getChild("task-list"));
@@ -40,7 +48,7 @@ public class TaskParser {
             List<String> childrenId = new ArrayList<>();
 
             fieldListElem.ifPresent(fieldList ->
-                    taskBuilder.fields(fieldToMap(fieldList, "field","field-no", "field-value"))
+                    taskBuilder.fields(StudyParseHandler.fieldToMap(fieldList, "field","field-no", "field-value"))
             );
             taskNotesElem.ifPresent(notes ->
                     taskBuilder.notes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
@@ -72,10 +80,5 @@ public class TaskParser {
         taskList.remove(0);
         return taskList;
     }
-    public Map<String,String> fieldToMap(Element element, String field, String key, String value){
-        List<Element> fields = element.getChildren(field);
-        Map<String,String> fieldsMap = new HashMap<>();
-        fields.forEach(el ->fieldsMap.put(el.getChildText(key), el.getChildText(value)));
-        return fieldsMap;
-    }
+
 }

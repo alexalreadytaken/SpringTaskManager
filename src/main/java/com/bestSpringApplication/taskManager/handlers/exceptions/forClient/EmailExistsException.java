@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.handlers.exceptions;
+package com.bestSpringApplication.taskManager.handlers.exceptions.forClient;
 
 public class EmailExistsException extends ClientException{
 

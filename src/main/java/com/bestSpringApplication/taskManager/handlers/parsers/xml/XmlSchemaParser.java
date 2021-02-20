@@ -1,6 +1,11 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
-import com.bestSpringApplication.taskManager.handlers.TasksHandler;
+import com.bestSpringApplication.taskManager.handlers.StudyParseHandler;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.IllegalFileFormatException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.internal.SchemaParseException;
+import com.bestSpringApplication.taskManager.handlers.parsers.SchemaParser;
+import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
 import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemaImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
@@ -12,8 +17,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,11 +32,33 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class StudySchemaParser {
+public class XmlSchemaParser implements SchemaParser {
 
     @NonNull private final TaskParser taskParser;
 
-    public StudySchema parseSchemaXml(Document mainDocument) throws JDOMException {
+    // FIXME: 2/20/2021 business exceptions in non-service
+    @Override
+    public StudySchema parse(Object parsable) throws ParseException {
+        try {
+            SAXBuilder saxBuilder = new SAXBuilder();
+            if (parsable instanceof File){
+                File file = (File) parsable;
+                Document fileDocument = saxBuilder.build(file);
+                return parseSchemaXml(fileDocument);
+            }else if (parsable instanceof MultipartFile){
+                MultipartFile multipartFile = (MultipartFile) parsable;
+                Document multipartFileDocument = saxBuilder.build(multipartFile.getInputStream());
+                return parseSchemaXml(multipartFileDocument);
+            }else {
+                throw new SchemaParseException("Parsable object is not file or multipart file");
+            }
+        } catch (IOException | JDOMException e) {
+            log.error("error with getting file:" + e.getMessage());
+            throw new IllegalFileFormatException("FIXME FIXME FIXME FIXME");
+        }
+    }
+
+    private StudySchema parseSchemaXml(Document mainDocument){
         Element rootElement = mainDocument.getRootElement();
         // FIXME: 2/17/2021 somehow use interface
         StudySchemaImpl studySchema = new StudySchemaImpl();
@@ -35,16 +66,16 @@ public class StudySchemaParser {
         log.trace("Start parse root element:\n{}",rootElement.getContent());
 
         Element fieldListElem = Optional.ofNullable(rootElement.getChild("task-field-list"))
-                .orElseThrow(()-> new JDOMException("fieldListElem is empty!"));
+                .orElseThrow(()-> new SchemaParseException("fieldListElem is empty!"));
         Element dependencyListElem = Optional.ofNullable(rootElement.getChild("task-dependency-list"))
-                .orElseThrow(()-> new JDOMException("dependencyListElement is empty!"));
+                .orElseThrow(()-> new SchemaParseException("dependencyListElement is empty!"));
         Element taskElem = Optional.ofNullable(rootElement.getChild("task"))
-                .orElseThrow(()-> new JDOMException("taskElement is empty!"));
+                .orElseThrow(()-> new SchemaParseException("taskElement is empty!"));
 
-        Map<String, String> fieldsMap = taskParser.fieldToMap(fieldListElem, "field", "no", "name");
+        Map<String, String> fieldsMap = StudyParseHandler.fieldToMap(fieldListElem, "field", "no", "name");
         List<Dependency> taskDependenciesList = parseDependenciesList(dependencyListElem);
-        List<Task> tasksList = taskParser.parseFromXml(taskElem);
-        TasksHandler.addTaskFields(tasksList,fieldsMap);
+        List<Task> tasksList = taskParser.parse(taskElem);
+        StudyParseHandler.addTaskFields(tasksList,fieldsMap);
         Map<String, Task> completedTasksMap = new HashMap<>();
 
         tasksList.forEach(task -> completedTasksMap.put(task.getId(),task));
@@ -67,5 +98,4 @@ public class StudySchemaParser {
             return new DependencyImpl(parent,child);
         }).collect(Collectors.toList());
     }
-
 }

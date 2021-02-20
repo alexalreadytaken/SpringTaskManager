@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.handlers.exceptions;
+package com.bestSpringApplication.taskManager.handlers.exceptions.forClient;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
