@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.models.study.implementations;
+package com.bestSpringApplication.taskManager.models.study.classes;
 
 import com.bestSpringApplication.taskManager.handlers.enumConverters.GradeConverter;
 import com.bestSpringApplication.taskManager.models.enums.Grade;

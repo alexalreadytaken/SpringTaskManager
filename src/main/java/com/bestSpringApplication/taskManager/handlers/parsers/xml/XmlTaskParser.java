@@ -5,8 +5,10 @@ import com.bestSpringApplication.taskManager.handlers.StudyParseHandler;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.TaskParseException;
 import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
-import com.bestSpringApplication.taskManager.models.study.implementations.TaskImpl;
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.study.classes.TaskImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
+@Slf4j
 public class XmlTaskParser implements TaskParser {
 
     @Override
@@ -23,12 +26,14 @@ public class XmlTaskParser implements TaskParser {
     }
 
     public List<Task> parseFromXml(Element element){
+        log.trace("Receiving element = {}",element);
         Stack<Element> tasksStack = new Stack<>();
         List<Task> taskList = new ArrayList<>();
         tasksStack.push(element);
 
         while (!tasksStack.empty()) {
             Element taskElemFromStack = tasksStack.pop();
+
             TaskImpl.TaskImplBuilder taskBuilder = TaskImpl.builder();
 
             String taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"))
@@ -77,7 +82,9 @@ public class XmlTaskParser implements TaskParser {
 
             taskList.add(taskBuilder.build());
         }
-        taskList.remove(0);
+        Task removed = taskList.remove(0);
+        log.trace("Removing unused zero task = {}",removed);
+        // TODO: 2/20/2021 somehow logging returned task list
         return taskList;
     }
 

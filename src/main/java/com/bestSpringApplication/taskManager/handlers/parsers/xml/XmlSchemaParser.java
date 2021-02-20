@@ -1,13 +1,13 @@
 package com.bestSpringApplication.taskManager.handlers.parsers.xml;
 
 import com.bestSpringApplication.taskManager.handlers.StudyParseHandler;
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.SchemaParseException;
 import com.bestSpringApplication.taskManager.handlers.parsers.SchemaParser;
 import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
-import com.bestSpringApplication.taskManager.models.study.implementations.DependencyImpl;
-import com.bestSpringApplication.taskManager.models.study.implementations.StudySchemaImpl;
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.study.classes.DefaultStudySchemaImpl;
+import com.bestSpringApplication.taskManager.models.study.classes.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
@@ -36,7 +36,6 @@ public class XmlSchemaParser implements SchemaParser {
 
     @NonNull private final TaskParser taskParser;
 
-    // FIXME: 2/20/2021 business exceptions in non-service
     @Override
     public StudySchema parse(Object parsable) throws ParseException {
         try {
@@ -53,17 +52,16 @@ public class XmlSchemaParser implements SchemaParser {
                 throw new SchemaParseException("Parsable object is not file or multipart file");
             }
         } catch (IOException | JDOMException e) {
-            log.error("error with getting file:" + e.getMessage());
-            throw new IllegalFileFormatException("FIXME FIXME FIXME FIXME");
+            throw new ParseException(String.format("Some error with getting file = %s",e.getMessage()));
         }
     }
 
     private StudySchema parseSchemaXml(Document mainDocument){
         Element rootElement = mainDocument.getRootElement();
         // FIXME: 2/17/2021 somehow use interface
-        StudySchemaImpl studySchema = new StudySchemaImpl();
+        AbstractStudySchema studySchema = new DefaultStudySchemaImpl();
 
-        log.trace("Start parse root element:\n{}",rootElement.getContent());
+        log.trace("Starting parse root element:\n{}",rootElement.getContent());
 
         Element fieldListElem = Optional.ofNullable(rootElement.getChild("task-field-list"))
                 .orElseThrow(()-> new SchemaParseException("fieldListElem is empty!"));
@@ -84,13 +82,13 @@ public class XmlSchemaParser implements SchemaParser {
         studySchema.setDependencies(taskDependenciesList);
         studySchema.setTasksMap(completedTasksMap);
 
-        log.trace("Return study schema = {}",studySchema);
+        log.trace("Returning study schema = {}",studySchema);
 
         return studySchema;
     }
 
     private List<Dependency> parseDependenciesList(Element dependencyListElem) {
-        log.trace("Received dependencies list xml element = {}",dependencyListElem.getContent());
+        log.trace("Starting parse dependencies list xml element = {}",dependencyListElem);
         List<Element> DependencyElements = dependencyListElem.getChildren("task-dependency");
         return DependencyElements.stream().map(DependencyChild ->{
             String parent = DependencyChild.getChildText("task-predecessor-id");
