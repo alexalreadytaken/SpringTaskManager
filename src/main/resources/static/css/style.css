@@ -1,3 +1,4 @@
+/* флексбоксы */
 .container {
     display: flex;
     flex-direction: column;
@@ -8,6 +9,10 @@
     display: flex;
     gap: 1rem;
 }
+
+/* навигационное меню 
+// накидать стилей на кнопки
+*/
 
 .sideBar {
     background-color: yellow;
@@ -41,6 +46,8 @@
     text-decoration: none;
 }
 
+/* левое меню (вспомогательное) */
+
 .leftBar {
     background-color: green;
     width: 180px;
@@ -53,11 +60,22 @@
     color: black;
 }
 
+/* основной контент с таблицей ганта 
+// добавить стили для двух кнопок + переход по
+страницам (одностраничник, скрывать / показывать
+элементы)
+*/
+
 .content {
     background-color: blue;
     height: 700px;
     width: 100%;
 }
+
+/* футер 
+//добавить оформление футера (не критично, может
+подождать)
+*/
 
 footer {
     background-color: orange;
