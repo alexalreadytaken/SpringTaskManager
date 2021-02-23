@@ -1,6 +1,9 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.handlers.exceptions.UserNotFoundException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ContentNotFoundException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.UserNotFoundException;
+import com.bestSpringApplication.taskManager.models.enums.Role;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import lombok.NonNull;
@@ -32,7 +35,7 @@ public class StudentSchemasService {
     }
 
     public void setSchemaToStudent(String studentId,String schemaKey){
-        if (!userService.existsUserById(studentId)) throw new UserNotFoundException("Студент не найден");
+        userService.validateExistsAndContainsRole(studentId,Role.STUDENT);
 
         Optional
                 .ofNullable(studentsWithSchemas.get(studentId))
@@ -45,6 +48,30 @@ public class StudentSchemasService {
         studentsWithSchemas.get(studentId).put(schemaKey,clonedMasterSchema);
 
         utrService.prepareFirstTasks(clonedMasterSchema,studentId);
+    }
+
+    // FIXME: 2/19/2021 not beautiful + concat code from utrService
+    public boolean checkTaskForOpen(String taskId,String studentId,String schemaKey){
+        Map<String, StudySchema> studentSchemas = Optional
+                .ofNullable(studentsWithSchemas.get(studentId))
+                .orElseThrow(() -> new ContentNotFoundException("Курсы не найдены"));
+
+        StudySchema schema = Optional.ofNullable(studentSchemas.get(schemaKey))
+                .orElseThrow(() -> new ContentNotFoundException("Курс не назначен"));
+
+        Map<String, Task> tasksMap = schema.getTasksMap();
+        List<Dependency> dependencies = schema.getDependencies();
+
+        Task task = Optional.ofNullable(tasksMap.get(taskId))
+                .orElseThrow(() -> new ContentNotFoundException("Задание не найдено"));
+
+
+        Boolean aBoolean = Optional.ofNullable(tasksMap.get(task.getParentId()))
+                .map(el -> !el.getChildrenId().contains(taskId))
+                .orElse(true);
+
+
+        return true;
     }
 
     public List<Task> studentSchemasOverview(String studentId){

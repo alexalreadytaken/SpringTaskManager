@@ -1,18 +1,16 @@
 package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.enums.Grade;
-import com.bestSpringApplication.taskManager.models.study.implementations.UserTaskRelationImpl;
+import com.bestSpringApplication.taskManager.models.study.classes.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
-import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,7 +26,7 @@ public class UserTaskRelationService {
 
     /*FIXME: 2/18/2021 optimize optimize optimize optimize optimize optimize optimize optimize
             or no? performance 0-16 ms */
-    public boolean prepareFirstTasks(StudySchema schema, String studentId){
+    public void prepareFirstTasks(StudySchema schema, String studentId){
         List<Dependency> dependencies = schema.getDependencies();
         Map<String, Task> tasksMap = schema.getTasksMap();
 
@@ -59,8 +57,11 @@ public class UserTaskRelationService {
                     .build();
             utrRepo.save(userTaskRelation);
         });
-        
-        return true;
+
+    }
+
+    public boolean existsBySchemeIdAndUserIdAndTaskId(String schemeId,String userId,String taskId){
+        return utrRepo.existsBySchemeIdAndUserIdAndTaskId(schemeId, userId, taskId);
     }
 
     public boolean saveRelation(UserTaskRelationImpl relation){

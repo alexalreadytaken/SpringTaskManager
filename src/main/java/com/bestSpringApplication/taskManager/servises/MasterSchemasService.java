@@ -1,23 +1,22 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFoundException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.IllegalXmlFormatException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.ServerException;
-import com.bestSpringApplication.taskManager.handlers.parsers.xml.StudySchemaParser;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ContentNotFoundException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.IllegalFileFormatException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ServerException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
+import com.bestSpringApplication.taskManager.handlers.parsers.SchemaParser;
 import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jdom2.Document;
-import org.jdom2.JDOMException;
-import org.jdom2.input.SAXBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -29,36 +28,33 @@ public class MasterSchemasService {
     @Value("${task.pool.path}")
     private String taskPoolPath;
 
-    @NonNull private final StudySchemaParser studySchemaParser;
+    @NonNull private final SchemaParser schemaParser;
 
     private Map<String, StudySchema> masterSchemas;
 
     @PostConstruct
-    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void init(){
+        initFromXml();
+    }
+
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private void initFromXml() {
         log.trace("Started initialization");
-        masterSchemas = new HashMap<>(1);
+        masterSchemas = new HashMap<>();
         File tasksDir = new File(taskPoolPath);
         if (tasksDir.exists()){
             Optional<File[]> files = Optional
                     .ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
             files.ifPresent(files0 -> {
-                    masterSchemas = new HashMap<>(files0.length*2);
                     Arrays.stream(files0).forEach(file -> {
                         String fileName = file.getName();
                         try {
                             log.trace("getting file '{}' to parse", fileName);
-                            InputStream fileInputStream = new FileInputStream(file);
-                            Document schemaDoc = new SAXBuilder().build(fileInputStream);
-                            StudySchema schemaFromDir = studySchemaParser.parseSchemaXml(schemaDoc);
+                            StudySchema schemaFromDir = schemaParser.parse(file);
                             log.trace("putting schema to Schemas,file:{}", fileName);
                             put(schemaFromDir);
-                        } catch (FileNotFoundException e) {
-                            log.warn("file {} was deleted in initializing time",fileName);
-                        } catch (JDOMException e) {
-                            log.error("error with parse XML:{},file:{}",e.getMessage(), fileName);
-                        } catch (IOException e) {
-                            log.error(e.getMessage());
+                        }  catch (ParseException e) {
+                            log.error("error with parse:{},file:{}",e.getMessage(), fileName);
                         }
                     });
         });
@@ -68,6 +64,7 @@ public class MasterSchemasService {
         }
     }
 
+    // FIXME: 2/20/2021 return only valid files
     public List<String> schemasFileList() {
         log.trace("file list request");
         File file = new File(taskPoolPath);
@@ -97,13 +94,12 @@ public class MasterSchemasService {
     // TODO: 2/17/2021 maybe transactional?
     public void putAndSaveFile(MultipartFile file)  {
         try {
-            Document fileDoc = new SAXBuilder().build(file.getInputStream());
-            StudySchema studySchema = studySchemaParser.parseSchemaXml(fileDoc);
+            StudySchema studySchema = schemaParser.parse(file);
             put(studySchema);
             saveFile(file);
-        }catch (JDOMException ex){
-            log.error("error with XML parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
-            throw new IllegalXmlFormatException("загрузка файла не удалась,проверьте структуру своего XML файла");
+        }catch (ParseException ex){
+            log.error("error with parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
+            throw new IllegalFileFormatException("загрузка файла не удалась,проверьте структуру своего файла");
         } catch (IOException e) {
             log.error("unknown io exception = {}",e.getMessage());
             throw new ServerException("Ошибка при загрузке файла,пожалуйста,повторите позже");

@@ -1,8 +1,8 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 
-import com.bestSpringApplication.taskManager.handlers.exceptions.ContentNotFoundException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.EmailExistsException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ContentNotFoundException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.EmailExistsException;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.servises.UserService;

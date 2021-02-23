@@ -1,11 +1,11 @@
 package com.bestSpringApplication.taskManager.servises;
 
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.UserNotFoundException;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.repos.UserRepo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -36,6 +36,13 @@ public class UserService implements UserDetailsService {
         }catch (UsernameNotFoundException ex){
             return false;
         }
+    }
+
+    public void validateExistsAndContainsRole(String studentId,Role role){
+        Optional.ofNullable(getUserById(studentId)
+                .orElseThrow(()->new UserNotFoundException("Пользователь не найден")))
+                .filter(el->el.getRole()==role)
+                .orElseThrow(()-> new UserNotFoundException("Роль пользователя не соответствует требованиям"));
     }
 
     public int countByRole(Role role){
