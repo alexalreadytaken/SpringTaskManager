@@ -48,6 +48,12 @@
     text-decoration: none;
 }
 
+.sideBarMenu a:hover {
+    color: blue;
+    border-bottom: 1px solid sienna;
+    border-radius: 10px;
+}
+
 /* левое меню (вспомогательное) */
 
 .leftBar {
@@ -74,6 +80,26 @@
     width: 100%;
 }
 
+.nav {
+    height: auto;
+    padding-bottom: 40px;
+}
+
+.nav button:first-child {
+    margin-right: 20px;
+}
+
+.nav button {
+    background-color: blueviolet;
+    font-size: 25px;
+    color: black;
+}
+
+nav button:target {
+    color: red
+}
+
+
 /* футер 
 //добавить оформление футера (не критично, может
 подождать)
@@ -82,4 +108,8 @@
 footer {
     background-color: orange;
     height: 70px;
+}
+
+h1 {
+    text-align: center;
 }
