@@ -5,10 +5,16 @@
     <meta http-equiv="X-UA-Compatble" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>template-front</title>
+    <!-- scripts for bible anychart -->
+    <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-core.min.js" type="text/javascript"></script>
+    <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-gantt.min.js" type="text/javascript"></script>
+    <!-- fontFamily -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Telivigala&display=swap" rel="stylesheet">
+    <!-- styles and favicon (css) -->
     <link rel="shortcut icon" href="../static/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../static/css/style.css">
+    <!-- scripts animation switch schemes in the page -->
     <script src="../static/js/public/animation.js"></script>
 </head>
 <body class="container">
@@ -45,7 +51,7 @@
             <button>btn2</button>
         </div>
         
-        <div id="graphGant"><h1>Content</h1></div>
+        <div id="graph-Gant"></div>
     </div>
 
 </div>
@@ -57,4 +63,8 @@
         <div class="callback"></div>
     </footer>
 </body>
+    <!-- script working schemes graph parse json -> data -->
+    <script src="../static/js/private/helpers_Module.js"></script>
+    <script src="../static/js/private/adminPage.js"></script>
+    <script src="../static/js/private/anyChartMaking.js"></script>
 </html>

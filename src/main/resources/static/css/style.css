@@ -82,7 +82,7 @@
 
 .nav {
     height: auto;
-    padding-bottom: 40px;
+    /* padding-bottom: 40px; */
 }
 
 .nav button:first-child {
@@ -99,6 +99,12 @@ nav button:target {
     color: red
 }
 
+/* Диаграмма ганта стилизация */
+
+#graph-Gant {
+    height: 80%;
+    padding: 40px 40px;
+}
 
 /* футер 
 //добавить оформление футера (не критично, может
