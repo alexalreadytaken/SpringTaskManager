@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.handlers;
 
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.study.classes.TaskImpl;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import org.jdom2.Element;
 
 import java.util.HashMap;
@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class StudyParseHandler {
 
-    public static void addTaskFields(List<Task> tasks, Map<String, String> schemeFields) {
+    public static void addTaskFields(List<AbstractTask> tasks, Map<String, String> schemeFields) {
         tasks.forEach(task -> {
             try {
                 TaskImpl taskImpl = (TaskImpl) task;

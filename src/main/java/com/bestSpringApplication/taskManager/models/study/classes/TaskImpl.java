@@ -28,9 +28,9 @@ public class TaskImpl extends AbstractTask {
     private LocalDateTime endDate;
 
     @Builder
-    public TaskImpl(String id,String name,int duration,String notes,boolean theme,boolean completed,
+    public TaskImpl(String id,String name,int duration,String notes,boolean theme,boolean opened,
                     Map<String,String> fields,String parentId,List<String> childrenId,LocalDateTime startDate,LocalDateTime endDate){
-        super(id, name, duration, notes, theme, completed);
+        super(id, name, duration, notes, theme,opened);
 
         this.childrenId=childrenId;
         this.endDate=endDate;

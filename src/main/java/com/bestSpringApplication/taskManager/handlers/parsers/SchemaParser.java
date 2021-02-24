@@ -1,8 +1,8 @@
 package com.bestSpringApplication.taskManager.handlers.parsers;
 
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
-import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
 
 public interface SchemaParser{
-    StudySchema parse(Object parsable) throws ParseException;
+    AbstractStudySchema parse(Object parsable) throws ParseException;
 }

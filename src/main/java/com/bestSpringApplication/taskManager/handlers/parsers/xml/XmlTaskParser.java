@@ -7,7 +7,6 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.internal.TaskPa
 import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.study.classes.TaskImpl;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -21,14 +20,14 @@ import java.util.*;
 public class XmlTaskParser implements TaskParser {
 
     @Override
-    public List<Task> parse(Object parsable) throws ParseException {
+    public List<AbstractTask> parse(Object parsable) throws ParseException {
         return parseFromXml((Element) parsable);
     }
 
-    public List<Task> parseFromXml(Element element){
+    public List<AbstractTask> parseFromXml(Element element){
         log.trace("Receiving element = {}",element);
         Stack<Element> tasksStack = new Stack<>();
-        List<Task> taskList = new ArrayList<>();
+        List<AbstractTask> taskList = new ArrayList<>();
         tasksStack.push(element);
 
         while (!tasksStack.empty()) {
@@ -37,9 +36,9 @@ public class XmlTaskParser implements TaskParser {
             TaskImpl.TaskImplBuilder taskBuilder = TaskImpl.builder();
 
             String taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"))
-                    .orElseThrow(()-> new TaskParseException("Task id is empty!"));
+                    .orElseThrow(()-> new TaskParseException("AbstractTask id is empty!"));
             String taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"))
-                    .orElseThrow(()->new TaskParseException("Task name is empty!"));
+                    .orElseThrow(()->new TaskParseException("AbstractTask name is empty!"));
 
             Optional<Element> fieldListElem = Optional.ofNullable(taskElemFromStack.getChild("field-list"));
             Optional<Element> taskListElem = Optional.ofNullable(taskElemFromStack.getChild("task-list"));
@@ -82,7 +81,7 @@ public class XmlTaskParser implements TaskParser {
 
             taskList.add(taskBuilder.build());
         }
-        Task removed = taskList.remove(0);
+        AbstractTask removed = taskList.remove(0);
         log.trace("Removing unused zero task = {}",removed);
         // TODO: 2/20/2021 somehow logging returned task list
         return taskList;

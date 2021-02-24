@@ -1,11 +1,11 @@
 package com.bestSpringApplication.taskManager.handlers.parsers;
 
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
 
 import java.util.List;
 
 
 public interface TaskParser{
-    List<Task> parse(Object parsable) throws ParseException;
+    List<AbstractTask> parse(Object parsable) throws ParseException;
 }

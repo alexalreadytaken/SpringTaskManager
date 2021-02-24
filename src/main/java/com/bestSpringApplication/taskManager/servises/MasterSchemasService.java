@@ -5,8 +5,8 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.Illeg
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ServerException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.handlers.parsers.SchemaParser;
-import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class MasterSchemasService {
 
     @NonNull private final SchemaParser schemaParser;
 
-    private Map<String, StudySchema> masterSchemas;
+    private Map<String, AbstractStudySchema> masterSchemas;
 
     @PostConstruct
     private void init(){
@@ -50,7 +50,7 @@ public class MasterSchemasService {
                         String fileName = file.getName();
                         try {
                             log.trace("getting file '{}' to parse", fileName);
-                            StudySchema schemaFromDir = schemaParser.parse(file);
+                            AbstractStudySchema schemaFromDir = schemaParser.parse(file);
                             log.trace("putting schema to Schemas,file:{}", fileName);
                             put(schemaFromDir);
                         }  catch (ParseException e) {
@@ -75,15 +75,15 @@ public class MasterSchemasService {
         return fileNames;
     }
 
-    public List<Task> schemasRootTasks(){
+    public List<AbstractTask> schemasRootTasks(){
         return masterSchemas
                 .values()
                 .stream()
-                .map(StudySchema::getRootTask)
+                .map(AbstractStudySchema::getRootTask)
                 .collect(Collectors.toList());
     }
 
-    public StudySchema schemaByKey(String schemaKey) {
+    public AbstractStudySchema schemaByKey(String schemaKey) {
         return Optional.ofNullable(masterSchemas.get(schemaKey))
                 .orElseThrow(()->{
                     log.error("schema with key = '{}' not found",schemaKey);
@@ -94,7 +94,7 @@ public class MasterSchemasService {
     // TODO: 2/17/2021 maybe transactional?
     public void putAndSaveFile(MultipartFile file)  {
         try {
-            StudySchema studySchema = schemaParser.parse(file);
+            AbstractStudySchema studySchema = schemaParser.parse(file);
             put(studySchema);
             saveFile(file);
         }catch (ParseException ex){
@@ -106,7 +106,7 @@ public class MasterSchemasService {
         }
     }
 
-    public void put(StudySchema studySchema){
+    public void put(AbstractStudySchema studySchema){
         String key = studySchema.getRootTask().getName();
         masterSchemas.put(key,studySchema);
     }

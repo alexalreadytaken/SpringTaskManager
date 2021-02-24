@@ -2,8 +2,8 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.IllegalFileFormatException;
-import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.servises.MasterSchemasService;
 import com.bestSpringApplication.taskManager.servises.StudentSchemasService;
 import com.bestSpringApplication.taskManager.servises.UserTaskRelationService;
@@ -41,7 +41,7 @@ public class SchemasController {
                     "xml","mrp","txt")));
 
     @GetMapping(MASTER_SCHEMA_BY_KEY_MAPPING)
-    public StudySchema masterSchemaByKey(@PathVariable String schemaKey){
+    public AbstractStudySchema masterSchemaByKey(@PathVariable String schemaKey){
         return masterSchemasService.schemaByKey(schemaKey);
     }
 
@@ -66,13 +66,13 @@ public class SchemasController {
     }
 
     @GetMapping(STUDENT_SCHEMAS_MAPPING)
-    public List<Task> studentSchemas(@PathVariable String studentId){
+    public List<AbstractTask> studentSchemas(@PathVariable String studentId){
         return studentSchemasService.studentSchemasOverview(studentId);
     }
 
     // TODO: 2/17/2021 what logging here?
     @GetMapping(MASTER_SCHEMAS_MAPPING)
-    public List<Task> masterSchemasOverview(){
+    public List<AbstractTask> masterSchemasOverview(){
         return masterSchemasService.schemasRootTasks();
     }
 

@@ -6,11 +6,10 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.internal.Schema
 import com.bestSpringApplication.taskManager.handlers.parsers.SchemaParser;
 import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.study.classes.DefaultStudySchemaImpl;
 import com.bestSpringApplication.taskManager.models.study.classes.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.models.study.interfaces.StudySchema;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Task;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +36,7 @@ public class XmlSchemaParser implements SchemaParser {
     @NonNull private final TaskParser taskParser;
 
     @Override
-    public StudySchema parse(Object parsable) throws ParseException {
+    public AbstractStudySchema parse(Object parsable) throws ParseException {
         try {
             SAXBuilder saxBuilder = new SAXBuilder();
             if (parsable instanceof File){
@@ -56,7 +55,7 @@ public class XmlSchemaParser implements SchemaParser {
         }
     }
 
-    private StudySchema parseSchemaXml(Document mainDocument){
+    private AbstractStudySchema parseSchemaXml(Document mainDocument){
         Element rootElement = mainDocument.getRootElement();
         // FIXME: 2/17/2021 somehow use interface
         AbstractStudySchema studySchema = new DefaultStudySchemaImpl();
@@ -72,9 +71,9 @@ public class XmlSchemaParser implements SchemaParser {
 
         Map<String, String> fieldsMap = StudyParseHandler.fieldToMap(fieldListElem, "field", "no", "name");
         List<Dependency> taskDependenciesList = parseDependenciesList(dependencyListElem);
-        List<Task> tasksList = taskParser.parse(taskElem);
+        List<AbstractTask> tasksList = taskParser.parse(taskElem);
         StudyParseHandler.addTaskFields(tasksList,fieldsMap);
-        Map<String, Task> completedTasksMap = new HashMap<>();
+        Map<String, AbstractTask> completedTasksMap = new HashMap<>();
 
         tasksList.forEach(task -> completedTasksMap.put(task.getId(),task));
 
