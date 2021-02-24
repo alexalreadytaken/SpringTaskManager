@@ -24,9 +24,6 @@ public class UserTaskRelationService {
 
     @NonNull private final UserTaskRelationRepo utrRepo;
 
-
-    /*FIXME: 2/18/2021 optimize optimize optimize optimize optimize optimize optimize optimize
-            or no? performance 0-16 ms */
     public void prepareFirstTasks(AbstractStudySchema schema, String studentId){
         List<Dependency> dependencies = schema.getDependencies();
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
@@ -53,6 +50,7 @@ public class UserTaskRelationService {
                 }).collect(Collectors.toList());
 
         openedTasks.forEach(task->{
+            task.setOpened(true);
             UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
                     .schemeId(schema.getRootTask().getName())
                     .finishConfirmed(false)

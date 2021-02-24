@@ -12,10 +12,7 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,22 +33,47 @@ public class StudentSchemasService {
 
     public void setSchemaToStudent(String studentId,String schemaKey){
         userService.validateExistsAndContainsRole(studentId,Role.STUDENT);
-
         Optional
                 .ofNullable(studentsWithSchemas.get(studentId))
                 .orElseGet(() -> studentsWithSchemas.put(studentId, new HashMap<>()));
-
         AbstractStudySchema masterSchema = masterSchemasService.schemaByKey(schemaKey);
-
         AbstractStudySchema clonedMasterSchema = SerializationUtils.clone(masterSchema);
-
         studentsWithSchemas.get(studentId).put(schemaKey,clonedMasterSchema);
-
         utrService.prepareFirstTasks(clonedMasterSchema,studentId);
     }
 
+    // TODO: 24.02.2021
+    public AbstractTask specificTaskOfStudentScheme(String schemaKey,String studentId,String taskId){
+        return null;
+    }
+
+    public List<AbstractTask> allOpenedStudentTasks(String studentId){
+        Collection<AbstractStudySchema> studentSchemas = getStudentSchemasOrThrow(studentId).values();
+
+        List<AbstractTask> tasks = new ArrayList<>();
+
+        studentSchemas.forEach(schema->
+                schema.getTasksMap()
+                        .values()
+                        .stream()
+                        .filter(AbstractTask::isOpened)
+                        .forEach(tasks::add));
+        return tasks;
+    }
+    public List<AbstractTask> openedStudentTasks(String studentId,String schemaKey){
+        return Optional.ofNullable(studentsWithSchemas.get(studentId))
+                .map(schemasMap->Optional.ofNullable(schemasMap.get(schemaKey))
+                        .map(schema->
+                                schema.getTasksMap()
+                                        .values().stream()
+                                        .filter(AbstractTask::isOpened)
+                                        .collect(Collectors.toList()))
+                        .orElseThrow(()->new ContentNotFoundException("Данный курс не назначен")))
+                .orElseThrow(()->new UserNotFoundException("Студент не найден"));
+    }
+
     // FIXME: 2/19/2021 not beautiful + concat code from utrService
-    public boolean checkTaskForOpen(String taskId,String studentId,String schemaKey){
+    /*public boolean checkTaskForOpen(String taskId,String studentId,String schemaKey){
         Map<String, AbstractStudySchema> studentSchemas = Optional
                 .ofNullable(studentsWithSchemas.get(studentId))
                 .orElseThrow(() -> new ContentNotFoundException("Курсы не найдены"));
@@ -67,16 +89,18 @@ public class StudentSchemasService {
 
 
         return true;
-    }
+    }*/
 
     public List<AbstractTask> studentSchemasOverview(String studentId){
-        Map<String, AbstractStudySchema> concreteStudentSchemas = Optional
-                .ofNullable(studentsWithSchemas.get(studentId))
-                .orElseThrow(() -> new UserNotFoundException("Студент не найден"));
-
-        return concreteStudentSchemas
+        return getStudentSchemasOrThrow(studentId)
                 .values().stream()
                 .map(AbstractStudySchema::getRootTask)
                 .collect(Collectors.toList());
+    }
+
+    private Map<String, AbstractStudySchema> getStudentSchemasOrThrow(String studentId) {
+        return Optional
+                .ofNullable(studentsWithSchemas.get(studentId))
+                .orElseThrow(() -> new UserNotFoundException("Студент не найден"));
     }
 }
