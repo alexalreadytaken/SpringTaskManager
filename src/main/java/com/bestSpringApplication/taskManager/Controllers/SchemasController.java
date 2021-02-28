@@ -23,15 +23,15 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SchemasController {
 
-    private final String MASTER_SCHEMAS_MAPPING=                "/master";
-    private final String MASTER_FILES_MAPPING =                 "/master/files";
-    private final String MASTER_FILES_ADD_MAPPING =             "/master/files/add";
-    private final String MASTER_SCHEMA_BY_KEY_MAPPING =         "/master/{schemaKey}";
-    private final String ADD_MASTER_SCHEMA_TO_STUDENT_MAPPING = "/master/{schemaKey}/addTo/{studentId}";
+    private final String MASTER_SCHEMAS =                   "/master";
+    private final String MASTER_FILES =                     "/master/files";
+    private final String MASTER_FILES_ADD =                 "/master/files/add";
+    private final String MASTER_SCHEMA_BY_KEY =             "/master/{schemaKey}";
+    private final String ADD_MASTER_SCHEMA_TO_STUDENT =     "/master/{schemaKey}/addTo/{studentId}";
 
-    private final String STUDENT_SCHEMAS_MAPPING =              "/student/{studentId}";
-    private final String OPEN_TASKS_OF_SCHEMA_FOR_STUDENT =     "/student/{studentId}/{schemaKey}/opened";
-    private final String OPEN_TASKS_OF_SCHEMAS_FOR_STUDENT =    "/student/{studentId}/opened";
+    private final String STUDENT_SCHEMAS =                  "/student/{studentId}";
+    private final String OPEN_TASKS_OF_SCHEMAS_FOR_STUDENT= "/student/{studentId}/opened";
+    private final String OPEN_TASKS_OF_SCHEMA_FOR_STUDENT = "/student/{studentId}/{schemaKey}/opened";
     private final String SPECIFIC_TASK_OF_STUDENT_SCHEME =  "/student/{studentId}/{schemaKey}/{taskId}";
 
 
@@ -46,12 +46,14 @@ public class SchemasController {
 
     @GetMapping(SPECIFIC_TASK_OF_STUDENT_SCHEME)
     public AbstractTask specificTaskOfStudentSchema(@PathVariable String studentId, @PathVariable String taskId, @PathVariable String schemaKey){
+        log.trace("Request for task '{}' in schema '{}' of student '{}'",taskId,schemaKey,studentId);
         return studentSchemasService.specificTaskOfStudentScheme(schemaKey,studentId,taskId);
     }
 
     @GetMapping(OPEN_TASKS_OF_SCHEMAS_FOR_STUDENT)
     public List<AbstractTask> allOpenedStudentTasks(@PathVariable String studentId){
-           return studentSchemasService.allOpenedStudentTasks(studentId);
+        log.trace("Request for all opened student '{}' tasks",studentId);
+        return studentSchemasService.allOpenedStudentTasks(studentId);
     }
 
     @GetMapping(OPEN_TASKS_OF_SCHEMA_FOR_STUDENT)
@@ -59,19 +61,19 @@ public class SchemasController {
         return studentSchemasService.openedStudentTasks(studentId,schemaKey);
     }
 
-    @GetMapping(MASTER_SCHEMA_BY_KEY_MAPPING)
+    @GetMapping(MASTER_SCHEMA_BY_KEY)
     public AbstractStudySchema masterSchemaByKey(@PathVariable String schemaKey){
         return masterSchemasService.schemaByKey(schemaKey);
     }
 
-    @GetMapping(ADD_MASTER_SCHEMA_TO_STUDENT_MAPPING)
+    @GetMapping(ADD_MASTER_SCHEMA_TO_STUDENT)
     @ResponseStatus(HttpStatus.OK)
     public void addSchemaToStudent(@PathVariable String schemaKey, @PathVariable String studentId){
         log.trace("new relation student to schema;schemaKey = {},studentId = {} ",schemaKey,studentId);
         studentSchemasService.setSchemaToStudent(studentId,schemaKey);
     }
 
-    @PostMapping(MASTER_FILES_ADD_MAPPING)
+    @PostMapping(MASTER_FILES_ADD)
     @ResponseStatus(HttpStatus.OK)
     public void newSchema(@RequestParam("file") MultipartFile file){
         String[] fileNameAndType = Objects.requireNonNull(file.getOriginalFilename()).split("\\.", 2);
@@ -84,20 +86,23 @@ public class SchemasController {
         }
     }
 
-    @GetMapping(STUDENT_SCHEMAS_MAPPING)
+    // TODO: 2/28/2021 Json view
+    @GetMapping(STUDENT_SCHEMAS)
     public List<AbstractTask> studentSchemas(@PathVariable String studentId){
         return studentSchemasService.studentSchemasOverview(studentId);
     }
 
-    // TODO: 2/17/2021 what logging here?
-    @GetMapping(MASTER_SCHEMAS_MAPPING)
+    @GetMapping(MASTER_SCHEMAS)
     public List<AbstractTask> masterSchemasOverview(){
+        log.trace("Request for all master schemas");
         return masterSchemasService.schemasRootTasks();
     }
 
-    @GetMapping(MASTER_FILES_MAPPING)
+    @GetMapping(MASTER_FILES)
     public List<String> schemasFileList() {
-        return masterSchemasService.schemasFileList();
+        List<String> fileNames = masterSchemasService.schemasFileList();
+        log.trace("Request for master schemas files, return={}",fileNames);
+        return fileNames;
     }
 }
 

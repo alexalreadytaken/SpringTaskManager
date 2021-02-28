@@ -42,9 +42,18 @@ public class StudentSchemasService {
         utrService.prepareFirstTasks(clonedMasterSchema,studentId);
     }
 
-    // TODO: 24.02.2021
     public AbstractTask specificTaskOfStudentScheme(String schemaKey,String studentId,String taskId){
-        return null;
+        Map<String, AbstractStudySchema> studentSchemas = Optional
+                .ofNullable(studentsWithSchemas.get(studentId))
+                .orElseThrow(() -> new UserNotFoundException("Студент не найднен"));
+
+        AbstractStudySchema schema = Optional
+                .ofNullable(studentSchemas.get(schemaKey))
+                .orElseThrow(() -> new ContentNotFoundException("Курс не назначен или не существует"));
+
+        return Optional
+                .ofNullable(schema.getTasksMap().get(taskId))
+                .orElseThrow(() -> new ContentNotFoundException("Задание не найдено"));
     }
 
     public List<AbstractTask> allOpenedStudentTasks(String studentId){
@@ -72,7 +81,7 @@ public class StudentSchemasService {
                 .orElseThrow(()->new UserNotFoundException("Студент не найден"));
     }
 
-    // FIXME: 2/19/2021 not beautiful + concat code from utrService
+    // FIXME: 2/19/2021
     /*public boolean checkTaskForOpen(String taskId,String studentId,String schemaKey){
         Map<String, AbstractStudySchema> studentSchemas = Optional
                 .ofNullable(studentsWithSchemas.get(studentId))
