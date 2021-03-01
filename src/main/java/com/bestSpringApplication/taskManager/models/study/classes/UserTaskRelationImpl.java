@@ -21,7 +21,7 @@ public class UserTaskRelationImpl implements UserTaskRelation {
     private boolean isFinished;
     private boolean finishConfirmed;
     private String userId;
-    private String schemeId;
+    private String schemaId;
     private String taskId;
     @Convert(converter = GradeConverter.class)
     private Grade grade;

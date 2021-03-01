@@ -32,7 +32,7 @@ public class SchemasController {
     private final String STUDENT_SCHEMAS =                  "/student/{studentId}";
     private final String OPEN_TASKS_OF_SCHEMAS_FOR_STUDENT= "/student/{studentId}/opened";
     private final String OPEN_TASKS_OF_SCHEMA_FOR_STUDENT = "/student/{studentId}/{schemaKey}/opened";
-    private final String SPECIFIC_TASK_OF_STUDENT_SCHEME =  "/student/{studentId}/{schemaKey}/{taskId}";
+    private final String SPECIFIC_TASK_OF_STUDENT_SCHEMA =  "/student/{studentId}/{schemaKey}/{taskId}";
 
 
     @NonNull private final MasterSchemasService masterSchemasService;
@@ -44,10 +44,10 @@ public class SchemasController {
                     "xml","mrp","txt")));
 
 
-    @GetMapping(SPECIFIC_TASK_OF_STUDENT_SCHEME)
+    @GetMapping(SPECIFIC_TASK_OF_STUDENT_SCHEMA)
     public AbstractTask specificTaskOfStudentSchema(@PathVariable String studentId, @PathVariable String taskId, @PathVariable String schemaKey){
         log.trace("Request for task '{}' in schema '{}' of student '{}'",taskId,schemaKey,studentId);
-        return studentSchemasService.specificTaskOfStudentScheme(schemaKey,studentId,taskId);
+        return studentSchemasService.specificTaskOfStudentSchema(schemaKey,studentId,taskId);
     }
 
     @GetMapping(OPEN_TASKS_OF_SCHEMAS_FOR_STUDENT)

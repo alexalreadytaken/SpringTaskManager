@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserTaskRelationRepo extends JpaRepository<UserTaskRelationImpl,Integer> {
-    boolean existsBySchemeIdAndUserIdAndTaskId(String schemeId,String userId,String taskId);
+    boolean existsByschemaIdAndUserIdAndTaskId(String schemaId,String userId,String taskId);
 }

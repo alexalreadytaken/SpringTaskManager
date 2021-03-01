@@ -5,7 +5,6 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.UserN
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.SerializationUtils;
@@ -42,25 +41,22 @@ public class StudentSchemasService {
         utrService.prepareFirstTasks(clonedMasterSchema,studentId);
     }
 
-    public AbstractTask specificTaskOfStudentScheme(String schemaKey,String studentId,String taskId){
-        Map<String, AbstractStudySchema> studentSchemas = Optional
-                .ofNullable(studentsWithSchemas.get(studentId))
-                .orElseThrow(() -> new UserNotFoundException("Студент не найднен"));
-
-        AbstractStudySchema schema = Optional
-                .ofNullable(studentSchemas.get(schemaKey))
-                .orElseThrow(() -> new ContentNotFoundException("Курс не назначен или не существует"));
-
+    public AbstractTask specificTaskOfStudentSchema(String schemaKey, String studentId, String taskId){
+        AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
         return Optional
                 .ofNullable(schema.getTasksMap().get(taskId))
                 .orElseThrow(() -> new ContentNotFoundException("Задание не найдено"));
     }
 
+    public void openTask(String schemaKey,String studentId,String taskId){
+        AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
+        AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
+        utrService.prepareTask(schema,task,studentId);
+    }
+
     public List<AbstractTask> allOpenedStudentTasks(String studentId){
         Collection<AbstractStudySchema> studentSchemas = getStudentSchemasOrThrow(studentId).values();
-
         List<AbstractTask> tasks = new ArrayList<>();
-
         studentSchemas.forEach(schema->
                 schema.getTasksMap()
                         .values()
@@ -81,6 +77,13 @@ public class StudentSchemasService {
                 .orElseThrow(()->new UserNotFoundException("Студент не найден"));
     }
 
+    public List<AbstractTask> studentSchemasOverview(String studentId){
+        return getStudentSchemasOrThrow(studentId)
+                .values().stream()
+                .map(AbstractStudySchema::getRootTask)
+                .collect(Collectors.toList());
+    }
+
     // FIXME: 2/19/2021
     /*public boolean checkTaskForOpen(String taskId,String studentId,String schemaKey){
         Map<String, AbstractStudySchema> studentSchemas = Optional
@@ -99,12 +102,10 @@ public class StudentSchemasService {
 
         return true;
     }*/
-
-    public List<AbstractTask> studentSchemasOverview(String studentId){
-        return getStudentSchemasOrThrow(studentId)
-                .values().stream()
-                .map(AbstractStudySchema::getRootTask)
-                .collect(Collectors.toList());
+    private AbstractStudySchema getStudentSchemaOrThrow(String studentId,String schemaKey){
+        return Optional
+                .ofNullable(getStudentSchemasOrThrow(studentId).get(schemaKey))
+                .orElseThrow(()->new ContentNotFoundException("Курс не назначен или не существует"));
     }
 
     private Map<String, AbstractStudySchema> getStudentSchemasOrThrow(String studentId) {

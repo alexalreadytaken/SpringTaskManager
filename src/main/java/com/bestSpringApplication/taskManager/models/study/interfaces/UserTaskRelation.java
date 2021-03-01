@@ -4,6 +4,6 @@ public interface UserTaskRelation{
 
     String getUserId();
     String getTaskId();
-    String getSchemeId();
+    String getSchemaId();
 
 }

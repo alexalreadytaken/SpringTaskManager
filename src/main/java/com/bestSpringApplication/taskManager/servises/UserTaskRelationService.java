@@ -49,23 +49,24 @@ public class UserTaskRelationService {
                     return parentIsTheme && parentsInDependenciesIsThemes && !task.isTheme();
                 }).collect(Collectors.toList());
 
-        openedTasks.forEach(task->{
-            task.setOpened(true);
-            UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
-                    .schemeId(schema.getRootTask().getName())
-                    .finishConfirmed(false)
-                    .grade(Grade.IN_WORK)
-                    .taskId(task.getId())
-                    .isFinished(false)
-                    .userId(studentId)
-                    .build();
-            utrRepo.save(userTaskRelation);
-        });
-
+        openedTasks.forEach(task-> prepareTask(schema,task,studentId));
     }
 
-    public boolean existsBySchemeIdAndUserIdAndTaskId(String schemeId,String userId,String taskId){
-        return utrRepo.existsBySchemeIdAndUserIdAndTaskId(schemeId, userId, taskId);
+    public void prepareTask(AbstractStudySchema schema,AbstractTask task,String studentId){
+        task.setOpened(true);
+        UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
+                .schemaId(schema.getRootTask().getName())
+                .finishConfirmed(false)
+                .grade(Grade.IN_WORK)
+                .taskId(task.getId())
+                .isFinished(false)
+                .userId(studentId)
+                .build();
+        utrRepo.save(userTaskRelation);
+    }
+
+    public boolean existsBySchemaIdAndUserIdAndTaskId(String schemaId, String userId, String taskId){
+        return utrRepo.existsByschemaIdAndUserIdAndTaskId(schemaId, userId, taskId);
     }
 
     public boolean saveRelation(UserTaskRelationImpl relation){

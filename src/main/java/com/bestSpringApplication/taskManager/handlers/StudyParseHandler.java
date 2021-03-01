@@ -10,14 +10,14 @@ import java.util.Map;
 
 public class StudyParseHandler {
 
-    public static void addTaskFields(List<AbstractTask> tasks, Map<String, String> schemeFields) {
+    public static void addTaskFields(List<AbstractTask> tasks, Map<String, String> schemaFields) {
         tasks.forEach(task -> {
             try {
                 TaskImpl taskImpl = (TaskImpl) task;
                 Map<String, String> taskFields = taskImpl.getFields();
                 for (int i = 0; taskFields!=null && i <  taskFields.size(); i++) {
                     String i0 = String.valueOf(i);
-                    String key = schemeFields.get(i0);
+                    String key = schemaFields.get(i0);
                     String value = taskFields.remove(i0);
                     taskFields.put(key,value);
                 }
