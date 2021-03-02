@@ -6,6 +6,7 @@ import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask
 import com.bestSpringApplication.taskManager.models.study.classes.TaskImpl;
 import com.bestSpringApplication.taskManager.models.study.classes.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -64,9 +65,12 @@ public class UserTaskRelationService {
                 .build();
         utrRepo.save(userTaskRelation);
     }
+    public boolean existsBySchemaIdAndTaskIdAndUserId(String schemaKey, String studentId, String taskId){
+        return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaKey, taskId, studentId);
+    }
 
-    public boolean existsBySchemaIdAndUserIdAndTaskId(String schemaId, String userId, String taskId){
-        return utrRepo.existsByschemaIdAndUserIdAndTaskId(schemaId, userId, taskId);
+    public Optional<UserTaskRelation> getBySchemaIdAndTaskIdAndUserId(String schemaKey, String studentId, String taskId){
+        return utrRepo.getBySchemaIdAndUserIdAndTaskId(schemaKey, taskId, studentId);
     }
 
     public boolean saveRelation(UserTaskRelationImpl relation){

@@ -1,10 +1,13 @@
 package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ContentNotFoundException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.TaskClosedException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.TaskInWorkException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.UserNotFoundException;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.SerializationUtils;
@@ -30,6 +33,30 @@ public class StudentSchemasService {
         studentsWithSchemas = new HashMap<>();
     }
 
+    public boolean canStartTask(String schemaKey, String studentId, String taskId){
+        validateTaskAlreadyInWork(schemaKey, studentId, taskId);
+
+        AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
+
+        List<Dependency> dependencies = schema.getDependencies();
+
+        AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
+
+        return false;
+    }
+
+    public void forceStartTask(String schemaKey, String studentId, String taskId){
+        startTask(schemaKey, studentId, taskId);
+    }
+
+    public void startTaskWithValidation(String schemaKey, String studentId, String taskId){
+        if (canStartTask(schemaKey, studentId, taskId)){
+            startTask(schemaKey, studentId, taskId);
+        }else {
+            throw new TaskClosedException("Задание невозможно начать (Перепеши текст ошибки)");
+        }
+    }
+
     public void setSchemaToStudent(String studentId,String schemaKey){
         userService.validateExistsAndContainsRole(studentId,Role.STUDENT);
         Optional
@@ -48,12 +75,6 @@ public class StudentSchemasService {
                 .orElseThrow(() -> new ContentNotFoundException("Задание не найдено"));
     }
 
-    public void openTask(String schemaKey,String studentId,String taskId){
-        AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
-        AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
-        utrService.prepareTask(schema,task,studentId);
-    }
-
     public List<AbstractTask> allOpenedStudentTasks(String studentId){
         Collection<AbstractStudySchema> studentSchemas = getStudentSchemasOrThrow(studentId).values();
         List<AbstractTask> tasks = new ArrayList<>();
@@ -65,6 +86,7 @@ public class StudentSchemasService {
                         .forEach(tasks::add));
         return tasks;
     }
+
     public List<AbstractTask> openedStudentTasks(String studentId,String schemaKey){
         return Optional.ofNullable(studentsWithSchemas.get(studentId))
                 .map(schemasMap->Optional.ofNullable(schemasMap.get(schemaKey))
@@ -102,15 +124,30 @@ public class StudentSchemasService {
 
         return true;
     }*/
-    private AbstractStudySchema getStudentSchemaOrThrow(String studentId,String schemaKey){
+
+    public AbstractStudySchema getStudentSchemaOrThrow(String studentId,String schemaKey){
         return Optional
                 .ofNullable(getStudentSchemasOrThrow(studentId).get(schemaKey))
                 .orElseThrow(()->new ContentNotFoundException("Курс не назначен или не существует"));
     }
 
-    private Map<String, AbstractStudySchema> getStudentSchemasOrThrow(String studentId) {
+    public Map<String, AbstractStudySchema> getStudentSchemasOrThrow(String studentId) {
         return Optional
                 .ofNullable(studentsWithSchemas.get(studentId))
                 .orElseThrow(() -> new UserNotFoundException("Студент не найден"));
+    }
+
+    private void startTask(String schemaKey, String studentId, String taskId) {
+        validateTaskAlreadyInWork(schemaKey, studentId, taskId);
+
+        AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
+        AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
+        utrService.prepareTask(schema,task,studentId);
+    }
+
+    private void validateTaskAlreadyInWork(String schemaKey, String studentId, String taskId){
+        if (utrService.existsBySchemaIdAndTaskIdAndUserId(schemaKey, studentId, taskId)) {
+            throw new TaskInWorkException("Задание уже начато");
+        }
     }
 }

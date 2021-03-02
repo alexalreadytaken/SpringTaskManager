@@ -19,6 +19,17 @@ public class RestExceptionsHandler{
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static ErrorMessage userNotFound(HttpServletRequest request,TaskClosedException ex){
+        return ErrorMessageFactory.newErrorMsg(ex,request);
+    }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static ErrorMessage userNotFound(HttpServletRequest request, TaskInWorkException ex){
+        return ErrorMessageFactory.newErrorMsg(ex,request);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public static ErrorMessage userNotFound(HttpServletRequest request,UserNotFoundException ex){
         return ErrorMessageFactory.newErrorMsg(ex,request);
     }
