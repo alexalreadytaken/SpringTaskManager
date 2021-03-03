@@ -33,6 +33,7 @@ public class StudentSchemasService {
         studentsWithSchemas = new HashMap<>();
     }
 
+    // TODO: 3/2/2021
     public boolean canStartTask(String schemaKey, String studentId, String taskId){
         validateTaskAlreadyInWork(schemaKey, studentId, taskId);
 

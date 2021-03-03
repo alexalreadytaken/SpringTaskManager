@@ -21,7 +21,6 @@ public class StaticResolver implements WebMvcConfigurer {
         registry.addViewController("/login").setViewName("login");
         registry.addViewController("/admin").setViewName("admin");
         registry.addViewController("/home").setViewName("home");
-        registry.addViewController("/study").setViewName("study");
     }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {

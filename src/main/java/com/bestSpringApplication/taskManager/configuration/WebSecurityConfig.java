@@ -1,6 +1,7 @@
 package com.bestSpringApplication.taskManager.configuration;
 
 
+import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +33,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .csrf().disable()
                     .authorizeRequests()
                     .antMatchers(permittedMappings).permitAll()
-//                    .antMatchers("/schemas/master/**","/js/private/**")
+//                    .antMatchers("/schemas/**","/js/private/**")
 //                        .hasAnyAuthority(Role.ADMIN.getStrValue(),Role.TEACHER.getStrValue())
+//                    .antMatchers("/study/**")
+//                        .hasAuthority(Role.STUDENT.getStrValue())
                     .anyRequest()
                     .authenticated()
                 .and()

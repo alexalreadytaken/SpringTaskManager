@@ -21,7 +21,7 @@ import java.util.*;
 @CrossOrigin
 @Slf4j
 @RequiredArgsConstructor
-public class SchemasController {
+public class AdminSchemasController {
 
     private final String MASTER_SCHEMAS =                   "/master";
     private final String MASTER_FILES =                     "/master/files";
@@ -37,7 +37,6 @@ public class SchemasController {
 
     @NonNull private final MasterSchemasService masterSchemasService;
     @NonNull private final StudentSchemasService studentSchemasService;
-    @NonNull private final UserTaskRelationService utrService;
 
     private static final Set<String> confirmedFileTypes =
             Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
