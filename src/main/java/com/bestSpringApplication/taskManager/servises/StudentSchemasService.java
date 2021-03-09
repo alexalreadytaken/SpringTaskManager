@@ -1,9 +1,6 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ContentNotFoundException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.TaskClosedException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.TaskInWorkException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.UserNotFoundException;
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.*;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
@@ -35,15 +32,17 @@ public class StudentSchemasService {
 
     // TODO: 3/2/2021
     public boolean canStartTask(String schemaKey, String studentId, String taskId){
-        validateTaskAlreadyInWork(schemaKey, studentId, taskId);
+        if (utrService.existsBySchemaIdAndTaskIdAndUserId(schemaKey,taskId,studentId)){
+            return false;
+        }else {
+            AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
 
-        AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
+            List<Dependency> dependencies = schema.getDependencies();
 
-        List<Dependency> dependencies = schema.getDependencies();
-
-        AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
-
-        return false;
+            AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
+            //todo todo todo todo  todo todo todo todo
+            return true;
+        }
     }
 
     public void forceStartTask(String schemaKey, String studentId, String taskId){
@@ -139,16 +138,12 @@ public class StudentSchemasService {
     }
 
     private void startTask(String schemaKey, String studentId, String taskId) {
-        validateTaskAlreadyInWork(schemaKey, studentId, taskId);
-
         AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
         AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
         utrService.prepareTask(schema,task,studentId);
     }
-
-    private void validateTaskAlreadyInWork(String schemaKey, String studentId, String taskId){
-        if (utrService.existsBySchemaIdAndTaskIdAndUserId(schemaKey, studentId, taskId)) {
-            throw new TaskInWorkException("Задание уже начато");
-        }
-    }
 }
+
+
+
+

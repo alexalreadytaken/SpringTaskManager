@@ -1,5 +1,6 @@
 package com.bestSpringApplication.taskManager.servises;
 
+import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.TaskInWorkException;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
@@ -54,17 +55,25 @@ public class UserTaskRelationService {
     }
 
     public void prepareTask(AbstractStudySchema schema,AbstractTask task,String studentId){
-        task.setOpened(true);
-        UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
-                .schemaId(schema.getRootTask().getName())
-                .finishConfirmed(false)
-                .grade(Grade.IN_WORK)
-                .taskId(task.getId())
-                .isFinished(false)
-                .userId(studentId)
-                .build();
-        utrRepo.save(userTaskRelation);
+        String schemaKey = schema.getUniqueKey();
+        String taskId = task.getId();
+
+        if (existsBySchemaIdAndTaskIdAndUserId(schemaKey,studentId,taskId)){
+            throw new TaskInWorkException("Задание уже начато");
+        }else {
+            task.setOpened(true);
+            UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
+                    .schemaId(schema.getUniqueKey())
+                    .finishConfirmed(false)
+                    .grade(Grade.IN_WORK)
+                    .taskId(task.getId())
+                    .isFinished(false)
+                    .userId(studentId)
+                    .build();
+            utrRepo.save(userTaskRelation);
+        }
     }
+
     public boolean existsBySchemaIdAndTaskIdAndUserId(String schemaKey, String studentId, String taskId){
         return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaKey, taskId, studentId);
     }

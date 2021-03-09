@@ -6,7 +6,6 @@ import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStud
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.servises.MasterSchemasService;
 import com.bestSpringApplication.taskManager.servises.StudentSchemasService;
-import com.bestSpringApplication.taskManager.servises.UserTaskRelationService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,7 +84,6 @@ public class AdminSchemasController {
         }
     }
 
-    // TODO: 2/28/2021 Json view
     @GetMapping(STUDENT_SCHEMAS)
     public List<AbstractTask> studentSchemas(@PathVariable String studentId){
         return studentSchemasService.studentSchemasOverview(studentId);

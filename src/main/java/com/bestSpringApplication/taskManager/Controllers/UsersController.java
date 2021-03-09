@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+// TODO: 3/3/2021 REMOVE
 @RestController
 @RequiredArgsConstructor
 public class UsersController{
@@ -56,7 +58,6 @@ public class UsersController{
 
     @DeleteMapping(USER_BY_ID_MAPPING)
     public Map<String,Boolean> deleteUser(@PathVariable String id){
-        //fixme
         Map<String,Boolean> response = new HashMap<>();
         try {
             User user = findUserById(id);

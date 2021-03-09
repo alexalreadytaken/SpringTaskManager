@@ -37,6 +37,7 @@ public class MasterSchemasService {
         initFromXml();
     }
 
+    // TODO: 3/3/2021 HOW DELETE F*****G FILE
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initFromXml() {
         log.trace("Started initialization");
@@ -45,21 +46,19 @@ public class MasterSchemasService {
         if (tasksDir.exists()){
             Optional<File[]> files = Optional
                     .ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
-            files.ifPresent(files0 -> {
-                    Arrays.stream(files0).forEach(file -> {
-                        String fileName = file.getName();
-                        try {
-                            log.trace("getting file '{}' to parse", fileName);
-                            AbstractStudySchema schemaFromDir = schemaParser.parse(file);
-                            log.trace("putting schema to Schemas,file:{}", fileName);
-                            put(schemaFromDir);
-                        }  catch (ParseException e) {
-                            log.error("error with parse:{},file:{}",e.getMessage(), fileName);
-                        }
-                    });
-        });
+            files.ifPresent(files0 -> Arrays.stream(files0).forEach(file -> {
+                String fileName = file.getName();
+                try {
+                    log.trace("getting file '{}' to parse", fileName);
+                    AbstractStudySchema schemaFromDir = schemaParser.parse(file);
+                    log.trace("putting schema to Schemas,file:{}", fileName);
+                    put(schemaFromDir);
+                }  catch (ParseException e) {
+                    log.error("error with parse:{}, file:{}",e.getMessage(), fileName);
+                }
+            }));
         }else {
-            log.warn("directory '{}' not found, creating...",taskPoolPath);
+            log.warn("directory '{}' not found, creating...", taskPoolPath);
             tasksDir.mkdir();
         }
     }
@@ -68,7 +67,8 @@ public class MasterSchemasService {
     public List<String> schemasFileList() {
         log.trace("file list request");
         File file = new File(taskPoolPath);
-        Optional<File[]> filesOpt = Optional.ofNullable(file.listFiles(File::isFile));
+        Optional<File[]> filesOpt = Optional
+                .ofNullable(file.listFiles(file0->!file0.isDirectory()&&file0.canExecute()));
         List<String> fileNames = new ArrayList<>();
         filesOpt.ifPresent(files-> Arrays.stream(files).map(File::getName).forEach(fileNames::add));
         log.trace("return file list = {}",fileNames);
@@ -107,7 +107,7 @@ public class MasterSchemasService {
     }
 
     public void put(AbstractStudySchema studySchema){
-        String key = studySchema.getRootTask().getName();
+        String key = studySchema.getUniqueKey();
         masterSchemas.put(key,studySchema);
     }
 

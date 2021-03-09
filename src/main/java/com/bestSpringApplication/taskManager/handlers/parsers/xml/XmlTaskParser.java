@@ -14,6 +14,7 @@ import org.jdom2.Element;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 @Slf4j
@@ -83,7 +84,7 @@ public class XmlTaskParser implements TaskParser {
         }
         AbstractTask removed = taskList.remove(0);
         log.trace("Removing unused zero task = {}",removed);
-        // TODO: 2/20/2021 somehow logging returned task list
+        log.trace("Returning tasks list = {}",taskList.stream().map(AbstractTask::getName).collect(Collectors.toList()));
         return taskList;
     }
 

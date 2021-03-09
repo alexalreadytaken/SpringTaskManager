@@ -57,7 +57,7 @@ public class XmlSchemaParser implements SchemaParser {
 
     private AbstractStudySchema parseSchemaXml(Document mainDocument){
         Element rootElement = mainDocument.getRootElement();
-        // FIXME: 2/17/2021 somehow use interface
+
         AbstractStudySchema studySchema = new DefaultStudySchemaImpl();
 
         log.trace("Starting parse root element:\n{}",rootElement.getContent());

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 public class TaskImpl extends AbstractTask {
 
     private Map<String,String> fields;
@@ -38,7 +40,6 @@ public class TaskImpl extends AbstractTask {
         this.parentId=parentId;
         this.startDate=startDate;
     }
-
 
 }
 
