@@ -30,9 +30,20 @@ public class StudentSchemasService {
         studentsWithSchemas = new HashMap<>();
     }
 
+    public void setSchemaToStudent(String studentId,String schemaKey){
+        userService.validateExistsAndContainsRole(studentId,Role.STUDENT);
+        Optional
+                .ofNullable(studentsWithSchemas.get(studentId))
+                .orElseGet(() -> studentsWithSchemas.put(studentId, new HashMap<>()));
+        AbstractStudySchema masterSchema = masterSchemasService.schemaByKey(schemaKey);
+        AbstractStudySchema clonedMasterSchema = SerializationUtils.clone(masterSchema);
+        studentsWithSchemas.get(studentId).put(schemaKey,clonedMasterSchema);
+        utrService.prepareFirstTasks(clonedMasterSchema,studentId);
+    }
+
     // TODO: 3/2/2021
     public boolean canStartTask(String schemaKey, String studentId, String taskId){
-        if (utrService.existsBySchemaIdAndTaskIdAndUserId(schemaKey,taskId,studentId)){
+        if (utrService.existsBySchemaIdAndUserIdAndTaskId(schemaKey,taskId,studentId)){
             return false;
         }else {
             AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
@@ -41,7 +52,7 @@ public class StudentSchemasService {
 
             AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
             //todo todo todo todo  todo todo todo todo
-            return true;
+            return false;
         }
     }
 
@@ -55,17 +66,6 @@ public class StudentSchemasService {
         }else {
             throw new TaskClosedException("Задание невозможно начать (Перепеши текст ошибки)");
         }
-    }
-
-    public void setSchemaToStudent(String studentId,String schemaKey){
-        userService.validateExistsAndContainsRole(studentId,Role.STUDENT);
-        Optional
-                .ofNullable(studentsWithSchemas.get(studentId))
-                .orElseGet(() -> studentsWithSchemas.put(studentId, new HashMap<>()));
-        AbstractStudySchema masterSchema = masterSchemasService.schemaByKey(schemaKey);
-        AbstractStudySchema clonedMasterSchema = SerializationUtils.clone(masterSchema);
-        studentsWithSchemas.get(studentId).put(schemaKey,clonedMasterSchema);
-        utrService.prepareFirstTasks(clonedMasterSchema,studentId);
     }
 
     public AbstractTask specificTaskOfStudentSchema(String schemaKey, String studentId, String taskId){

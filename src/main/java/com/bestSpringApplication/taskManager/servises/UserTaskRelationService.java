@@ -1,13 +1,11 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.TaskInWorkException;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.study.classes.TaskImpl;
 import com.bestSpringApplication.taskManager.models.study.classes.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.models.study.interfaces.UserTaskRelation;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -55,31 +53,20 @@ public class UserTaskRelationService {
     }
 
     public void prepareTask(AbstractStudySchema schema,AbstractTask task,String studentId){
-        String schemaKey = schema.getUniqueKey();
-        String taskId = task.getId();
-
-        if (existsBySchemaIdAndTaskIdAndUserId(schemaKey,studentId,taskId)){
-            throw new TaskInWorkException("Задание уже начато");
-        }else {
-            task.setOpened(true);
-            UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
-                    .schemaId(schema.getUniqueKey())
-                    .finishConfirmed(false)
-                    .grade(Grade.IN_WORK)
-                    .taskId(task.getId())
-                    .isFinished(false)
-                    .userId(studentId)
-                    .build();
-            utrRepo.save(userTaskRelation);
-        }
+        task.setOpened(true);
+        UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
+                .schemaId(schema.getRootTask().getName())
+                .finishConfirmed(false)
+                .grade(Grade.IN_WORK)
+                .taskId(task.getId())
+                .isFinished(false)
+                .userId(studentId)
+                .build();
+        utrRepo.save(userTaskRelation);
     }
 
-    public boolean existsBySchemaIdAndTaskIdAndUserId(String schemaKey, String studentId, String taskId){
-        return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaKey, taskId, studentId);
-    }
-
-    public Optional<UserTaskRelation> getBySchemaIdAndTaskIdAndUserId(String schemaKey, String studentId, String taskId){
-        return utrRepo.getBySchemaIdAndUserIdAndTaskId(schemaKey, taskId, studentId);
+    public boolean existsBySchemaIdAndUserIdAndTaskId(String schemaId, String userId, String taskId){
+        return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaId, userId, taskId);
     }
 
     public boolean saveRelation(UserTaskRelationImpl relation){
