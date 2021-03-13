@@ -9,7 +9,6 @@ import com.bestSpringApplication.taskManager.servises.StudentSchemasService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,10 +45,11 @@ public class AdminSchemasController {
 
     @GetMapping(OPEN_TASK_FOR_STUDENT)
     @ResponseStatus(HttpStatus.OK)
-    public void openTaskForStudent(@RequestParam(required = false,name = "force",defaultValue = "false") boolean forceOpen,
+    public void openTaskForStudent(@RequestParam(required = false,name = "force",defaultValue = "false") String forceOpenQuery,
                                    @PathVariable String schemaKey,
                                    @PathVariable String studentId,
                                    @PathVariable String taskId){
+        boolean forceOpen = Boolean.parseBoolean(forceOpenQuery);
         if (forceOpen){
             studentSchemasService.forceStartTask(schemaKey, studentId, taskId);
         }else{
@@ -103,7 +103,7 @@ public class AdminSchemasController {
 
     @GetMapping(STUDENT_SCHEMAS)
     public List<AbstractTask> studentSchemas(@PathVariable String studentId){
-        return studentSchemasService.studentSchemasOverview(studentId);
+        return studentSchemasService.studentSchemasRootTasks(studentId);
     }
 
     @GetMapping(MASTER_SCHEMAS)

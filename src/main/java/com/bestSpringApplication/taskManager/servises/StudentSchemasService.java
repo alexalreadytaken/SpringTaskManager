@@ -99,31 +99,12 @@ public class StudentSchemasService {
                 .orElseThrow(()->new UserNotFoundException("Студент не найден"));
     }
 
-    public List<AbstractTask> studentSchemasOverview(String studentId){
+    public List<AbstractTask> studentSchemasRootTasks(String studentId){
         return getStudentSchemasOrThrow(studentId)
                 .values().stream()
                 .map(AbstractStudySchema::getRootTask)
                 .collect(Collectors.toList());
     }
-
-    // FIXME: 2/19/2021
-    /*public boolean checkTaskForOpen(String taskId,String studentId,String schemaKey){
-        Map<String, AbstractStudySchema> studentSchemas = Optional
-                .ofNullable(studentsWithSchemas.get(studentId))
-                .orElseThrow(() -> new ContentNotFoundException("Курсы не найдены"));
-
-        AbstractStudySchema schema = Optional.ofNullable(studentSchemas.get(schemaKey))
-                .orElseThrow(() -> new ContentNotFoundException("Курс не назначен"));
-
-        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
-        List<Dependency> dependencies = schema.getDependencies();
-
-        AbstractTask task = Optional.ofNullable(tasksMap.get(taskId))
-                .orElseThrow(() -> new ContentNotFoundException("Задание не найдено"));
-
-
-        return true;
-    }*/
 
     public AbstractStudySchema getStudentSchemaOrThrow(String studentId,String schemaKey){
         return Optional
@@ -132,9 +113,10 @@ public class StudentSchemasService {
     }
 
     public Map<String, AbstractStudySchema> getStudentSchemasOrThrow(String studentId) {
+        userService.validateExistsAndContainsRole(studentId,Role.STUDENT);
         return Optional
                 .ofNullable(studentsWithSchemas.get(studentId))
-                .orElseThrow(() -> new UserNotFoundException("Студент не найден"));
+                .orElseThrow(() -> new UserNotFoundException("Курсы не назначены"));
     }
 
     private void startTask(String schemaKey, String studentId, String taskId) {

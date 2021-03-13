@@ -16,7 +16,7 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class TaskImpl extends AbstractTask {
+public class HierarchicalTaskImpl extends AbstractTask {
 
     private Map<String,String> fields;
     private String parentId;
@@ -30,8 +30,8 @@ public class TaskImpl extends AbstractTask {
     private LocalDateTime endDate;
 
     @Builder
-    public TaskImpl(String id,String name,int duration,String notes,boolean theme,boolean opened,
-                    Map<String,String> fields,String parentId,List<String> childrenId,LocalDateTime startDate,LocalDateTime endDate){
+    public HierarchicalTaskImpl(String id, String name, int duration, String notes, boolean theme, boolean opened,
+                                Map<String,String> fields, String parentId, List<String> childrenId, LocalDateTime startDate, LocalDateTime endDate){
         super(id, name, duration, notes, theme,opened);
 
         this.childrenId=childrenId;

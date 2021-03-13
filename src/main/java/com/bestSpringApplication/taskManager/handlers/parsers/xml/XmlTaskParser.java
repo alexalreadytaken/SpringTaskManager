@@ -6,7 +6,7 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseE
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.TaskParseException;
 import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.study.classes.TaskImpl;
+import com.bestSpringApplication.taskManager.models.study.classes.HierarchicalTaskImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -34,7 +34,7 @@ public class XmlTaskParser implements TaskParser {
         while (!tasksStack.empty()) {
             Element taskElemFromStack = tasksStack.pop();
 
-            TaskImpl.TaskImplBuilder taskBuilder = TaskImpl.builder();
+            HierarchicalTaskImpl.HierarchicalTaskImplBuilder taskBuilder = HierarchicalTaskImpl.builder();
 
             String taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"))
                     .orElseThrow(()-> new TaskParseException("AbstractTask id is empty!"));
@@ -53,7 +53,7 @@ public class XmlTaskParser implements TaskParser {
             List<String> childrenId = new ArrayList<>();
 
             fieldListElem.ifPresent(fieldList ->
-                    taskBuilder.fields(StudyParseHandler.fieldToMap(fieldList, "field","field-no", "field-value"))
+                    taskBuilder.fields(StudyParseHandler.xmlFieldToMap(fieldList, "field","field-no", "field-value"))
             );
             taskNotesElem.ifPresent(notes ->
                     taskBuilder.notes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))

@@ -3,7 +3,7 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.study.classes.TaskImpl;
+import com.bestSpringApplication.taskManager.models.study.classes.HierarchicalTaskImpl;
 import com.bestSpringApplication.taskManager.models.study.classes.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
@@ -28,28 +28,13 @@ public class UserTaskRelationService {
         List<Dependency> dependencies = schema.getDependencies();
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
 
-        List<AbstractTask> openedTasks = tasksMap
-                .values().stream()
-                .filter(task -> {
-                    boolean parentIsTheme = true;
+        List<AbstractTask> availableTasks = tasksMap
+                .values()
+                .stream()
+                .filter(task -> firstsCheckTaskForOpen(dependencies, tasksMap, task))
+                .collect(Collectors.toList());
 
-                    if (task instanceof TaskImpl){
-                        TaskImpl task0 = (TaskImpl) task;
-                        parentIsTheme = Optional
-                                .ofNullable(tasksMap.get(task0.getParentId()))
-                                .map(AbstractTask::isTheme)
-                                .orElse(true);
-                    }
-
-                    boolean parentsInDependenciesIsThemes = dependencies.stream()
-                            .filter(depend -> depend.getId1().equals(task.getId()))
-                            .map(depend -> tasksMap.get(depend.getId0()))
-                            .allMatch(AbstractTask::isTheme);
-
-                    return parentIsTheme && parentsInDependenciesIsThemes && !task.isTheme();
-                }).collect(Collectors.toList());
-
-        openedTasks.forEach(task-> prepareTask(schema,task,studentId));
+        availableTasks.forEach(task-> prepareTask(schema,task,studentId));
     }
 
     public void prepareTask(AbstractStudySchema schema,AbstractTask task,String studentId){
@@ -96,6 +81,21 @@ public class UserTaskRelationService {
         }
     }
 
+    private boolean firstsCheckTaskForOpen(List<Dependency> dependencies, Map<String, AbstractTask> tasksMap, AbstractTask task) {
+        boolean parentIsTheme = true;
+        if (task instanceof HierarchicalTaskImpl){
+            HierarchicalTaskImpl task0 = (HierarchicalTaskImpl) task;
+            parentIsTheme = Optional
+                    .ofNullable(tasksMap.get(task0.getParentId()))
+                    .map(AbstractTask::isTheme)
+                    .orElse(true);
+        }
+        boolean parentsInDependenciesIsThemes = dependencies.stream()
+                .filter(depend -> depend.getId1().equals(task.getId()))
+                .map(depend -> tasksMap.get(depend.getId0()))
+                .allMatch(AbstractTask::isTheme);
+        return parentIsTheme && parentsInDependenciesIsThemes && !task.isTheme();
+    }
 }
 
 

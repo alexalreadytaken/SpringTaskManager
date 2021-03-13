@@ -4,7 +4,6 @@ import com.bestSpringApplication.taskManager.handlers.StudyParseHandler;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.SchemaParseException;
 import com.bestSpringApplication.taskManager.handlers.parsers.SchemaParser;
-import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.study.classes.DefaultStudySchemaImpl;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class XmlSchemaParser implements SchemaParser {
 
-    @NonNull private final TaskParser taskParser;
+    @NonNull private final XmlTaskParser taskParser;
 
     @Override
     public AbstractStudySchema parse(Object parsable) throws ParseException {
@@ -69,7 +68,7 @@ public class XmlSchemaParser implements SchemaParser {
         Element taskElem = Optional.ofNullable(rootElement.getChild("task"))
                 .orElseThrow(()-> new SchemaParseException("taskElement is empty!"));
 
-        Map<String, String> fieldsMap = StudyParseHandler.fieldToMap(fieldListElem, "field", "no", "name");
+        Map<String, String> fieldsMap = StudyParseHandler.xmlFieldToMap(fieldListElem, "field", "no", "name");
         List<Dependency> taskDependenciesList = parseDependenciesList(dependencyListElem);
         List<AbstractTask> tasksList = taskParser.parse(taskElem);
         StudyParseHandler.addTaskFields(tasksList,fieldsMap);

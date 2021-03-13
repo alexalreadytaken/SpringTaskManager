@@ -23,14 +23,14 @@ public class StudentSchemasController {
 
     @NonNull private final StudentSchemasService schemasService;
 
-    private final String OPENED_SCHEMAS = "/schemas/opened";
+    private final String OPENED_SCHEMAS =       "/schemas/opened";
     private final String OPENED_SCHEMAS_TASKS = "/schemas/{schemaKey}/opened";
-    private final String ALL_OPENED_TASKS = "/tasks/opened";
+    private final String ALL_OPENED_TASKS =     "/tasks/opened";
 
     @GetMapping(OPENED_SCHEMAS)
     public List<AbstractTask> openedSchemas(@AuthenticationPrincipal User user){
         String studentId = String.valueOf(user.getId());
-        return schemasService.studentSchemasOverview(studentId);
+        return schemasService.studentSchemasRootTasks(studentId);
     }
 
     @GetMapping(OPENED_SCHEMAS_TASKS)

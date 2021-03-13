@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class StaticResolver implements WebMvcConfigurer {
 
-    @Value("${task.pool.path}")
+    @Value("${xml.task.pool.path}")
     private String taskPoolPath;
 
     @Override

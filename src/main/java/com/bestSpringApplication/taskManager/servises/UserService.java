@@ -45,10 +45,6 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(()-> new UserNotFoundException("Роль пользователя не соответствует требованиям"));
     }
 
-    public int countByRole(Role role){
-        return userRepo.countByRole(role);
-    }
-
     public void saveUser(User user){
         String password = user.getPassword();
         String encodedPass = encoder.encode(password);

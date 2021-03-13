@@ -1,5 +1,6 @@
 package com.bestSpringApplication.taskManager.servises;
 
+import com.bestSpringApplication.taskManager.handlers.FileDeleter;
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ServerException;
@@ -25,8 +26,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class MasterSchemasService {
 
-    @Value("${task.pool.path}")
-    private String taskPoolPath;
+    @Value("${xml.task.pool.path}")
+    private String xmlTaskPoolPath;
 
     @NonNull private final SchemaParser schemaParser;
 
@@ -34,15 +35,14 @@ public class MasterSchemasService {
 
     @PostConstruct
     private void init(){
+        masterSchemas = new HashMap<>();
         initFromXml();
     }
 
-    // TODO: 3/3/2021 HOW DELETE F*****G FILE
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void initFromXml() {
         log.trace("Started initialization");
-        masterSchemas = new HashMap<>();
-        File tasksDir = new File(taskPoolPath);
+        File tasksDir = new File(xmlTaskPoolPath);
         if (tasksDir.exists()){
             Optional<File[]> files = Optional
                     .ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
@@ -51,26 +51,31 @@ public class MasterSchemasService {
                 try {
                     log.trace("getting file '{}' to parse", fileName);
                     AbstractStudySchema schemaFromDir = schemaParser.parse(file);
-                    log.trace("putting schema to Schemas,file:{}", fileName);
+                    log.trace("putting schema to map,file:{}", fileName);
                     put(schemaFromDir);
                 }  catch (ParseException e) {
-                    log.error("error with parse:{}, file:{}",e.getMessage(), fileName);
+                    log.error("error with parse:{}",e.getMessage());
+                    log.error("deleting file '{}' ",fileName);
+                    //fixme later
+                    FileDeleter.deleteAsync(file,2000);
                 }
             }));
         }else {
-            log.warn("directory '{}' not found, creating...", taskPoolPath);
+            log.warn("directory '{}' not found, creating...", xmlTaskPoolPath);
             tasksDir.mkdir();
         }
     }
 
-    // FIXME: 2/20/2021 return only valid files
     public List<String> schemasFileList() {
         log.trace("file list request");
-        File file = new File(taskPoolPath);
+        File file = new File(xmlTaskPoolPath);
         Optional<File[]> filesOpt = Optional
-                .ofNullable(file.listFiles(file0->!file0.isDirectory()&&file0.canExecute()));
+                .ofNullable(file.listFiles(file0->!file0.isDirectory()));
         List<String> fileNames = new ArrayList<>();
-        filesOpt.ifPresent(files-> Arrays.stream(files).map(File::getName).forEach(fileNames::add));
+        filesOpt
+                .ifPresent(files-> Arrays.stream(files)
+                .map(File::getName)
+                .forEach(fileNames::add));
         log.trace("return file list = {}",fileNames);
         return fileNames;
     }
@@ -91,28 +96,31 @@ public class MasterSchemasService {
                 });
     }
 
-    // TODO: 2/17/2021 maybe transactional?
     public void putAndSaveFile(MultipartFile file)  {
+        //костыльно
+        AbstractStudySchema studySchema = null;
         try {
-            AbstractStudySchema studySchema = schemaParser.parse(file);
+            studySchema = schemaParser.parse(file);
             put(studySchema);
             saveFile(file);
         }catch (ParseException ex){
             log.error("error with parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
             throw new IllegalFileFormatException("загрузка файла не удалась,проверьте структуру своего файла");
         } catch (IOException e) {
-            log.error("unknown io exception = {}",e.getMessage());
+            masterSchemas.remove(studySchema.getKey());
+
+            log.error("unknown io exception = {}, removing schema from map",e.getMessage());
             throw new ServerException("Ошибка при загрузке файла,пожалуйста,повторите позже");
         }
     }
 
     public void put(AbstractStudySchema studySchema){
-        String key = studySchema.getUniqueKey();
+        String key = studySchema.getKey();
         masterSchemas.put(key,studySchema);
     }
 
     public void saveFile(MultipartFile file) throws IOException {
-        File initialFile = new File(taskPoolPath + file.getOriginalFilename());
+        File initialFile = new File(xmlTaskPoolPath + file.getOriginalFilename());
         log.trace("transfer file to '{}'",initialFile.getAbsolutePath());
         file.transferTo(initialFile);
     }
