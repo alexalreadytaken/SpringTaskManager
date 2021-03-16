@@ -41,9 +41,9 @@ multiFetch = (url) => {
                 makeUserList(result)
                 break
                 // case '/admin/schemas/0': // TODO local ip
-                case 'http://10.1.0.64:2000/admin/schemas/0':
-                makeGraph(result)
-                break
+            case 'http://10.1.0.64:2000/admin/schemas/0':
+            makeGraph(result)
+            break
         }
     })
 }
