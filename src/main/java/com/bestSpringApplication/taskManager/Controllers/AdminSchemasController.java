@@ -72,7 +72,8 @@ public class AdminSchemasController {
     }
 
     @GetMapping(OPENED_TASKS_OF_SCHEMA_FOR_STUDENT)
-    public List<AbstractTask> openedStudentTasks(@PathVariable String schemaKey, @PathVariable String studentId){
+    public List<AbstractTask> openedStudentTasks(@PathVariable String schemaKey,
+                                                 @PathVariable String studentId){
         return studentSchemasService.openedStudentTasks(studentId,schemaKey);
     }
 
