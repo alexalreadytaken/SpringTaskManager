@@ -1,7 +1,6 @@
-package com.bestSpringApplication.taskManager.configuration;
+package com.bestSpringApplication.taskManager.configurations;
 
 
-import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

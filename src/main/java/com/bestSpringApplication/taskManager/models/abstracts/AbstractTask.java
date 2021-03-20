@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.models.study.abstracts;
+package com.bestSpringApplication.taskManager.models.abstracts;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

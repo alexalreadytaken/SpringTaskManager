@@ -1,6 +1,6 @@
-package com.bestSpringApplication.taskManager.models.study.classes;
+package com.bestSpringApplication.taskManager.models.classes;
 
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

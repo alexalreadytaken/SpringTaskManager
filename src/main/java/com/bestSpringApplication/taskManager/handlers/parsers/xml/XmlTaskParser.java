@@ -5,53 +5,57 @@ import com.bestSpringApplication.taskManager.handlers.StudyParseHandler;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.TaskParseException;
 import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.study.classes.HierarchicalTaskImpl;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
+import com.bestSpringApplication.taskManager.models.classes.TaskImpl;
+import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
-import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
-@Component
 @Slf4j
 public class XmlTaskParser implements TaskParser {
 
-    @Override
-    public List<AbstractTask> parse(Object parsable) throws ParseException {
-        return parseFromXml((Element) parsable);
+    private final Map<String, AbstractTask> taskMap;
+    private final List<DependencyWithRelationType> dependencies;
+
+    public XmlTaskParser(Element arg) {
+        taskMap = new HashMap<>();
+        dependencies = new ArrayList<>();
+        parseAndMakeDependencies(arg);
     }
 
-    public List<AbstractTask> parseFromXml(Element element){
+    @Override
+    public Map<String, AbstractTask> getTasks() throws ParseException {
+        return taskMap;
+    }
+
+    @Override
+    public List<DependencyWithRelationType> getHierarchicalDependencies() throws ParseException {
+        return dependencies;
+    }
+
+    private void parseAndMakeDependencies(Element element){
         log.trace("Receiving element = {}",element);
         Stack<Element> tasksStack = new Stack<>();
         List<AbstractTask> taskList = new ArrayList<>();
         tasksStack.push(element);
-
         while (!tasksStack.empty()) {
             Element taskElemFromStack = tasksStack.pop();
-
-            HierarchicalTaskImpl.HierarchicalTaskImplBuilder taskBuilder = HierarchicalTaskImpl.builder();
-
+            TaskImpl.TaskImplBuilder taskBuilder = TaskImpl.builder();
             String taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"))
-                    .orElseThrow(()-> new TaskParseException("AbstractTask id is empty!"));
+                    .orElseThrow(()->new TaskParseException("task id is empty!"));
             String taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"))
-                    .orElseThrow(()->new TaskParseException("AbstractTask name is empty!"));
-
+                    .orElseThrow(()->new TaskParseException("task name is empty!"));
             Optional<Element> fieldListElem = Optional.ofNullable(taskElemFromStack.getChild("field-list"));
             Optional<Element> taskListElem = Optional.ofNullable(taskElemFromStack.getChild("task-list"));
             Optional<Element> taskNotesElem = Optional.ofNullable(taskElemFromStack.getChild("task-notes"));
-            Optional<String> parentId = Optional.ofNullable(taskElemFromStack.getAttributeValue("parent-id"));
-
             String startDate = taskElemFromStack.getChildText("task-start-date");
             String endDate = taskElemFromStack.getChildText("task-end-date");
-
-
-            List<String> childrenId = new ArrayList<>();
-
             fieldListElem.ifPresent(fieldList ->
                     taskBuilder.fields(StudyParseHandler.xmlFieldToMap(fieldList, "field","field-no", "field-value"))
             );
@@ -63,29 +67,27 @@ public class XmlTaskParser implements TaskParser {
                 Optional<List<Element>> tasks = Optional.ofNullable(tasksOpt.getChildren("task"));
                 tasks.ifPresent(tasksListOpt->
                         tasksListOpt.forEach(el->{
-                            String taskElemId = el.getChildText("task-id");
-                            childrenId.add(taskElemId);
-                            el.setAttribute("parent-id",taskId);
+                            String taskListElemId = el.getChildText("task-id");
+                            dependencies.add(new DependencyWithRelationType(RelationType.HIERARCHICAL,taskId,taskListElemId));
                             tasksStack.push(el);
                         })
                 );
             });
             String optimizedName = StringUtils.normalizeSpace(taskName).replaceAll(" ", "_");
-
+            LocalDateTime formattedStartDate = DateHandler.parseDateFromFormat(startDate, "dd-MM-yyyy, HH:mm:ss");
+            LocalDateTime formattedEndDate = DateHandler.parseDateFromFormat(endDate, "dd-MM-yyyy, HH:mm:ss");
             taskBuilder
                     .name(optimizedName)
                     .id(taskId)
-                    .parentId(parentId.orElse(null))
-                    .childrenId(childrenId)
-                    .startDate(DateHandler.parseDateFromFormat(startDate,"dd-MM-yyyy, HH:mm:ss"))
-                    .endDate(DateHandler.parseDateFromFormat(endDate,"dd-MM-yyyy, HH:mm:ss"));
-
+                    .startDate(formattedStartDate)
+                    .endDate(formattedEndDate);
             taskList.add(taskBuilder.build());
         }
-        AbstractTask removed = taskList.remove(0);
-        log.trace("Removing unused zero task = {}",removed);
-        log.trace("Returning tasks list = {}",taskList.stream().map(AbstractTask::getName).collect(Collectors.toList()));
-        return taskList;
+        AbstractTask unusedTask = taskList.remove(0);
+        dependencies.removeIf(el->el.getId0().equals(unusedTask.getId()));
+        AbstractTask rootCourseTask = taskList.get(0);
+        rootCourseTask.setOpened(true);
+        taskMap.put("root",rootCourseTask);
+        taskList.forEach(task->taskMap.put(task.getId(),task));
     }
-
 }

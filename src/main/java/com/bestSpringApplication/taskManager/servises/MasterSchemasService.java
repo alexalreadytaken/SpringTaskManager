@@ -6,8 +6,8 @@ import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.Illeg
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ServerException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.handlers.parsers.SchemaParser;
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

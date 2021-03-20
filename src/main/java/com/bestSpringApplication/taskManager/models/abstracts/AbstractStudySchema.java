@@ -1,7 +1,8 @@
-package com.bestSpringApplication.taskManager.models.study.abstracts;
+package com.bestSpringApplication.taskManager.models.abstracts;
 
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
 
@@ -12,10 +13,11 @@ import java.util.Map;
 
 @Data
 @ToString(of = "rootTask")
+@AllArgsConstructor
 public abstract class AbstractStudySchema implements Serializable {
 
     private Map<String, AbstractTask> tasksMap;
-    private List<Dependency> dependencies;
+    private List<DependencyWithRelationType> dependencies;
 
     @JsonIgnore
     private AbstractTask rootTask;

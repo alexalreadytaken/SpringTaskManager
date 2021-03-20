@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.models.study.interfaces;
+package com.bestSpringApplication.taskManager.models.interfaces;
 
 import java.io.Serializable;
 

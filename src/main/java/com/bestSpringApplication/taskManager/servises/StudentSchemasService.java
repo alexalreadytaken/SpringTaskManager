@@ -3,10 +3,11 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.TaskClosedException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.UserNotFoundException;
+import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.enums.Role;
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.SerializationUtils;
@@ -44,15 +45,13 @@ public class StudentSchemasService {
     }
 
     public boolean canStartTask(String schemaKey, String studentId, String taskId){
-        if (utrService.existsBySchemaIdAndUserIdAndTaskId(schemaKey,taskId,studentId)){
-            return false;
-        }else {
+        if (!utrService.existsBySchemaIdAndUserIdAndTaskId(schemaKey, taskId, studentId)) {
             boolean parentsCompleted = true;
             AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
-            List<Dependency> dependencies = schema.getDependencies();
+            List<DependencyWithRelationType> dependencies = schema.getDependencies();
             AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
-            return false;
         }
+        return false;
     }
     public void forceStartTask(String schemaKey, String studentId, String taskId){
         startTask(schemaKey, studentId, taskId);

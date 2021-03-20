@@ -1,11 +1,12 @@
 package com.bestSpringApplication.taskManager.servises;
 
+import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.study.classes.HierarchicalTaskImpl;
-import com.bestSpringApplication.taskManager.models.study.classes.UserTaskRelationImpl;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.TaskImpl;
+import com.bestSpringApplication.taskManager.models.classes.UserTaskRelationImpl;
+import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class UserTaskRelationService {
     @NonNull private final UserTaskRelationRepo utrRepo;
 
     public void prepareFirstTasks(AbstractStudySchema schema, String studentId){
-        List<Dependency> dependencies = schema.getDependencies();
+        List<DependencyWithRelationType> dependencies = schema.getDependencies();
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
 
         List<AbstractTask> availableTasks = tasksMap
@@ -81,15 +82,16 @@ public class UserTaskRelationService {
         }
     }
 
-    private boolean firstsCheckTaskForOpen(List<Dependency> dependencies, Map<String, AbstractTask> tasksMap, AbstractTask task) {
+    // TODO: 3/18/2021
+    private boolean firstsCheckTaskForOpen(List<DependencyWithRelationType> dependencies, Map<String, AbstractTask> tasksMap, AbstractTask task) {
         boolean parentIsTheme = true;
-        if (task instanceof HierarchicalTaskImpl){
-            HierarchicalTaskImpl task0 = (HierarchicalTaskImpl) task;
-            parentIsTheme = Optional
-                    .ofNullable(tasksMap.get(task0.getParentId()))
-                    .map(AbstractTask::isTheme)
-                    .orElse(true);
-        }
+//        if (task instanceof TaskImpl){
+//            TaskImpl task0 = (TaskImpl) task;
+//            parentIsTheme = Optional
+//                    .ofNullable(tasksMap.get(task0.getParentId()))
+//                    .map(AbstractTask::isTheme)
+//                    .orElse(true);
+//        }
         boolean parentsInDependenciesIsThemes = dependencies.stream()
                 .filter(depend -> depend.getId1().equals(task.getId()))
                 .map(depend -> tasksMap.get(depend.getId0()))

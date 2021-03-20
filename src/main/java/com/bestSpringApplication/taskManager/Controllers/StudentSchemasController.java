@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.servises.StudentSchemasService;
 import lombok.NonNull;

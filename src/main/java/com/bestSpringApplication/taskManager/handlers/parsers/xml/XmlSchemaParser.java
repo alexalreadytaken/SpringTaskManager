@@ -4,11 +4,13 @@ import com.bestSpringApplication.taskManager.handlers.StudyParseHandler;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.handlers.exceptions.internal.SchemaParseException;
 import com.bestSpringApplication.taskManager.handlers.parsers.SchemaParser;
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.study.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.study.classes.DefaultStudySchemaImpl;
-import com.bestSpringApplication.taskManager.models.study.classes.DependencyImpl;
-import com.bestSpringApplication.taskManager.models.study.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.handlers.parsers.TaskParser;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.DefaultStudySchemaImpl;
+import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
+import com.bestSpringApplication.taskManager.models.classes.TaskImpl;
+import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,12 +18,12 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +34,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class XmlSchemaParser implements SchemaParser {
 
-    @NonNull private final XmlTaskParser taskParser;
+    @NonNull private final ApplicationContext applicationContext;
 
     @Override
     public AbstractStudySchema parse(Object parsable) throws ParseException {
@@ -56,42 +58,46 @@ public class XmlSchemaParser implements SchemaParser {
 
     private AbstractStudySchema parseSchemaXml(Document mainDocument){
         Element rootElement = mainDocument.getRootElement();
-
-        AbstractStudySchema studySchema = new DefaultStudySchemaImpl();
-
         log.trace("Starting parse root element:\n{}",rootElement.getContent());
-
         Element fieldListElem = Optional.ofNullable(rootElement.getChild("task-field-list"))
                 .orElseThrow(()-> new SchemaParseException("fieldListElem is empty!"));
         Element dependencyListElem = Optional.ofNullable(rootElement.getChild("task-dependency-list"))
                 .orElseThrow(()-> new SchemaParseException("dependencyListElement is empty!"));
         Element taskElem = Optional.ofNullable(rootElement.getChild("task"))
                 .orElseThrow(()-> new SchemaParseException("taskElement is empty!"));
-
         Map<String, String> fieldsMap = StudyParseHandler.xmlFieldToMap(fieldListElem, "field", "no", "name");
-        List<Dependency> taskDependenciesList = parseDependenciesList(dependencyListElem);
-        List<AbstractTask> tasksList = taskParser.parse(taskElem);
-        StudyParseHandler.addTaskFields(tasksList,fieldsMap);
-        Map<String, AbstractTask> completedTasksMap = new HashMap<>();
-
-        tasksList.forEach(task -> completedTasksMap.put(task.getId(),task));
-
-        studySchema.setRootTask(tasksList.get(0));
-        studySchema.setDependencies(taskDependenciesList);
-        studySchema.setTasksMap(completedTasksMap);
-
-        log.trace("Returning study schema = {}",studySchema);
-
-        return studySchema;
+        List<DependencyWithRelationType> dependenciesList = parseDependenciesList(dependencyListElem);
+        TaskParser taskParser = applicationContext.getBean(XmlTaskParser.class, taskElem);
+        Map<String, AbstractTask> tasksMap = taskParser.getTasks();
+        dependenciesList.addAll(taskParser.getHierarchicalDependencies());
+        addFieldsToTasks(tasksMap,fieldsMap);
+        log.trace("Returning study schema = {}",tasksMap.get("root"));
+        return new DefaultStudySchemaImpl(tasksMap,dependenciesList,tasksMap.remove("root"));
     }
 
-    private List<Dependency> parseDependenciesList(Element dependencyListElem) {
+    private List<DependencyWithRelationType> parseDependenciesList(Element dependencyListElem) {
         log.trace("Starting parse dependencies list xml element = {}",dependencyListElem);
         List<Element> DependencyElements = dependencyListElem.getChildren("task-dependency");
         return DependencyElements.stream().map(DependencyChild ->{
             String parent = DependencyChild.getChildText("task-predecessor-id");
             String child = DependencyChild.getChildText("task-successor-id");
-            return new DependencyImpl(parent,child);
+            return new DependencyWithRelationType(RelationType.WEAK,parent,child);
         }).collect(Collectors.toList());
+    }
+
+    private void addFieldsToTasks(Map<String, AbstractTask> tasks, Map<String, String> schemaFields) {
+        tasks.values().forEach(task -> {
+            if (task instanceof TaskImpl) {
+                Map<String, String> taskFields = ((TaskImpl) task).getFields();
+                if (taskFields!=null){
+                    for (int i = 0;i <  taskFields.size(); i++) {
+                        String i0 = String.valueOf(i);
+                        String key = schemaFields.get(i0);
+                        String value = taskFields.remove(i0);
+                        taskFields.put(key,value);
+                    }
+                }
+            }
+        });
     }
 }
