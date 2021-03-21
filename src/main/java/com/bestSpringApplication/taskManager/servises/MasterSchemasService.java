@@ -62,7 +62,7 @@ public class MasterSchemasService {
                 }
             }));
         }else {
-            log.warn("directory '{}' not found, creating...", xmlTaskPoolPath);
+            log.warn("directory '{}' not found,try to create...", xmlTaskPoolPath);
             tasksDir.mkdir();
         }
     }

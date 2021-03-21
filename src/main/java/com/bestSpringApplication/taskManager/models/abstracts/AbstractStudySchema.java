@@ -19,7 +19,6 @@ public abstract class AbstractStudySchema implements Serializable {
     private Map<String, AbstractTask> tasksMap;
     private List<DependencyWithRelationType> dependencies;
 
-    @JsonIgnore
     private AbstractTask rootTask;
 
     @JsonIgnore
