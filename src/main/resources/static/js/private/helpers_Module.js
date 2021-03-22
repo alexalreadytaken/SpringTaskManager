@@ -1,7 +1,6 @@
-console.log('%cwe are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px')
-var data = [], chilHeadParent = []
+import makeGraph from './making.js'
 
-function makeFileList (fileNames) {
+export function makeFileList (fileNames) {
     let schemasFileList = document.getElementById("schemasFileList");
     fileNames.forEach(file=>{
         let div = document.createElement('div');
@@ -14,8 +13,8 @@ function makeFileList (fileNames) {
         schemasFileList.append(div)
     })
 }
-    
-function makeUserList (users) {
+
+export function makeUserList (users) {
     let userList = document.getElementById("UsersList")
     users.forEach(user => {
         let userContainer ='<div style="border: 1px solid black">'
@@ -29,38 +28,22 @@ function makeUserList (users) {
     })
 }
 
-multiFetch = (url) => {
+export function multiFetch (url) {
     fetch( url )
     .then(response => response.json())
     .then(result => {
         switch ( url ) {
-            case '/admin/schemas/files':
+            case '/schemas/master/files':
                 makeFileList(result)
-                break
+            break
+            
             case '/admin/users':
                 makeUserList(result)
-                break
-                // case '/admin/schemas/0': // TODO local ip
-            case 'http://10.1.0.64:2000/admin/schemas/0':
-            makeGraph(result)
+            break
+            
+            case 'http://10.1.0.64:2000/schemas/master/Предмет_1':
+                makeGraph(result)
             break
         }
     })
 }
-
-document.getElementById('file')
-    .addEventListener('change', evt => { // #file in future maybe change (fixed...)
-        let fileData = evt.target["files"]
-        let formData = new FormData()
-        formData.append('file',fileData[0])
-        evt.target.value = ''
-        fetch('/',{ // TODO ИЗМЕНИТЬ URL 
-            method:'POST',
-            body: formData
-        })  
-        .then(response=>
-            response.status!==200 ? response.json():{result:'загружено успешно'})
-        .then(response=>{
-            alert(response.result)
-    })
-})
