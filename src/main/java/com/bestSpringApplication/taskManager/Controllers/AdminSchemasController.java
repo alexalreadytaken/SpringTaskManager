@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.IllegalFileFormatException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.servises.MasterSchemasService;

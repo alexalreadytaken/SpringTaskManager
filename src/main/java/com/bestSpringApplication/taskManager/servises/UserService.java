@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.UserNotFoundException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.UserNotFoundException;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.user.User;
 import com.bestSpringApplication.taskManager.repos.UserRepo;

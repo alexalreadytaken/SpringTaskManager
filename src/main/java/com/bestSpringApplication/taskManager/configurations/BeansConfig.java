@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.configurations;
 
-import com.bestSpringApplication.taskManager.handlers.parsers.xml.XmlTaskParser;
+import com.bestSpringApplication.taskManager.utils.parsers.xml.XmlTaskParser;
 import org.jdom2.Element;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

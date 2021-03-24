@@ -1,13 +1,12 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ContentNotFoundException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.TaskClosedException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.UserNotFoundException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskClosedException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.UserNotFoundException;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.SerializationUtils;

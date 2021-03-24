@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.models.classes;
 
-import com.bestSpringApplication.taskManager.handlers.DateHandler;
+import com.bestSpringApplication.taskManager.utils.DateHandler;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;

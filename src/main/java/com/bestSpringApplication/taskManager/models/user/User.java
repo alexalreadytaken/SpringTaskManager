@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.models.user;
 
-import com.bestSpringApplication.taskManager.handlers.enumConverters.RoleConverter;
+import com.bestSpringApplication.taskManager.utils.enumConverters.RoleConverter;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;

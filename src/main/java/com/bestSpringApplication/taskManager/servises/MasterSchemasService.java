@@ -1,11 +1,12 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.handlers.FileDeleter;
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ContentNotFoundException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.IllegalFileFormatException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.forClient.ServerException;
-import com.bestSpringApplication.taskManager.handlers.exceptions.internal.ParseException;
-import com.bestSpringApplication.taskManager.handlers.parsers.SchemaParser;
+import com.bestSpringApplication.taskManager.utils.FileDeleter;
+import com.bestSpringApplication.taskManager.utils.VersionedList;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ServerException;
+import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
+import com.bestSpringApplication.taskManager.utils.parsers.SchemaParser;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import lombok.NonNull;
@@ -31,8 +32,7 @@ public class MasterSchemasService {
 
     @NonNull private final SchemaParser schemaParser;
 
-    // TODO: 3/16/2021 Version control
-    private Map<String, AbstractStudySchema> masterSchemas;
+    private Map<String, VersionedList<AbstractStudySchema>> masterSchemas;
 
     @PostConstruct
     private void init(){
@@ -75,8 +75,8 @@ public class MasterSchemasService {
         List<String> fileNames = new ArrayList<>();
         filesOpt
                 .ifPresent(files-> Arrays.stream(files)
-                .map(File::getName)
-                .forEach(fileNames::add));
+                        .map(File::getName)
+                        .forEach(fileNames::add));
         log.trace("return file list = {}",fileNames);
         return fileNames;
     }
@@ -85,14 +85,16 @@ public class MasterSchemasService {
         return masterSchemas
                 .values()
                 .stream()
+                .map(VersionedList::getNewest)
                 .map(AbstractStudySchema::getRootTask)
                 .collect(Collectors.toList());
     }
 
     public AbstractStudySchema schemaByKey(String schemaKey) {
         return Optional.ofNullable(masterSchemas.get(schemaKey))
+                .map(VersionedList::getNewest)
                 .orElseThrow(()->{
-                    log.error("schema with key = '{}' not found",schemaKey);
+                    log.warn("schema with key = '{}' not found",schemaKey);
                     return new ContentNotFoundException("Курс не найден");
                 });
     }
@@ -117,7 +119,11 @@ public class MasterSchemasService {
 
     public void put(AbstractStudySchema studySchema){
         String key = studySchema.getKey();
-        masterSchemas.put(key,studySchema);
+        VersionedList<AbstractStudySchema> schemasList = Optional
+                .ofNullable(masterSchemas.get(key))
+                .orElseGet(VersionedList::new);
+        schemasList.put(studySchema);
+        masterSchemas.put(key,schemasList);
     }
 
     public void saveFile(MultipartFile file) throws IOException {
