@@ -43,6 +43,7 @@ public class StudentSchemasService {
         utrService.prepareFirstTasks(clonedMasterSchema,studentId);
     }
 
+    // FIXME: 3/25/2021 all
     public boolean canStartTask(String schemaKey, String studentId, String taskId){
         if (!utrService.existsBySchemaIdAndUserIdAndTaskId(schemaKey, taskId, studentId)) {
             boolean parentsCompleted = true;
@@ -52,6 +53,7 @@ public class StudentSchemasService {
         }
         return false;
     }
+
     public void forceStartTask(String schemaKey, String studentId, String taskId){
         startTask(schemaKey, studentId, taskId);
     }

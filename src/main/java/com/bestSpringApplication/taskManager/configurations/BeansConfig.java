@@ -4,7 +4,6 @@ import com.bestSpringApplication.taskManager.utils.parsers.xml.XmlTaskParser;
 import org.jdom2.Element;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +13,6 @@ public class BeansConfig {
 
     // FIXME: 3/20/2021 suppress warnings
     @Bean
-    @Primary
     @Scope("prototype")
     @SuppressWarnings("all")
     public XmlTaskParser initTaskParser(Element arg) {

@@ -87,24 +87,23 @@ public class XmlSchemaParser implements SchemaParser {
     }
 
     private void organizeThemesDependencies(List<DependencyWithRelationType> dependencies,Map<String,AbstractTask> tasksMap){
-        // TODO: 3/21/2021 optimize
-        List<DependencyWithRelationType> some = dependencies.stream().filter(dependency -> {
+        dependencies.stream().filter(dependency -> {
             String id0 = dependency.getId0();
             String id1 = dependency.getId1();
             RelationType relationType = dependency.getRelationType();
             AbstractTask task0 = tasksMap.get(id0);
             AbstractTask task1 = tasksMap.get(id1);
             return task0.isTheme() && !task1.isTheme() && relationType == RelationType.HIERARCHICAL;
-        }).collect(Collectors.toList());
-        some.forEach(dependency->{
-            String id1 = dependency.getId1();
-            String id0 = dependency.getId0();
-            dependencies.forEach(dependency1 -> {
-                if (dependency1.getId0().equals(id1)){
-                    dependency1.setId0(id0+"."+id1);
-                }
-            });
-        });
+        }).collect(Collectors.toList())
+                .forEach(dependency->{
+                    String id1 = dependency.getId1();
+                    String id0 = dependency.getId0();
+                    dependencies.forEach(dependency1 -> {
+                        if (dependency1.getId0().equals(id1)){
+                            dependency1.setId0(id0+"."+id1);
+                        }
+                    });
+                });
     }
 
     private void addFieldsToTasks(Map<String, AbstractTask> tasks, Map<String, String> schemaFields) {

@@ -1,14 +1,13 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.utils.FileDeleter;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.utils.VersionedList;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ServerException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.utils.parsers.SchemaParser;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -58,7 +57,7 @@ public class MasterSchemasService {
                     log.error("error with parse:{}",e.getMessage());
                     log.error("deleting file '{}' ",fileName);
                     //fixme later
-                    FileDeleter.deleteAsync(file,2000);
+//                    FileDeleter.deleteAsync(file,2000);
                 }
             }));
         }else {
@@ -119,11 +118,11 @@ public class MasterSchemasService {
 
     public void put(AbstractStudySchema studySchema){
         String key = studySchema.getKey();
-        VersionedList<AbstractStudySchema> schemasList = Optional
+        VersionedList<AbstractStudySchema> schemaList = Optional
                 .ofNullable(masterSchemas.get(key))
                 .orElseGet(VersionedList::new);
-        schemasList.put(studySchema);
-        masterSchemas.put(key,schemasList);
+        schemaList.put(studySchema);
+        masterSchemas.put(key,schemaList);
     }
 
     public void saveFile(MultipartFile file) throws IOException {

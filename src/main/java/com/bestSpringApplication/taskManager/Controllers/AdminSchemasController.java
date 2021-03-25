@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @RestController
@@ -84,7 +85,7 @@ public class AdminSchemasController {
 
     @GetMapping(ADD_MASTER_SCHEMA_TO_STUDENT)
     @ResponseStatus(HttpStatus.OK)
-    public void addSchemaToStudent(@PathVariable String schemaKey, @PathVariable String studentId){
+    public void addSchemaToStudent(@PathVariable String schemaKey, @PathVariable String studentId, HttpServletRequest request){
         log.trace("new relation student to schema;schemaKey = {},studentId = {} ",schemaKey,studentId);
         studentSchemasService.setSchemaToStudent(studentId,schemaKey);
     }
