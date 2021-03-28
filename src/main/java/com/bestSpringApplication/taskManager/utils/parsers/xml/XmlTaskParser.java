@@ -84,9 +84,9 @@ public class XmlTaskParser implements TaskParser {
             taskList.add(taskBuilder.build());
         }
         AbstractTask rootCourseTask = taskList.get(1);
-        rootCourseTask.setOpened(true);
-        taskMap.put("root", rootCourseTask);
+        taskMap.put("root",rootCourseTask);
         taskList.forEach(task->taskMap.put(task.getId(),task));
     }
+
 
 }

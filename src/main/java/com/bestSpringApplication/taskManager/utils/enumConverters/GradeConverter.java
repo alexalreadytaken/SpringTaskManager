@@ -15,6 +15,6 @@ public class GradeConverter implements AttributeConverter<Grade,Integer> {
 
     @Override
     public Grade convertToEntityAttribute(Integer integer) {
-        return integer==null?null:Grade.getInstanceFromInt(integer);
+        return integer==null?null:Grade.of(integer);
     }
 }

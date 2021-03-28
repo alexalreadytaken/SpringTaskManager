@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class BeansConfig {
 
-    // FIXME: 3/20/2021 suppress warnings
+//     FIXME: 3/20/2021 suppress warnings
     @Bean
     @Scope("prototype")
     @SuppressWarnings("all")

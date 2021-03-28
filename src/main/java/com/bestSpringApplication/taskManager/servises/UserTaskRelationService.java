@@ -5,9 +5,8 @@ import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelati
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.classes.TaskImpl;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelationImpl;
-import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @RequiredArgsConstructor
@@ -27,26 +26,26 @@ public class UserTaskRelationService {
 
     @NonNull private final UserTaskRelationRepo utrRepo;
 
+
+    // TODO: 3/26/2021 + fix removing in parser
     public void prepareFirstTasks(AbstractStudySchema schema, String studentId){
         List<DependencyWithRelationType> dependencies = schema.getDependencies();
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
         List<AbstractTask> availableTasks = new ArrayList<>();
-        dependencies.forEach(dependency -> {
-            String id0 = dependency.getId0();
-            boolean taskIsNotSuccessor = dependencies.stream()
-                    .map(DependencyImpl::getId1)
-                    .noneMatch(id1 -> id1.equals(id0));
-            if (taskIsNotSuccessor) availableTasks.add(tasksMap.get(id0));
-        });
+
+        dependencies.forEach(el-> System.out.println(el.getId0()+"---"+el.getId1()+"-----"+el.getRelationType()));
+
+
+
         availableTasks.forEach(task-> prepareTask(schema,task,studentId));
     }
 
     public void prepareTask(AbstractStudySchema schema,AbstractTask task,String studentId){
-        task.setOpened(true);
         UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
                 .schemaId(schema.getKey())
                 .finishConfirmed(false)
-                .grade(Grade.IN_WORK)
+                .grade(Grade.ONE)
+                .status(Status.IN_WORK)
                 .taskId(task.getId())
                 .isFinished(false)
                 .userId(studentId)
