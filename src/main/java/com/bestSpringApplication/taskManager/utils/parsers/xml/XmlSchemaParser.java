@@ -73,6 +73,9 @@ public class XmlSchemaParser implements SchemaParser {
         organizeThemesDependencies(dependenciesList,tasksMap);
         addFieldsToTasks(tasksMap,fieldsMap);
         log.trace("Returning study schema = {}",tasksMap.get("root"));
+
+//        dependenciesList.forEach(el-> System.err.println(el.getId0()+"---"+el.getId1()+"-----"+el.getRelationType()));
+
         return new DefaultStudySchemaImpl(tasksMap,dependenciesList,tasksMap.remove("root"));
     }
 
