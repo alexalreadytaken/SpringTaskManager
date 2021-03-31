@@ -1,4 +1,4 @@
-import any from './anyChartMaking.js';
+import anyChartMaking from './anyChartMaking.js';
 export default function makeGraph(arrData) {
 
     arrData = {
@@ -360,21 +360,42 @@ export default function makeGraph(arrData) {
     var data = []
 
     console.log(arrData);
-    let dataPars = Object.entries(arrData.tasksMap).map(el => el[1])
-
+    let tasksPars = Object.entries(arrData.tasksMap).map(el => el[1])
     let depen = Object.entries(arrData.dependencies).map(el=>el[1])
+
     
-    depen.forEach(el => {
-        dataPars.forEach(el1 => {
-            console.log(el.id1 === el1.id)
+    tasksPars.forEach(el => (el.theme) ? data.push(el) : console.log('Not create')) // построение отцов (главные темы)
+   
+
+    data.forEach( el => {
+        el.children = []
+        depen.forEach(el1 => {
+            if (el1.relationType === 'HIERARCHICAL') {
+                if (el.id === el1.id0) {
+                    tasksPars.forEach (task => {
+                        if (task.id === el1.id1) {
+                            el.children.push (task)
+                        }
+                    })    
+                }
+            }
+            if (el1.relationType === "WEAK") {
+                if ( el1.id0.split('.')[1]) {
+                    console.log( el1.id0.split('.')[1] )
+                } else {
+                    console.log( el1.id0.split('.')[0] )
+                }
+            }
         })
     })
-    
-    dataPars.forEach(el => (el.theme) ? data.push(el) : console.log(false)) // построение отцов (главные темы)
-    data.forEach(el => {
-        el.children = [{}]
-    })
-    console.log(data);
 
-    any(data)
+
+    // id0 - Parent
+    // id1 - Children
+    // нужно смотреть по зависимостям отцов, искать сразу всех детей
+    // лучше сделать через рекурсию -> чтобы функция смотрела есть ли у детей еще дети
+
+    console.log(data)
+
+    anyChartMaking(data)
 }
