@@ -364,7 +364,7 @@ export default function makeGraph(arrData) {
     let depen = Object.entries(arrData.dependencies).map(el=>el[1])
 
     
-    tasksPars.forEach(el => (el.theme) ? data.push(el) : console.log('Not create')) // построение отцов (главные темы)
+    tasksPars.forEach (el => { if(el.theme) data.push(el) }) // построение отцов (главные темы)
    
 
     data.forEach( el => {
