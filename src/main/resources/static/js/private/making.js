@@ -374,7 +374,7 @@ export default function makeGraph(arrData) {
                 if (el.id === el1.id0) {
                     tasksPars.forEach (task => {
                         if (task.id === el1.id1) {
-                            el.children.push (task)
+                            el.children.push(task)
                         }
                     })    
                 }
