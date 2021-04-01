@@ -1,4 +1,4 @@
-import anyChartMaking from './anyChartMaking.js';
+import anyChartMaking from '../controllers/anyChartMaking.js';
 export default function makeGraph(arrData) {
 
     arrData = {
