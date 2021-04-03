@@ -67,7 +67,6 @@ public class MasterSchemasService {
     }
 
     public List<String> schemasFileList() {
-        log.trace("file list request");
         File file = new File(xmlTaskPoolPath);
         Optional<File[]> filesOpt = Optional
                 .ofNullable(file.listFiles(file0->!file0.isDirectory()));
@@ -76,7 +75,6 @@ public class MasterSchemasService {
                 .ifPresent(files-> Arrays.stream(files)
                         .map(File::getName)
                         .forEach(fileNames::add));
-        log.trace("return file list = {}",fileNames);
         return fileNames;
     }
 
@@ -95,6 +93,16 @@ public class MasterSchemasService {
                 .orElseThrow(()->{
                     log.warn("schema with key = '{}' not found",schemaKey);
                     return new ContentNotFoundException("Курс не найден");
+                });
+    }
+
+    public AbstractTask taskByIdInSchema(String taskId,String schemaKey){
+        AbstractStudySchema schema = schemaByKey(schemaKey);
+        return Optional.ofNullable(schema.getTasksMap())
+                .map(taskMap->taskMap.get(taskId))
+                .orElseThrow(()->{
+                    log.warn("can`t get task by id '{}' in schema '{}'",taskId,schemaKey);
+                    return new ContentNotFoundException("Задание не найдено");
                 });
     }
 

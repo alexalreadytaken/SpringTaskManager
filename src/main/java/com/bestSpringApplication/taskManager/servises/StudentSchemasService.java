@@ -13,8 +13,10 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -43,23 +45,12 @@ public class StudentSchemasService {
         utrService.prepareFirstTasks(clonedMasterSchema,studentId);
     }
 
-    // FIXME: 3/25/2021 all
-    public boolean canStartTask(String schemaKey, String studentId, String taskId){
-        if (!utrService.existsBySchemaIdAndUserIdAndTaskId(schemaKey, taskId, studentId)) {
-            boolean parentsCompleted = true;
-            AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
-            List<DependencyWithRelationType> dependencies = schema.getDependencies();
-            AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
-        }
-        return false;
-    }
-
     public void forceStartTask(String schemaKey, String studentId, String taskId){
         startTask(schemaKey, studentId, taskId);
     }
 
     public void startTaskWithValidation(String schemaKey, String studentId, String taskId){
-        if (canStartTask(schemaKey, studentId, taskId)){
+        if (utrService.canStartTask(schemaKey, studentId, taskId)){
             startTask(schemaKey, studentId, taskId);
         }else {
             throw new TaskClosedException("Задание невозможно начать (REWRITE EX TEXT)");

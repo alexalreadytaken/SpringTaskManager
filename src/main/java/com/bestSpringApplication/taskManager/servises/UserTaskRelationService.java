@@ -20,36 +20,19 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-// TODO: 3/28/2021 rename
+// TODO: 3/28/2021 rename?
 public class UserTaskRelationService {
 
     @NonNull private final UserTaskRelationRepo utrRepo;
+    @NonNull private final MasterSchemasService masterSchemasService;
 
     public void prepareFirstTasks(AbstractStudySchema schema, String studentId){
-        List<DependencyWithRelationType> dependencies = schema.getDependencies();
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
 
         List<AbstractTask> availableTasks = tasksMap.values().stream()
                 .filter(task -> !task.isTheme())
-                .filter(task -> {
-                    // FIXME: 3/28/2021 optimize
-                    List<DependencyWithRelationType> allTaskParents = dependencies.stream()
-                            .filter(dependency -> dependency.getId1().equals(task.getId()))
-                            .collect(Collectors.toList());
-                    return allTaskParents.stream().allMatch(dependency -> {
-                        String id0;
-                        try {
-                            id0 = dependency.getId0().split("\\.")[1];
-                        } catch (ArrayIndexOutOfBoundsException ex) {
-                            id0 = dependency.getId0();
-                        }
-                        String finalId = id0;
-                        boolean parentIsRoot = dependencies.stream()
-                                .noneMatch(dependency1 -> dependency1.getId1().equals(finalId));
-                        boolean parentIsTheme = tasksMap.get(finalId).isTheme();
-                        return parentIsTheme && parentIsRoot;
-                    });
-                }).collect(Collectors.toList());
+                .filter(task -> canStartTask(schema,studentId,task))
+                .collect(Collectors.toList());
 
         availableTasks.forEach(task->prepareTask(schema,task,studentId));
     }
@@ -65,6 +48,39 @@ public class UserTaskRelationService {
                 .grade(Grade.ONE)
                 .build();
         utrRepo.save(userTaskRelation);
+    }
+
+    public boolean canStartTask(String schemaKey, String studentId, String taskId){
+        AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
+        AbstractTask task = masterSchemasService.taskByIdInSchema(taskId, schemaKey);
+        return canStartTask(schema,studentId,task);
+    }
+    public boolean canStartTask(AbstractStudySchema schema, String studentId, AbstractTask task){
+        List<DependencyWithRelationType> dependencies = schema.getDependencies();
+        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
+
+        List<DependencyWithRelationType> allTaskParents = dependencies.stream()
+                .filter(dependency -> dependency.getId1().equals(task.getId()))
+                .collect(Collectors.toList());
+
+
+        return allTaskParents.stream().allMatch(dependency -> {
+            String id0 = splitIdOrDefault(dependency.getId0());
+
+            boolean parentIsRoot = dependencies.stream()
+                    .noneMatch(dependency1 -> dependency1.getId1().equals(id0));
+            boolean parentIsTheme = tasksMap.get(id0).isTheme();
+            return parentIsTheme && parentIsRoot;
+        });
+    }
+
+    private String splitIdOrDefault(String id){
+        try {
+            id = id.split("\\.")[1];
+            return id;
+        } catch (ArrayIndexOutOfBoundsException ignored) {
+            return id;
+        }
     }
 
     public boolean existsBySchemaIdAndUserIdAndTaskId(String schemaId, String userId, String taskId){
