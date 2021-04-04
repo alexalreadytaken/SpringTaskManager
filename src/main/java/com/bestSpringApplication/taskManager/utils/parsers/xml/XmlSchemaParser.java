@@ -70,12 +70,8 @@ public class XmlSchemaParser implements SchemaParser {
         TaskParser taskParser = applicationContext.getBean(XmlTaskParser.class, taskElem);
         Map<String, AbstractTask> tasksMap = taskParser.getTasks();
         dependenciesList.addAll(taskParser.getHierarchicalDependencies());
-        organizeThemesDependencies(dependenciesList,tasksMap);
         addFieldsToTasks(tasksMap,fieldsMap);
         log.trace("Returning study schema = {}",tasksMap.get("root"));
-
-//        dependenciesList.forEach(el-> System.err.println(el.getId0()+"---"+el.getId1()+"-----"+el.getRelationType()));
-
         return new DefaultStudySchemaImpl(tasksMap,dependenciesList,tasksMap.remove("root"));
     }
 
@@ -87,26 +83,6 @@ public class XmlSchemaParser implements SchemaParser {
             String child = DependencyChild.getChildText("task-successor-id");
             return new DependencyWithRelationType(RelationType.WEAK,parent,child);
         }).collect(Collectors.toList());
-    }
-
-    private void organizeThemesDependencies(List<DependencyWithRelationType> dependencies,Map<String,AbstractTask> tasksMap){
-        dependencies.stream().filter(dependency -> {
-            String id0 = dependency.getId0();
-            String id1 = dependency.getId1();
-            RelationType relationType = dependency.getRelationType();
-            AbstractTask task0 = tasksMap.get(id0);
-            AbstractTask task1 = tasksMap.get(id1);
-            return task0.isTheme() && !task1.isTheme() && relationType == RelationType.HIERARCHICAL;
-        }).collect(Collectors.toList())
-                .forEach(dependency->{
-                    String id1 = dependency.getId1();
-                    String id0 = dependency.getId0();
-                    dependencies.forEach(dependency1 -> {
-                        if (dependency1.getId0().equals(id1)){
-                            dependency1.setId0(id0+"."+id1);
-                        }
-                    });
-                });
     }
 
     private void addFieldsToTasks(Map<String, AbstractTask> tasks, Map<String, String> schemaFields) {
