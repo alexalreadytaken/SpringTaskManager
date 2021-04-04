@@ -1,16 +1,13 @@
 import anyChartMaking from '../controllers/anyChartMaking.js';
-import scheme1 from '../local-JSON/scheme1.js';
+// import scheme1 from '../local-JSON/scheme1.js';
 import scheme2 from '../local-JSON/scheme2.js'
 
 export default function makeGraph(arrData) {
-    var data = []
-    var weakDepen = []
-    var bigData = []
+    var data = [], weakDepen = [], bigData = []
 
-    arrData = scheme1
-    // arrData = scheme2
+    arrData = scheme2
 
-    console.log(scheme1)
+    console.log(arrData)
 
     let tasksPars = Object.entries(arrData.tasksMap).map(el => el[1])
     let depen = Object.entries(arrData.dependencies).map(el => el[1])
@@ -37,10 +34,10 @@ export default function makeGraph(arrData) {
 
     tasksPars.forEach( taskEl => {
         weakDepen.forEach( weakEl => {
-            if (weakEl.id0 === taskEl.id) {
+            if (weakEl.id1 === taskEl.id) {
                 bigData.push({
-                    dep:weakEl.id1,
-                    id0: taskEl.id
+                    id1:weakEl.id1,
+                    id0: weakEl.id0
                 })
             }
         })
@@ -79,6 +76,9 @@ export default function makeGraph(arrData) {
     // лучше сделать через рекурсию -> чтобы функция смотрела есть ли у детей еще дети
 
     console.log(data)
+
+
+    data[1].children[2].connectTo = 
 
     anyChartMaking(data)
 }
