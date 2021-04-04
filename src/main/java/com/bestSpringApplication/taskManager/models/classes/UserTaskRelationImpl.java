@@ -3,7 +3,6 @@ package com.bestSpringApplication.taskManager.models.classes;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.utils.enumConverters.GradeConverter;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
-import com.bestSpringApplication.taskManager.models.interfaces.UserTaskRelation;
 import com.bestSpringApplication.taskManager.utils.enumConverters.StatusConverter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
@@ -15,13 +14,11 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTaskRelationImpl implements UserTaskRelation {
+public class UserTaskRelationImpl{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore
     private Integer db_id;
-    private boolean isFinished;
-    private boolean finishConfirmed;
     private String userId;
     private String schemaId;
     private String taskId;

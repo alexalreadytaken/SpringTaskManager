@@ -1,22 +1,20 @@
 package com.bestSpringApplication.taskManager.servises;
 
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.UserTaskRelationImpl;
+import com.bestSpringApplication.taskManager.models.enums.Role;
+import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskClosedException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.UserNotFoundException;
-import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
-import com.bestSpringApplication.taskManager.models.enums.Role;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.SerializationUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -36,13 +34,7 @@ public class StudentSchemasService {
 
     public void setSchemaToStudent(String studentId,String schemaKey){
         userService.validateExistsAndContainsRole(studentId,Role.STUDENT);
-        Optional
-                .ofNullable(studentsWithSchemas.get(studentId))
-                .orElseGet(() -> studentsWithSchemas.put(studentId, new HashMap<>()));
-        AbstractStudySchema masterSchema = masterSchemasService.schemaByKey(schemaKey);
-        AbstractStudySchema clonedMasterSchema = SerializationUtils.clone(masterSchema);
-        studentsWithSchemas.get(studentId).put(schemaKey,clonedMasterSchema);
-        utrService.prepareFirstTasks(clonedMasterSchema,studentId);
+        utrService.prepareFirstTasks(masterSchemasService.schemaByKey(schemaKey),studentId);
     }
 
     public void forceStartTask(String schemaKey, String studentId, String taskId){
@@ -56,6 +48,32 @@ public class StudentSchemasService {
             throw new TaskClosedException("Задание невозможно начать (REWRITE EX TEXT)");
         }
     }
+
+    private void startTask(String schemaKey, String studentId, String taskId) {
+        AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
+        AbstractTask task = masterSchemasService.taskByIdInSchema(taskId,schemaKey);
+        utrService.prepareTask(schema,task,studentId);
+    }
+
+    public List<AbstractTask> getAllFinishedTasksOfSchemaForTheStudent(String schemaKey, String studentId){
+        AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
+
+        List<UserTaskRelationImpl> allOpenedTasksOfSchemaForTheStudent =
+                utrService.getAllOpenedTasksOfSchemaForTheStudent(schemaKey, studentId);
+
+       return schema.getTasksMap()
+                .values().stream()
+                .filter(task ->
+                        allOpenedTasksOfSchemaForTheStudent.stream()
+                                .filter(utr->utr.getTaskId().equals(task.getId()))
+                                .findAny()
+                                .map(utr->utr.getStatus()== Status.FINISHED
+                                        &&utr.getGrade().getIntValue()>=3)
+                                .orElse(false))
+                .collect(Collectors.toList());
+    }
+
+    // TODO: 4/3/21 <--------------------------To refactor------------------------------------>
 
     public AbstractTask specificTaskOfStudentSchema(String schemaKey, String studentId, String taskId){
         AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
@@ -106,12 +124,6 @@ public class StudentSchemasService {
         return Optional
                 .ofNullable(studentsWithSchemas.get(studentId))
                 .orElseThrow(() -> new UserNotFoundException("Курсы не назначены"));
-    }
-
-    private void startTask(String schemaKey, String studentId, String taskId) {
-        AbstractStudySchema schema = getStudentSchemaOrThrow(studentId, schemaKey);
-        AbstractTask task = specificTaskOfStudentSchema(schemaKey, studentId, taskId);
-        utrService.prepareTask(schema,task,studentId);
     }
 }
 

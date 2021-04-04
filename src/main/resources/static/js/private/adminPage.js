@@ -30,18 +30,18 @@ firstGraph = (response) => {
     let cl = document.querySelectorAll('g.sankey-node')
     cl.forEach(el=>{
         let childText = el.querySelector(".node-label-text-path");
-        let schemeId = childText.innerHTML.split("=")[1];
-        el.setAttribute('onmouseup', `schemeActions(${schemeId})`)
+        let schemaId = childText.innerHTML.split("=")[1];
+        el.setAttribute('onmouseup', `schemaActions(${schemaId})`)
     })
 }
 
-schemeActions = (schemeId) => {
-    actions.innerHTML=`<button onclick="schemeInfo(${schemeId})">Подробности</button>`
+schemaActions = (schemaId) => {
+    actions.innerHTML=`<button onclick="schemaInfo(${schemaId})">Подробности</button>`
 }
 
-schemeInfo = (schemeId) => {
+schemaInfo = (schemaId) => {
     actions.innerHTML=''
-    fetch(`/schemas/${schemeId}`).then(response=>response.json()).then(response=>{
+    fetch(`/schemas/${schemaId}`).then(response=>response.json()).then(response=>{
         makeGraph(response,response.name)
     })
 

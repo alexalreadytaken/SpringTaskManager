@@ -74,8 +74,8 @@ public class XmlTaskParser implements TaskParser {
                 );
             });
             String optimizedName = StringUtils.normalizeSpace(taskName).replaceAll(" ", "_");
-            LocalDateTime formattedStartDate = DateHandler.parseDateFromFormat(startDate, "dd-MM-yyyy, HH:mm:ss");
-            LocalDateTime formattedEndDate = DateHandler.parseDateFromFormat(endDate, "dd-MM-yyyy, HH:mm:ss");
+            long formattedStartDate = DateHandler.parseDateToLongFromFormat(startDate, "dd-MM-yyyy, HH:mm:ss");
+            long formattedEndDate = DateHandler.parseDateToLongFromFormat(endDate, "dd-MM-yyyy, HH:mm:ss");
             taskBuilder
                     .name(optimizedName)
                     .id(taskId)
@@ -83,19 +83,18 @@ public class XmlTaskParser implements TaskParser {
                     .endDate(formattedEndDate);
             taskList.add(taskBuilder.build());
         }
-        AbstractTask unusedTask = removeFromDependenciesAndMap(taskList,0);
-        AbstractTask rootCourseTask = removeFromDependenciesAndMap(taskList,0);
+        AbstractTask rootCourseTask = taskList.get(1);
         rootCourseTask.setOpened(true);
         taskMap.put("root",rootCourseTask);
         taskList.forEach(task->taskMap.put(task.getId(),task));
     }
     // FIXME: 3/28/2021 remove removing
 
-    private AbstractTask removeFromDependenciesAndMap(List<AbstractTask> taskList,int index) {
+    /*private AbstractTask removeFromDependenciesAndMap(List<AbstractTask> taskList,int index) {
         AbstractTask rootCourseTask = taskList.remove(index);
         dependencies.removeIf(el -> el.getId0().equals(rootCourseTask.getId())||el.getId1().equals(rootCourseTask.getId()));
         return rootCourseTask;
-    }
+    }*/
 
 
 }
