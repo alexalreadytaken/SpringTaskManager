@@ -3,15 +3,19 @@ import anyChartMaking from '../controllers/anyChartMaking.js';
 import scheme2 from '../local-JSON/scheme2.js'
 
 export default function makeGraph(arrData) {
-    var data = [], weakDepen = [], bigData = []
-
     arrData = scheme2
+
+    var data = [], weakDepen = [], bigData = []
 
     console.log(arrData)
 
     let tasksPars = Object.entries(arrData.tasksMap).map(el => el[1])
     let depen = Object.entries(arrData.dependencies).map(el => el[1])
     
+    tasksPars.splice(0,2)
+    
+    console.log(tasksPars)
+
 // закидывем WEAK зависимости в отдельную переменную для удобной работы с ними
 
     depen.forEach(el => {
@@ -27,8 +31,6 @@ export default function makeGraph(arrData) {
             }
         }
     })
-
-    console.log(tasksPars)
 
 // костыль для адекватного прокидывания в data.connectorTo (сделать через проверку повторяющихся выходящих тасков, чтобы они лежали в массиме и их было удобнее доставать из массива и передавать в data в str)
 
@@ -51,7 +53,6 @@ export default function makeGraph(arrData) {
     //     })
     // })
 
-    console.log(bigData)
     tasksPars.forEach (el => { if(el.theme) data.push(el) }) // построение отцов (главные темы)
 
     data.forEach( el => {
@@ -69,16 +70,12 @@ export default function makeGraph(arrData) {
         })
     })
 
-    console.log(weakDepen)
     // id0 - Parent
     // id1 - Children
     // нужно смотреть по зависимостям отцов, искать сразу всех детей
     // лучше сделать через рекурсию -> чтобы функция смотрела есть ли у детей еще дети
 
     console.log(data)
-
-
-    data[1].children[2].connectTo = 
 
     anyChartMaking(data)
 }
