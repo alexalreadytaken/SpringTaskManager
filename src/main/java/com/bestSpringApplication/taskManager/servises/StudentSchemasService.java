@@ -55,24 +55,6 @@ public class StudentSchemasService {
         utrService.prepareTask(schema,task,studentId);
     }
 
-    public List<AbstractTask> getAllFinishedTasksOfSchemaForTheStudent(String schemaKey, String studentId){
-        AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
-
-        List<UserTaskRelationImpl> allOpenedTasksOfSchemaForTheStudent =
-                utrService.getAllOpenedTasksOfSchemaForTheStudent(schemaKey, studentId);
-
-       return schema.getTasksMap()
-                .values().stream()
-                .filter(task ->
-                        allOpenedTasksOfSchemaForTheStudent.stream()
-                                .filter(utr->utr.getTaskId().equals(task.getId()))
-                                .findAny()
-                                .map(utr->utr.getStatus()== Status.FINISHED
-                                        &&utr.getGrade().getIntValue()>=3)
-                                .orElse(false))
-                .collect(Collectors.toList());
-    }
-
     // TODO: 4/3/21 <--------------------------To refactor------------------------------------>
 
     public AbstractTask specificTaskOfStudentSchema(String schemaKey, String studentId, String taskId){

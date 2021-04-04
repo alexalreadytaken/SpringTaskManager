@@ -62,8 +62,7 @@ public class UserTaskRelationService {
             return false;
         }
 
-        Set<String> finishedTasksId = studentSchemasService
-                .getAllFinishedTasksOfSchemaForTheStudent(schemaKey, studentId)
+        Set<String> finishedTasksId = getAllFinishedTasksOfSchemaForTheStudent(schemaKey, studentId)
                 .stream()
                 .map(AbstractTask::getId)
                 .collect(Collectors.toSet());
@@ -95,6 +94,24 @@ public class UserTaskRelationService {
                 .noneMatch(dependency->dependency.getId1().equals(taskId));
 
         return taskNotSuccessor&&superValidate;
+    }
+
+    public List<AbstractTask> getAllFinishedTasksOfSchemaForTheStudent(String schemaKey, String studentId){
+        AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
+
+        List<UserTaskRelationImpl> allOpenedTasksOfSchemaForTheStudent =
+                getAllOpenedTasksOfSchemaForTheStudent(schemaKey, studentId);
+
+        return schema.getTasksMap()
+                .values().stream()
+                .filter(task ->
+                        allOpenedTasksOfSchemaForTheStudent.stream()
+                                .filter(utr->utr.getTaskId().equals(task.getId()))
+                                .findAny()
+                                .map(utr->utr.getStatus()== Status.FINISHED
+                                        &&utr.getGrade().getIntValue()>=3)
+                                .orElse(false))
+                .collect(Collectors.toList());
     }
 
     public boolean firstCheckTask(AbstractStudySchema schema,AbstractTask task){
