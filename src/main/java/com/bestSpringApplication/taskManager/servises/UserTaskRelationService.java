@@ -30,28 +30,6 @@ public class UserTaskRelationService {
     @NonNull private final UserTaskRelationRepo utrRepo;
     @NonNull private final MasterSchemasService masterSchemasService;
 
-    public void prepareFirstTasks(AbstractStudySchema schema, String studentId){
-        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
-
-        List<AbstractTask> availableTasks = tasksMap.values().stream()
-                .filter(task -> !task.isTheme())
-                .filter(task -> firstCheckTask(schema,task))
-                .collect(Collectors.toList());
-
-        availableTasks.forEach(task->prepareTask(schema,task,studentId));
-    }
-
-    public void prepareTask(AbstractStudySchema schema,AbstractTask task,String studentId){
-        UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
-                .schemaId(schema.getKey())
-                .status(Status.IN_WORK)
-                .taskId(task.getId())
-                .userId(studentId)
-                .grade(Grade.ONE)
-                .build();
-        utrRepo.save(userTaskRelation);
-    }
-
     public boolean canStartTask(String schemaKey, String studentId, String taskId){
         AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
         AbstractTask task = masterSchemasService.taskByIdInSchema(taskId, schemaKey);
@@ -143,4 +121,39 @@ public class UserTaskRelationService {
         return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaId, userId, taskId);
     }
 
+    public void prepareFirstTasks(AbstractStudySchema schema, String studentId){
+        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
+
+        List<AbstractTask> availableTasks = tasksMap.values().stream()
+                .filter(task -> !task.isTheme())
+                .filter(task -> firstCheckTask(schema,task))
+                .collect(Collectors.toList());
+
+        availableTasks.forEach(task->prepareTask(schema,task,studentId));
+    }
+
+    public void prepareTask(AbstractStudySchema schema,AbstractTask task,String studentId){
+        UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
+                .schemaId(schema.getKey())
+                .status(Status.IN_WORK)
+                .taskId(task.getId())
+                .userId(studentId)
+                .grade(Grade.ONE)
+                .build();
+        utrRepo.save(userTaskRelation);
+    }
+
+    // TODO: 4/6/21 <-----------------------------CHECK EXISTS-------------------------------->
+
+    public List<String> getAllOpenedSchemasKeysToStudent(String studentId){
+        return utrRepo.getAllOpenedSchemasKeysToStudent(studentId);
+    }
+
+    public List<String> getOpenedTasksIdOfStudent(String userId){
+        return utrRepo.getAllOpenedSchemasKeysToStudent(userId);
+    }
+
+    public List<String> getOpenedTasksIdBySchemaOfStudent(String userId,String schemaId){
+        return utrRepo.getOpenedTasksIdBySchemaOfStudent(userId, schemaId);
+    }
 }

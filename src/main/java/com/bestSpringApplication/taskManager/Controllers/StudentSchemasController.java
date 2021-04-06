@@ -36,7 +36,7 @@ public class StudentSchemasController {
     @GetMapping(OPENED_SCHEMAS_TASKS)
     public List<AbstractTask> openedSchemasTasks(@PathVariable String schemaKey, @AuthenticationPrincipal User user){
         String studentId = String.valueOf(user.getId());
-        return schemasService.openedStudentTasks(studentId,schemaKey);
+        return schemasService.openedStudentTasksOfSchema(studentId,schemaKey);
     }
 
     @GetMapping(ALL_OPENED_TASKS)
