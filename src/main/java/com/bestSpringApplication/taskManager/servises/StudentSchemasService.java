@@ -2,9 +2,7 @@ package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.models.enums.Role;
-import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskClosedException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.UserNotFoundException;

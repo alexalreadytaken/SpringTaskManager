@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Status {
-    IN_WORK("in_work"),FINISHED("finished"),DEBT("debt");
+    IN_WORK("in_work"),FINISHED("finished"),DEBT("debt"),NOT_CONFIRMED("not_confirmed");
 
     private static final Map<String,Status> VALUES = new HashMap<>();
 

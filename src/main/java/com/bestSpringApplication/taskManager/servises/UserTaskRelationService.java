@@ -2,13 +2,15 @@ package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.classes.DependencyImpl;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelationImpl;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
+import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskInWorkException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskIsThemeException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,61 +59,47 @@ public class UserTaskRelationService {
         List<DependencyWithRelationType> dependencies = schema.getDependencies();
 
         // TODO: 4/4/21 reopen
-        if (task.isTheme()||existsBySchemaIdAndUserIdAndTaskId(schemaKey,studentId,taskId)){
-            return false;
+        if (existsBySchemaIdAndUserIdAndTaskId(schemaKey,studentId,taskId)){
+            throw new TaskInWorkException("Задание уже начато");
+        }else if (task.isTheme()){
+            throw new TaskIsThemeException("Тему начать невозможно!");
         }
 
         Set<String> finishedTasksId =
                 getAllFinishedTasksOfSchemaForTheStudent(schemaKey, studentId)
-                .stream()
-                .map(AbstractTask::getId)
-                .collect(Collectors.toSet());
+                        .stream()
+                        .map(AbstractTask::getId)
+                        .collect(Collectors.toSet());
 
-        /*List<DependencyWithRelationType> themeParents = dependencies
-                .stream()
-                .filter(dependency -> dependency.getId1().equals(taskId))
-                .filter(dependency -> tasksMap.get(dependency.getId0()).isTheme())
-                .collect(Collectors.toList());
+        boolean parentsOnlyHierarchical = dependencies.stream()
+                .filter(dep -> dep.getId1().equals(taskId))
+                .allMatch(dep -> dep.getRelationType() == RelationType.HIERARCHICAL);
 
-        Boolean superValidate = themeParents
-                .stream()
-                .map(dependency ->
-                        dependencies
-                                .stream()
-                                .filter(dependency1 -> dependency1.getId1().equals(dependency.getId0()))
-                                .filter(dependency1 -> dependency1.getRelationType() == RelationType.WEAK)
-                                .map(DependencyImpl::getId1)
-                                .filter(id->!tasksMap.get(id).isTheme())
-                                .allMatch(finishedTasksId::contains))
-                .reduce(true, (a, b) -> a && b); */
+        boolean taskNotSuccessor = true;
+        boolean __NEED_NAME__ = true;
 
-
-        boolean taskNotSuccessor = dependencies
-                .stream()
-                .filter(dependency->!finishedTasksId.contains(dependency.getId1())
-                        &&!finishedTasksId.contains(dependency.getId0()))
-                .filter(dependency -> dependency.getRelationType()==RelationType.WEAK)
-                .noneMatch(dependency->dependency.getId1().equals(taskId));
-
-        return taskNotSuccessor/*&&superValidate*/;
-    }
-
-    public List<AbstractTask> getAllFinishedTasksOfSchemaForTheStudent(String schemaKey, String studentId){
-        AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
-
-        List<UserTaskRelationImpl> allOpenedTasksOfSchemaForTheStudent =
-                getAllOpenedTasksOfSchemaForTheStudent(schemaKey, studentId);
-
-        return schema.getTasksMap()
-                .values().stream()
-                .filter(task ->
-                        allOpenedTasksOfSchemaForTheStudent.stream()
-                                .filter(utr->utr.getTaskId().equals(task.getId()))
-                                .findAny()
-                                .map(utr->utr.getStatus()== Status.FINISHED
-                                        &&utr.getGrade().getIntValue()>=3)
-                                .orElse(false))
-                .collect(Collectors.toList());
+        if (parentsOnlyHierarchical){
+            __NEED_NAME__ = dependencies.stream()
+                    .filter(dep -> dep.getId1().equals(taskId))
+                    .map(Dependency::getId0)
+                    .flatMap(id -> dependencies.stream()
+                            .filter(dep -> dep.getId1().equals(id)))
+                    .map(Dependency::getId0)
+                    .flatMap(id -> dependencies.stream()
+                            .filter(dep -> dep.getId0().equals(id))
+                            .map(Dependency::getId1))
+                    //bug in future if task in root theme
+                    .filter(id->!tasksMap.get(id).isTheme())
+                    .allMatch(finishedTasksId::contains);
+        }else {
+            taskNotSuccessor = dependencies
+                    .stream()
+                    .filter(dep->!finishedTasksId.contains(dep.getId1())
+                            &&!finishedTasksId.contains(dep.getId0()))
+                    .filter(dep -> dep.getRelationType()==RelationType.WEAK)
+                    .noneMatch(dep->dep.getId1().equals(taskId));
+        }
+        return taskNotSuccessor&&__NEED_NAME__;
     }
 
     public boolean firstCheckTask(AbstractStudySchema schema,AbstractTask task){
@@ -129,6 +117,24 @@ public class UserTaskRelationService {
                 });
     }
 
+    public List<AbstractTask> getAllFinishedTasksOfSchemaForTheStudent(String schemaKey, String studentId){
+        AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
+
+        List<UserTaskRelationImpl> allOpenedTasksOfSchemaForTheStudent =
+                getAllOpenedTasksOfSchemaForTheStudent(schemaKey, studentId);
+
+        return schema.getTasksMap()
+                .values().stream()
+                .filter(task ->
+                        allOpenedTasksOfSchemaForTheStudent.stream()
+                                .filter(utr->utr.getTaskId().equals(task.getId()))
+                                .findAny()
+                                .map(utr->utr.getStatus()==Status.FINISHED
+                                        &&utr.getGrade().getIntValue()>=3)
+                                .orElse(false))
+                .collect(Collectors.toList());
+    }
+
     public List<UserTaskRelationImpl> getAllOpenedTasksOfSchemaForTheStudent(String schemaKey, String studentId) {
         return utrRepo.getAllBySchemaIdAndUserId(schemaKey, studentId);
     }
@@ -138,8 +144,3 @@ public class UserTaskRelationService {
     }
 
 }
-
-
-
-
-

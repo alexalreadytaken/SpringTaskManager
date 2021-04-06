@@ -18,6 +18,11 @@ public class RestExceptionsHandler{
     public static ErrorMessage contentNotFound(HttpServletRequest request, ContentNotFoundException ex){
         return ErrorMessageFactory.newErrorMsg(ex,request);
     }
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static ErrorMessage taskIsTheme(HttpServletRequest request, TaskIsThemeException ex){
+        return ErrorMessageFactory.newErrorMsg(ex,request);
+    }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
