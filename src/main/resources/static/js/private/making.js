@@ -1,8 +1,8 @@
-import anyChartMaking from './chartMaking.js';
+import chartMaking from './chartMaking.js';
 // import scheme1 from '../local-JSON/scheme1.js';
-import scheme2 from './local-JSON/scheme2.js'
+import scheme2 from './local-JSON/scheme2.js';
 
-export function makeGraph(arrData) {
+function makeGraph (arrData) {
     arrData = scheme2
 
     let weakDepen = [], bigData = []
@@ -83,5 +83,7 @@ export function makeGraph(arrData) {
 
     data[1].children[0].connectTo
 
-    anyChartMaking(data)
+    chartMaking(data)
 }
+
+export default makeGraph
