@@ -1,9 +1,9 @@
 import chartMaking from './chartMaking.js';
-// import scheme1 from '../local-JSON/scheme1.js';
+import scheme1 from './local-JSON/scheme1.js';
 import scheme2 from './local-JSON/scheme2.js';
 
 function makeGraph (arrData) {
-    arrData = scheme2
+    arrData = scheme1
 
     let weakDepen = [], bigData = []
 
@@ -44,9 +44,6 @@ function makeGraph (arrData) {
         })
     })
 
-    console.log(weakDepen)
-    console.log(bigData)
-
     // tasksPars.forEach( el => {
     //     bigData.forEach ( el1 => {
     //         if (el.id = el1.id0) {
@@ -56,6 +53,21 @@ function makeGraph (arrData) {
     // })
 
     const data = tasksPars.filter(data => data.theme)
+
+    // data.reduce((prev, next) => {
+    //     next.children = []
+    //     depen.forEach(el => {
+    //         if (el.relationType === 'HIERARCHICAL'  ) {
+    //             if (next.id === el.id1) {
+    //                 tasksPars.forEach(task => {
+    //                     if(task.id === el.id1) {
+    //                         next.children.push(task)
+    //                     }
+    //                 })
+    //             }
+    //         }
+    //     })
+    // })
 
     data.forEach( el => {
         el.children = []
