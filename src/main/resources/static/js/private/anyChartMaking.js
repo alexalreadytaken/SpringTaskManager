@@ -25,4 +25,4 @@ export default function any (data) {
     document.getElementsByClassName('anychart-credits')[0].remove() // удаление информации о библиотеке
 }
 
-console.log('%c we are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px')
+// console.log('%c we are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px')
