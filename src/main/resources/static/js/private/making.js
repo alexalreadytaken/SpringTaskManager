@@ -1,8 +1,8 @@
-import anyChartMaking from './anyChartMaking.js';
+import anyChartMaking from './chartMaking.js';
 // import scheme1 from '../local-JSON/scheme1.js';
 import scheme2 from './local-JSON/scheme2.js'
 
-export default function makeGraph(arrData) {
+export function makeGraph(arrData) {
     arrData = scheme2
 
     let weakDepen = [], bigData = []

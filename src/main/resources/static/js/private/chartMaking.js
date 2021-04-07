@@ -1,4 +1,4 @@
-export default function any (data) {
+export function Chart (data) {
     var  treeData = anychart.data.tree (data, 'as-tree')
 
     var chart = anychart.ganttProject()
