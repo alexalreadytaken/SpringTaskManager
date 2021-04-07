@@ -11,7 +11,6 @@ function makeGraph (arrData) {
 
     const tasksPars = Object.entries(arrData.tasksMap).map(el => el[1])
     const depen = Object.entries(arrData.dependencies).map(el => el[1])
-    
     tasksPars.splice(0,2)
     
     console.log(tasksPars)
@@ -45,6 +44,9 @@ function makeGraph (arrData) {
         })
     })
 
+    console.log(weakDepen)
+    console.log(bigData)
+
     // tasksPars.forEach( el => {
     //     bigData.forEach ( el1 => {
     //         if (el.id = el1.id0) {
@@ -52,10 +54,6 @@ function makeGraph (arrData) {
     //         }
     //     })
     // })
-
-
-
-    // tasksPars.forEach (el => { if(el.theme) data.push(el) }) // построение отцов (главные темы)
 
     const data = tasksPars.filter(data => data.theme)
 
@@ -68,7 +66,7 @@ function makeGraph (arrData) {
                         if (task.id === el1.id1) {
                             el.children.push(task)
                         }
-                    })    
+                    })
                 }
             }
         })
@@ -80,8 +78,6 @@ function makeGraph (arrData) {
     // лучше сделать через рекурсию -> чтобы функция смотрела есть ли у детей еще дети
 
     console.log(data)
-
-    data[1].children[0].connectTo
 
     chartMaking(data)
 }
