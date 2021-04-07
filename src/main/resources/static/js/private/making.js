@@ -55,34 +55,32 @@ function makeGraph (arrData) {
     const data = tasksPars.filter(data => data.theme)
 
     // data.reduce((prev, next) => {
-    //     next.children = []
-    //     depen.forEach(el => {
+    //     depen.forEach((el, i) => {
     //         if (el.relationType === 'HIERARCHICAL'  ) {
-    //             if (next.id === el.id1) {
-    //                 tasksPars.forEach(task => {
-    //                     if(task.id === el.id1) {
-    //                         next.children.push(task)
+    //             if (el.id0 === next.id) {
+    //                 prev.push ( next.children = tasksPars[5])
+    //             }
+    //         }
+    //     })
+    //     return data 
+    // }, [])
+
+    // console.log(data);
+
+    // data.forEach( el => {
+    //     el.children = []
+    //     depen.forEach(el1 => {
+    //         if (el1.relationType === 'HIERARCHICAL') {
+    //             if (el.id === el1.id0) {
+    //                 tasksPars.forEach (task => {
+    //                     if (task.id === el1.id1) {
+    //                         el.children.push(task)
     //                     }
     //                 })
     //             }
     //         }
     //     })
     // })
-
-    data.forEach( el => {
-        el.children = []
-        depen.forEach(el1 => {
-            if (el1.relationType === 'HIERARCHICAL') {
-                if (el.id === el1.id0) {
-                    tasksPars.forEach (task => {
-                        if (task.id === el1.id1) {
-                            el.children.push(task)
-                        }
-                    })
-                }
-            }
-        })
-    })
 
     // id0 - Parent
     // id1 - Children

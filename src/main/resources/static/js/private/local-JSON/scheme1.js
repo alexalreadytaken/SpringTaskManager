@@ -9,7 +9,7 @@ export default scheme1 = {
     theme: true,
     opened: false,
     fields: null,
-    actualStart: 1605668400000,
+    _end: 1605668400000,
     actualEnd: 1605698100000
     },
     1: {
@@ -44,8 +44,8 @@ export default scheme1 = {
     fields: {
     Вид: "Навык"
     },
-    actualStart: 1605681900000,
-    actualEnd: 1605681900000
+    _start: 1605681900000,
+    _end: 1605681900000
     },
     4: {
     id: "4",
