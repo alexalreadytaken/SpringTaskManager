@@ -67,20 +67,20 @@ function makeGraph (arrData) {
 
     // console.log(data);
 
-    // data.forEach( el => {
-    //     el.children = []
-    //     depen.forEach(el1 => {
-    //         if (el1.relationType === 'HIERARCHICAL') {
-    //             if (el.id === el1.id0) {
-    //                 tasksPars.forEach (task => {
-    //                     if (task.id === el1.id1) {
-    //                         el.children.push(task)
-    //                     }
-    //                 })
-    //             }
-    //         }
-    //     })
-    // })
+    data.forEach( el => {
+        el.children = []
+        depen.forEach(el1 => {
+            if (el1.relationType === 'HIERARCHICAL') {
+                if (el.id === el1.id0) {
+                    tasksPars.forEach (task => {
+                        if (task.id === el1.id1) {
+                            el.children.push(task)
+                        }
+                    })
+                }
+            }
+        })
+    })
 
     // id0 - Parent
     // id1 - Children
