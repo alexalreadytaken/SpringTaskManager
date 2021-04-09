@@ -17,24 +17,23 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @RestController
-@RequestMapping("/schemas")
 @CrossOrigin
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/schemas")
 public class AdminSchemasController {
 
     private final String MASTER_SCHEMAS =                       "/master";
     private final String MASTER_FILES =                         "/master/files";
     private final String MASTER_FILES_ADD =                     "/master/files/add";
-    private final String MASTER_SCHEMA_BY_KEY =                 "/master/{schemaKey}";
-    private final String ADD_MASTER_SCHEMA_TO_STUDENT =         "/master/{schemaKey}/addTo/{studentId}";
+    private final String MASTER_SCHEMA_BY_ID =                  "/master/{schemaId}";
+    private final String ADD_MASTER_SCHEMA_TO_STUDENT =         "/master/{schemaId}/addTo/{studentId}";
 
-    private final String OPEN_TASK_FOR_STUDENT =                "/student/{studentId}/{schemaKey}/{taskId}/open";
+    private final String OPEN_TASK_FOR_STUDENT =                "/student/{studentId}/{schemaId}/{taskId}/open";
 
     private final String STUDENT_SCHEMAS =                      "/student/{studentId}";
     private final String OPENED_TASKS_OF_SCHEMAS_FOR_STUDENT =  "/student/{studentId}/opened";
-    private final String OPENED_TASKS_OF_SCHEMA_FOR_STUDENT =   "/student/{studentId}/{schemaKey}/opened";
-    private final String SPECIFIC_TASK_OF_STUDENT_SCHEMA =      "/student/{studentId}/{schemaKey}/{taskId}";
+    private final String OPENED_TASKS_OF_SCHEMA_FOR_STUDENT =   "/student/{studentId}/{schemaId}/opened";
 
 
     @NonNull private final MasterSchemasService masterSchemasService;
@@ -47,23 +46,15 @@ public class AdminSchemasController {
     @GetMapping(OPEN_TASK_FOR_STUDENT)
     @ResponseStatus(HttpStatus.OK)
     public void openTaskForStudent(@RequestParam(required = false,name = "force",defaultValue = "false") String forceOpenQuery,
-                                   @PathVariable String schemaKey,
+                                   @PathVariable String schemaId,
                                    @PathVariable String studentId,
                                    @PathVariable String taskId){
         boolean forceOpen = Boolean.parseBoolean(forceOpenQuery);
         if (forceOpen){
-            studentSchemasService.forceStartTask(schemaKey, studentId, taskId);
+            studentSchemasService.forceStartTask(schemaId, studentId, taskId);
         }else{
-            studentSchemasService.startTaskWithValidation(schemaKey, studentId, taskId);
+            studentSchemasService.startTaskWithValidation(schemaId, studentId, taskId);
         }
-    }
-
-    @GetMapping(SPECIFIC_TASK_OF_STUDENT_SCHEMA)
-    public AbstractTask specificTaskOfStudentSchema(@PathVariable String studentId,
-                                                    @PathVariable String taskId,
-                                                    @PathVariable String schemaKey){
-        log.trace("Request for task '{}' in schema '{}' of student '{}'",taskId,schemaKey,studentId);
-        return studentSchemasService.specificTaskOfStudentSchema(schemaKey,studentId,taskId);
     }
 
     @GetMapping(OPENED_TASKS_OF_SCHEMAS_FOR_STUDENT)
@@ -73,21 +64,21 @@ public class AdminSchemasController {
     }
 
     @GetMapping(OPENED_TASKS_OF_SCHEMA_FOR_STUDENT)
-    public List<AbstractTask> openedStudentTasks(@PathVariable String schemaKey,
+    public List<AbstractTask> openedStudentTasks(@PathVariable String schemaId,
                                                  @PathVariable String studentId){
-        return studentSchemasService.openedStudentTasksOfSchema(studentId,schemaKey);
+        return studentSchemasService.openedStudentTasksOfSchema(studentId,schemaId);
     }
 
-    @GetMapping(MASTER_SCHEMA_BY_KEY)
-    public AbstractStudySchema masterSchemaByKey(@PathVariable String schemaKey){
-        return masterSchemasService.schemaByKey(schemaKey);
+    @GetMapping(MASTER_SCHEMA_BY_ID)
+    public AbstractStudySchema masterSchemaById(@PathVariable String schemaId){
+        return masterSchemasService.schemaById(schemaId);
     }
 
     @GetMapping(ADD_MASTER_SCHEMA_TO_STUDENT)
     @ResponseStatus(HttpStatus.OK)
-    public void addSchemaToStudent(@PathVariable String schemaKey, @PathVariable String studentId, HttpServletRequest request){
-        log.trace("new relation student to schema;schemaKey = {},studentId = {} ",schemaKey,studentId);
-        studentSchemasService.setSchemaToStudent(studentId,schemaKey);
+    public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String studentId, HttpServletRequest request){
+        log.trace("new relation student to schema;schemaId = {},studentId = {} ",schemaId,studentId);
+        studentSchemasService.setSchemaToStudent(studentId,schemaId);
     }
 
     @PostMapping(MASTER_FILES_ADD)

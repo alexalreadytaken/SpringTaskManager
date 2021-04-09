@@ -24,7 +24,7 @@ public class StudentSchemasController {
     @NonNull private final StudentSchemasService schemasService;
 
     private final String OPENED_SCHEMAS =       "/schemas/opened";
-    private final String OPENED_SCHEMAS_TASKS = "/schemas/{schemaKey}/opened";
+    private final String OPENED_SCHEMAS_TASKS = "/schemas/{schemaId}/opened";
     private final String ALL_OPENED_TASKS =     "/tasks/opened";
 
     @GetMapping(OPENED_SCHEMAS)
@@ -34,9 +34,9 @@ public class StudentSchemasController {
     }
 
     @GetMapping(OPENED_SCHEMAS_TASKS)
-    public List<AbstractTask> openedSchemasTasks(@PathVariable String schemaKey, @AuthenticationPrincipal User user){
+    public List<AbstractTask> openedSchemasTasks(@PathVariable String schemaId, @AuthenticationPrincipal User user){
         String studentId = String.valueOf(user.getId());
-        return schemasService.openedStudentTasksOfSchema(studentId,schemaKey);
+        return schemasService.openedStudentTasksOfSchema(studentId,schemaId);
     }
 
     @GetMapping(ALL_OPENED_TASKS)

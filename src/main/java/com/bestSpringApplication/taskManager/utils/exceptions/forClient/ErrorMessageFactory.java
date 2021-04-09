@@ -20,7 +20,7 @@ public class ErrorMessageFactory {
         }
 
         ErrorMessage errorMessage = new ErrorMessage(LocalDateTime.now(),ex.getMessage(),requestURI);
-        log.warn("Return exception '{}' to client",errorMessage);
+        log.trace("Return exception '{}' to client",errorMessage);
         return errorMessage;
     }
 

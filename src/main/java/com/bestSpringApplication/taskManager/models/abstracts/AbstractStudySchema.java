@@ -22,7 +22,7 @@ public abstract class AbstractStudySchema implements Serializable {
     private AbstractTask rootTask;
 
     @JsonIgnore
-    public String getKey(){
+    public String getId(){
         return this.rootTask.getName();
     }
 }

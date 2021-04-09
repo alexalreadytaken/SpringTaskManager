@@ -88,13 +88,5 @@ public class XmlTaskParser implements TaskParser {
         taskMap.put("root",rootCourseTask);
         taskList.forEach(task->taskMap.put(task.getId(),task));
     }
-    // FIXME: 3/28/2021 remove removing
-
-    /*private AbstractTask removeFromDependenciesAndMap(List<AbstractTask> taskList,int index) {
-        AbstractTask rootCourseTask = taskList.remove(index);
-        dependencies.removeIf(el -> el.getId0().equals(rootCourseTask.getId())||el.getId1().equals(rootCourseTask.getId()));
-        return rootCourseTask;
-    }*/
-
 
 }

@@ -9,6 +9,7 @@ import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskInWorkException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskIsThemeException;
 import lombok.NonNull;
@@ -24,27 +25,26 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-// TODO: 3/28/2021 rename?
 public class UserTaskRelationService {
 
     @NonNull private final UserTaskRelationRepo utrRepo;
     @NonNull private final MasterSchemasService masterSchemasService;
 
-    public boolean canStartTask(String schemaKey, String studentId, String taskId){
-        AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
-        AbstractTask task = masterSchemasService.taskByIdInSchema(taskId, schemaKey);
+    public boolean canStartTask(String schemaId, String userId, String taskId){
+        AbstractStudySchema schema = masterSchemasService.schemaById(schemaId);
+        AbstractTask task = masterSchemasService.taskByIdInSchema(taskId, schemaId);
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
         List<DependencyWithRelationType> dependencies = schema.getDependencies();
 
         // TODO: 4/4/21 reopen
-        if (existsBySchemaIdAndUserIdAndTaskId(schemaKey,studentId,taskId)){
+        if (existsBySchemaIdAndUserIdAndTaskId(schemaId,userId,taskId)){
             throw new TaskInWorkException("Задание уже начато");
         }else if (task.isTheme()){
             throw new TaskIsThemeException("Тему начать невозможно!");
         }
 
         Set<String> finishedTasksId =
-                getAllFinishedTasksOfSchemaForTheStudent(schemaKey, studentId)
+                getAllCompletedTasksOfSchemaForTheStudent(schemaId, userId)
                         .stream()
                         .map(AbstractTask::getId)
                         .collect(Collectors.toSet());
@@ -54,10 +54,10 @@ public class UserTaskRelationService {
                 .allMatch(dep -> dep.getRelationType() == RelationType.HIERARCHICAL);
 
         boolean taskNotSuccessor = true;
-        boolean __NEED_NAME__ = true;
+        boolean TaskNotSuccessorDeep = true;
 
         if (parentsOnlyHierarchical){
-            __NEED_NAME__ = dependencies.stream()
+            TaskNotSuccessorDeep = dependencies.stream()
                     .filter(dep -> dep.getId1().equals(taskId))
                     .map(Dependency::getId0)
                     .flatMap(id -> dependencies.stream()
@@ -77,7 +77,7 @@ public class UserTaskRelationService {
                     .filter(dep -> dep.getRelationType()==RelationType.WEAK)
                     .noneMatch(dep->dep.getId1().equals(taskId));
         }
-        return taskNotSuccessor&&__NEED_NAME__;
+        return taskNotSuccessor&&TaskNotSuccessorDeep;
     }
 
     public boolean firstCheckTask(AbstractStudySchema schema,AbstractTask task){
@@ -95,11 +95,31 @@ public class UserTaskRelationService {
                 });
     }
 
-    public List<AbstractTask> getAllFinishedTasksOfSchemaForTheStudent(String schemaKey, String studentId){
-        AbstractStudySchema schema = masterSchemasService.schemaByKey(schemaKey);
+    public void prepareFirstTasks(AbstractStudySchema schema, String userId){
+        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
+
+        tasksMap.values().stream()
+                .filter(task -> !task.isTheme())
+                .filter(task -> firstCheckTask(schema,task))
+                .forEach(task->prepareTask(schema,task,userId));
+    }
+
+    public void prepareTask(AbstractStudySchema schema,AbstractTask task,String userId){
+        UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
+                .schemaId(schema.getId())
+                .status(Status.IN_WORK)
+                .taskId(task.getId())
+                .userId(userId)
+                .grade(Grade.ONE)
+                .build();
+        utrRepo.save(userTaskRelation);
+    }
+
+    public List<AbstractTask> getAllCompletedTasksOfSchemaForTheStudent(String schemaId, String userId){
+        AbstractStudySchema schema = masterSchemasService.schemaById(schemaId);
 
         List<UserTaskRelationImpl> allOpenedTasksOfSchemaForTheStudent =
-                getAllOpenedTasksOfSchemaForTheStudent(schemaKey, studentId);
+                getAllOpenedTasksOfSchemaForTheStudent(schemaId, userId);
 
         return schema.getTasksMap()
                 .values().stream()
@@ -113,47 +133,27 @@ public class UserTaskRelationService {
                 .collect(Collectors.toList());
     }
 
-    public List<UserTaskRelationImpl> getAllOpenedTasksOfSchemaForTheStudent(String schemaKey, String studentId) {
-        return utrRepo.getAllBySchemaIdAndUserId(schemaKey, studentId);
+    public List<UserTaskRelationImpl> getAllOpenedTasksOfSchemaForTheStudent(String schemaId, String userId) {
+        return utrRepo.getAllBySchemaIdAndUserId(schemaId, userId);
     }
 
     public boolean existsBySchemaIdAndUserIdAndTaskId(String schemaId, String userId, String taskId){
         return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaId, userId, taskId);
     }
 
-    public void prepareFirstTasks(AbstractStudySchema schema, String studentId){
-        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
-
-        List<AbstractTask> availableTasks = tasksMap.values().stream()
-                .filter(task -> !task.isTheme())
-                .filter(task -> firstCheckTask(schema,task))
-                .collect(Collectors.toList());
-
-        availableTasks.forEach(task->prepareTask(schema,task,studentId));
-    }
-
-    public void prepareTask(AbstractStudySchema schema,AbstractTask task,String studentId){
-        UserTaskRelationImpl userTaskRelation = UserTaskRelationImpl.builder()
-                .schemaId(schema.getKey())
-                .status(Status.IN_WORK)
-                .taskId(task.getId())
-                .userId(studentId)
-                .grade(Grade.ONE)
-                .build();
-        utrRepo.save(userTaskRelation);
-    }
-
-    // TODO: 4/6/21 <-----------------------------CHECK EXISTS-------------------------------->
-
-    public List<String> getAllOpenedSchemasKeysToStudent(String studentId){
-        return utrRepo.getAllOpenedSchemasKeysToStudent(studentId);
+    public List<String> getAllOpenedSchemasIdToStudent(String userId){
+        List<String> schemasId = utrRepo.getAllOpenedSchemasIdToStudent(userId);
+        if (schemasId.size()==0)throw new ContentNotFoundException("Курсы не назначены");
+        return schemasId;
     }
 
     public List<String> getOpenedTasksIdOfStudent(String userId){
-        return utrRepo.getAllOpenedSchemasKeysToStudent(userId);
+        return utrRepo.getAllOpenedSchemasIdToStudent(userId);
     }
 
     public List<String> getOpenedTasksIdBySchemaOfStudent(String userId,String schemaId){
-        return utrRepo.getOpenedTasksIdBySchemaOfStudent(userId, schemaId);
+        List<String> tasksId = utrRepo.getOpenedTasksIdBySchemaOfStudent(userId, schemaId);
+        if (tasksId.size()==0)throw new ContentNotFoundException("Данный курс не назначен");
+        return tasksId;
     }
 }

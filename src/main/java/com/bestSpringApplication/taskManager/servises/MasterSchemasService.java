@@ -88,21 +88,21 @@ public class MasterSchemasService {
                 .collect(Collectors.toList());
     }
 
-    public AbstractStudySchema schemaByKey(String schemaKey) {
-        return Optional.ofNullable(masterSchemas.get(schemaKey))
+    public AbstractStudySchema schemaById(String schemaId) {
+        return Optional.ofNullable(masterSchemas.get(schemaId))
                 .map(VersionedList::getNewest)
                 .orElseThrow(()->{
-                    log.warn("schema with key = '{}' not found",schemaKey);
+                    log.warn("schema with id = '{}' not found",schemaId);
                     return new ContentNotFoundException("Курс не найден");
                 });
     }
 
-    public AbstractTask taskByIdInSchema(String taskId,String schemaKey){
-        AbstractStudySchema schema = schemaByKey(schemaKey);
+    public AbstractTask taskByIdInSchema(String taskId,String schemaId){
+        AbstractStudySchema schema = schemaById(schemaId);
         return Optional.ofNullable(schema.getTasksMap())
                 .map(taskMap->taskMap.get(taskId))
                 .orElseThrow(()->{
-                    log.warn("can`t get task by id '{}' in schema '{}'",taskId,schemaKey);
+                    log.warn("can`t get task by id '{}' in schema '{}'",taskId,schemaId);
                     return new ContentNotFoundException("Задание не найдено");
                 });
     }
@@ -118,7 +118,7 @@ public class MasterSchemasService {
             log.error("error with parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
             throw new IllegalFileFormatException("загрузка файла не удалась,проверьте структуру своего файла");
         } catch (IOException e) {
-            masterSchemas.remove(studySchema.getKey());
+            masterSchemas.remove(studySchema.getId());
 
             log.error("unknown io exception = {}, removing schema from map",e.getMessage());
             throw new ServerException("Ошибка при загрузке файла,пожалуйста,повторите позже");
@@ -126,12 +126,12 @@ public class MasterSchemasService {
     }
 
     public void put(AbstractStudySchema studySchema){
-        String key = studySchema.getKey();
+        String id = studySchema.getId();
         VersionedList<AbstractStudySchema> schemaList = Optional
-                .ofNullable(masterSchemas.get(key))
+                .ofNullable(masterSchemas.get(id))
                 .orElseGet(VersionedList::new);
         schemaList.put(studySchema);
-        masterSchemas.put(key,schemaList);
+        masterSchemas.put(id,schemaList);
     }
 
     public void saveFile(MultipartFile file) throws IOException {
