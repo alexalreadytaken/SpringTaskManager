@@ -3,13 +3,13 @@ package com.bestSpringApplication.taskManager.models.abstracts;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.io.Serializable;
+import lombok.ToString;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class AbstractTask implements Serializable {
+@ToString(of = {"name","id"})
+public abstract class AbstractTask{
     private String id;
     private String name;
     private int duration;

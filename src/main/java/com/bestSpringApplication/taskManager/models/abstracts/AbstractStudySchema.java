@@ -14,7 +14,7 @@ import java.util.Map;
 @Data
 @ToString(of = "rootTask")
 @AllArgsConstructor
-public abstract class AbstractStudySchema implements Serializable {
+public abstract class AbstractStudySchema{
 
     private Map<String, AbstractTask> tasksMap;
     private List<DependencyWithRelationType> dependencies;

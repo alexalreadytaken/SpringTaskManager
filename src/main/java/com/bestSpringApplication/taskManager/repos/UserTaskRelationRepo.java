@@ -1,16 +1,14 @@
 package com.bestSpringApplication.taskManager.repos;
 
-import com.bestSpringApplication.taskManager.models.classes.UserTaskRelationImpl;
+import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
-public interface UserTaskRelationRepo extends JpaRepository<UserTaskRelationImpl,Integer> {
+public interface UserTaskRelationRepo extends JpaRepository<UserTaskRelation,Integer> {
     boolean existsBySchemaIdAndUserIdAndTaskId(String schemaId, String studentId, String taskId);
-    Optional<UserTaskRelationImpl> getBySchemaIdAndUserIdAndTaskId(String schemaId, String studentId, String taskId);
-    List<UserTaskRelationImpl> getAllBySchemaIdAndUserId(String schemaId,String studentId);
+    List<UserTaskRelation> getAllBySchemaIdAndUserId(String schemaId, String studentId);
 
     @Query(value = "select distinct schemaId from user_task_relation where userId=userId")
     List<String> getAllOpenedSchemasIdToStudent(String userId);

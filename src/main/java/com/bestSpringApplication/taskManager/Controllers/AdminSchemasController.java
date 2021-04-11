@@ -32,7 +32,6 @@ public class AdminSchemasController {
     private final String OPEN_TASK_FOR_STUDENT =                "/student/{studentId}/{schemaId}/{taskId}/open";
 
     private final String STUDENT_SCHEMAS =                      "/student/{studentId}";
-    private final String OPENED_TASKS_OF_SCHEMAS_FOR_STUDENT =  "/student/{studentId}/opened";
     private final String OPENED_TASKS_OF_SCHEMA_FOR_STUDENT =   "/student/{studentId}/{schemaId}/opened";
 
 
@@ -57,12 +56,6 @@ public class AdminSchemasController {
         }
     }
 
-    @GetMapping(OPENED_TASKS_OF_SCHEMAS_FOR_STUDENT)
-    public List<AbstractTask> allOpenedStudentTasks(@PathVariable String studentId){
-        log.trace("Request for all opened student '{}' tasks",studentId);
-        return studentSchemasService.allOpenedStudentTasks(studentId);
-    }
-
     @GetMapping(OPENED_TASKS_OF_SCHEMA_FOR_STUDENT)
     public List<AbstractTask> openedStudentTasks(@PathVariable String schemaId,
                                                  @PathVariable String studentId){
@@ -77,7 +70,6 @@ public class AdminSchemasController {
     @GetMapping(ADD_MASTER_SCHEMA_TO_STUDENT)
     @ResponseStatus(HttpStatus.OK)
     public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String studentId, HttpServletRequest request){
-        log.trace("new relation student to schema;schemaId = {},studentId = {} ",schemaId,studentId);
         studentSchemasService.setSchemaToStudent(studentId,schemaId);
     }
 

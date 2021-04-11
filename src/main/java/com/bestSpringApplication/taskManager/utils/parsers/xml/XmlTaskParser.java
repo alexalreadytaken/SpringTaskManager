@@ -1,20 +1,19 @@
 package com.bestSpringApplication.taskManager.utils.parsers.xml;
 
+import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
+import com.bestSpringApplication.taskManager.models.classes.TaskImpl;
+import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.utils.DateHandler;
 import com.bestSpringApplication.taskManager.utils.StudyParseHandler;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.TaskParseException;
 import com.bestSpringApplication.taskManager.utils.parsers.TaskParser;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
-import com.bestSpringApplication.taskManager.models.classes.TaskImpl;
-import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.jdom2.Element;
 
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Slf4j

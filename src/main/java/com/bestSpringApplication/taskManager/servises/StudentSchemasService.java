@@ -3,19 +3,20 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.enums.Role;
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskClosedException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
-// TODO: 4/9/21 LOGGING
 public class StudentSchemasService {
 
     @NonNull private final MasterSchemasService masterSchemasService;
@@ -23,8 +24,9 @@ public class StudentSchemasService {
     @NonNull private final UserTaskRelationService utrService;
 
     public void setSchemaToStudent(String studentId,String schemaId){
+        log.trace("trying prepare schema '{}' to student '{}'",schemaId,studentId);
         userService.validateExistsAndContainsRole(studentId,Role.STUDENT);
-        utrService.prepareFirstTasks(masterSchemasService.schemaById(schemaId),studentId);
+        utrService.prepareSchema(masterSchemasService.schemaById(schemaId),studentId);
     }
 
     public void forceStartTask(String schemaId, String studentId, String taskId){
@@ -40,6 +42,7 @@ public class StudentSchemasService {
     }
 
     private void startTask(String schemaId, String studentId, String taskId) {
+        log.trace("trying start task '{}' in schema '{}' for student '{}'",taskId,schemaId,studentId);
         AbstractStudySchema schema = masterSchemasService.schemaById(schemaId);
         AbstractTask task = masterSchemasService.taskByIdInSchema(taskId,schemaId);
         utrService.prepareTask(schema,task,studentId);
@@ -48,10 +51,11 @@ public class StudentSchemasService {
     public Map<String, AbstractStudySchema> getStudentSchemas(String studentId) {
         userService.validateExistsAndContainsRole(studentId,Role.STUDENT);
         List<String> allOpenedSchemasToStudent = utrService.getAllOpenedSchemasIdToStudent(studentId);
-
-        return allOpenedSchemasToStudent.stream()
+        Map<String, AbstractStudySchema> schemasMap = allOpenedSchemasToStudent.stream()
                 .map(masterSchemasService::schemaById)
                 .collect(Collectors.toMap(AbstractStudySchema::getId, Function.identity()));
+        log.trace("request for all schemas of student '{}',return = {} ",studentId,schemasMap.keySet());
+        return schemasMap;
     }
 
     public List<AbstractTask> studentSchemasRootTasks(String studentId){

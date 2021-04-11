@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.utils.exceptions.forClient;
 
-public class UserNotFoundException extends ClientException{
+public class UserNotFoundException extends BadRequestException {
 
     public UserNotFoundException(String message) {
         super(message);

@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.utils.exceptions.forClient;
 
-public class IllegalXmlFormatException extends ClientException{
+public class IllegalXmlFormatException extends BadRequestException {
 
     public IllegalXmlFormatException(String message) {
         super(message);

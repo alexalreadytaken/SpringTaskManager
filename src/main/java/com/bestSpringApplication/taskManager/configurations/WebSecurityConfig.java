@@ -25,14 +25,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @NonNull private final PasswordEncoder passwordEncoder;
     @NonNull private final UserService userService;
 
-
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         String[] permittedMappings = {"/favicon.ico","/js/**","/register/**","/schemas/**","/admin/**"};
         http
-//                    .cors().configurationSource(corsConfig())
-//                .and()
                 .csrf().disable()
                 .authorizeRequests()
                 .antMatchers(permittedMappings).permitAll()
@@ -59,15 +55,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .deleteCookies("JSESSIONID","remember-me")
                 .logoutSuccessUrl("/login");
     }
-    /* @Bean
-    CorsConfigurationSource corsConfig(){
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Collections.singletonList("http://localhost:4200"));
-        config.setAllowedMethods(Arrays.stream(HttpMethod.values()).map(HttpMethod::name).collect(Collectors.toList()));
-        UrlBasedCorsConfigurationSource finalConfig = new UrlBasedCorsConfigurationSource();
-        finalConfig.registerCorsConfiguration("/**",config);
-        return finalConfig;
-    }*/
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

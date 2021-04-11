@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.utils.exceptions.forClient;
 
-public class EmailExistsException extends ClientException{
+public class EmailExistsException extends BadRequestException {
 
 
     public EmailExistsException(String message) {
