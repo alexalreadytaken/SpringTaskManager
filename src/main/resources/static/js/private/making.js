@@ -1,23 +1,27 @@
 import chartMaking from './chartMaking.js';
 import scheme1 from './local-JSON/scheme1.js';
-import scheme2 from './local-JSON/scheme2.js';
 
 function makeGraph (arrData) {
     arrData = scheme1
 
-    console.log(arrData)
-
     const tasksPars = Object.entries(arrData.tasksMap).map(el => el[1])
     const depen = Object.entries(arrData.dependencies).map(el => el[1])
     tasksPars.splice(0,2)
-    
-    console.log(depen);
 
-// закидывем WEAK зависимости в отдельную переменную для удобной работы с ними
+    console.log(tasksPars)
 
-
+    console.log(arrData)
 
     const data = tasksPars.filter(data => data.theme)
+
+    // tasksPars.forEach (el => {
+    //     el.connector = [
+    //         {
+    //             "connectTo": '4',
+    //             "connectTo": '2'
+    //         }
+    //     ]
+    // })
 
     // data.reduce((prev, next) => {
     //     depen.forEach((el, i) => {
