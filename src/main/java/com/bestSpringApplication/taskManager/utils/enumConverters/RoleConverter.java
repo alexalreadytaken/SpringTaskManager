@@ -9,11 +9,11 @@ import javax.persistence.Converter;
 public class RoleConverter implements AttributeConverter<Role,String> {
     @Override
     public String convertToDatabaseColumn(Role role) {
-        return role.getStrValue();
+        return role==null?null:role.getStrValue();
     }
 
     @Override
     public Role convertToEntityAttribute(String s) {
-        return Role.of(s);
+        return s==null?null:Role.of(s);
     }
 }

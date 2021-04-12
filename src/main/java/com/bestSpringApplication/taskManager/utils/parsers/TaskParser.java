@@ -9,6 +9,6 @@ import java.util.Map;
 
 
 public interface TaskParser{
-    Map<String,AbstractTask> getTasks() throws ParseException;
-    List<DependencyWithRelationType> getHierarchicalDependencies() throws ParseException;
+    Map<String,AbstractTask> getTasks();
+    List<DependencyWithRelationType> getHierarchicalDependencies();
 }

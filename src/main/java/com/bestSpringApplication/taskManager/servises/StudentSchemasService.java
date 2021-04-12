@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 @Slf4j
 @Service
@@ -53,7 +55,7 @@ public class StudentSchemasService {
         List<String> allOpenedSchemasToStudent = utrService.getAllOpenedSchemasIdToStudent(studentId);
         Map<String, AbstractStudySchema> schemasMap = allOpenedSchemasToStudent.stream()
                 .map(masterSchemasService::schemaById)
-                .collect(Collectors.toMap(AbstractStudySchema::getId, Function.identity()));
+                .collect(toMap(AbstractStudySchema::getId, Function.identity()));
         log.trace("request for all schemas of student '{}',return = {} ",studentId,schemasMap.keySet());
         return schemasMap;
     }
@@ -62,16 +64,15 @@ public class StudentSchemasService {
         return getStudentSchemas(studentId)
                 .values().stream()
                 .map(AbstractStudySchema::getRootTask)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public List<AbstractTask> openedStudentTasksOfSchema(String studentId, String schemaId){
         List<String> tasksId = utrService.getOpenedTasksIdBySchemaOfStudent(studentId, schemaId);
         Map<String, AbstractTask> tasksMap = masterSchemasService.schemaById(schemaId).getTasksMap();
-
         return tasksId.stream()
                 .map(tasksMap::get)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
 }

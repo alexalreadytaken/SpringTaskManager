@@ -12,6 +12,12 @@ import java.util.List;
 public class VersionedList<T> {
     private final List<T> values = new ArrayList<>();
 
+    public static <R> VersionedList<R> of(R... values){
+        VersionedList<R> versionedList = new VersionedList<>();
+        for (R el:values) versionedList.put(el);
+        return versionedList;
+    }
+
     public T getNewest(){
         return values.get(values.size()-1);
     }

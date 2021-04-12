@@ -1,16 +1,16 @@
 package com.bestSpringApplication.taskManager.utils.parsers.xml;
 
-import com.bestSpringApplication.taskManager.utils.StudyParseHandler;
-import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
-import com.bestSpringApplication.taskManager.utils.exceptions.internal.SchemaParseException;
-import com.bestSpringApplication.taskManager.utils.parsers.SchemaParser;
-import com.bestSpringApplication.taskManager.utils.parsers.TaskParser;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DefaultStudySchemaImpl;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.classes.TaskImpl;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
+import com.bestSpringApplication.taskManager.utils.StudyParseHandler;
+import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
+import com.bestSpringApplication.taskManager.utils.exceptions.internal.SchemaParseException;
+import com.bestSpringApplication.taskManager.utils.parsers.SchemaParser;
+import com.bestSpringApplication.taskManager.utils.parsers.TaskParser;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +27,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Component
@@ -78,26 +79,28 @@ public class XmlSchemaParser implements SchemaParser {
     private List<DependencyWithRelationType> parseDependenciesList(Element dependencyListElem) {
         log.trace("Starting parse dependencies list xml element = {}",dependencyListElem);
         List<Element> DependencyElements = dependencyListElem.getChildren("task-dependency");
-        return DependencyElements.stream().map(DependencyChild ->{
-            String parent = DependencyChild.getChildText("task-predecessor-id");
-            String child = DependencyChild.getChildText("task-successor-id");
-            return new DependencyWithRelationType(RelationType.WEAK,parent,child);
-        }).collect(Collectors.toList());
+        return DependencyElements.stream()
+                .map(DependencyChild ->{
+                    String parent = DependencyChild.getChildText("task-predecessor-id");
+                    String child = DependencyChild.getChildText("task-successor-id");
+                    return new DependencyWithRelationType(RelationType.WEAK,parent,child);
+                }).collect(toList());
     }
 
     private void addFieldsToTasks(Map<String, AbstractTask> tasks, Map<String, String> schemaFields) {
-        tasks.values().forEach(task -> {
-            if (task instanceof TaskImpl) {
-                Map<String, String> taskFields = ((TaskImpl) task).getFields();
-                if (taskFields!=null){
-                    for (int i = 0;i <  taskFields.size(); i++) {
-                        String i0 = String.valueOf(i);
-                        String key = schemaFields.get(i0);
-                        String value = taskFields.remove(i0);
-                        taskFields.put(key,value);
+        tasks.values().stream()
+                .filter(TaskImpl.class::isInstance)
+                .map(TaskImpl.class::cast)
+                .forEach(task -> {
+                    Map<String, String> taskFields = task.getFields();
+                    if (taskFields!=null){
+                        for (int i = 0;i <  taskFields.size(); i++) {
+                            String i0 = String.valueOf(i);
+                            String key = schemaFields.get(i0);
+                            String value = taskFields.remove(i0);
+                            taskFields.put(key,value);
+                        }
                     }
-                }
-            }
-        });
+                });
     }
 }

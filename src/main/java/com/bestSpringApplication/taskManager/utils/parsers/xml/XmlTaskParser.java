@@ -29,16 +29,16 @@ public class XmlTaskParser implements TaskParser {
     }
 
     @Override
-    public Map<String, AbstractTask> getTasks() throws ParseException {
+    public Map<String, AbstractTask> getTasks(){
         return taskMap;
     }
 
     @Override
-    public List<DependencyWithRelationType> getHierarchicalDependencies() throws ParseException {
+    public List<DependencyWithRelationType> getHierarchicalDependencies() {
         return dependencies;
     }
 
-    private void parseAndMakeDependencies(Element element){
+    private void parseAndMakeDependencies(Element element) throws TaskParseException{
         log.trace("Receiving element = {}",element);
         Stack<Element> tasksStack = new Stack<>();
         List<AbstractTask> taskList = new ArrayList<>();
@@ -53,8 +53,8 @@ public class XmlTaskParser implements TaskParser {
             Optional<Element> fieldListElem = Optional.ofNullable(taskElemFromStack.getChild("field-list"));
             Optional<Element> taskListElem = Optional.ofNullable(taskElemFromStack.getChild("task-list"));
             Optional<Element> taskNotesElem = Optional.ofNullable(taskElemFromStack.getChild("task-notes"));
-            String startDate = taskElemFromStack.getChildText("task-start-date");
-            String endDate = taskElemFromStack.getChildText("task-end-date");
+            Optional<String> startDate = Optional.ofNullable(taskElemFromStack.getChildText("task-start-date"));
+            Optional<String> endDate = Optional.ofNullable(taskElemFromStack.getChildText("task-end-date"));
             fieldListElem.ifPresent(fieldList ->
                     taskBuilder.fields(StudyParseHandler.xmlFieldToMap(fieldList, "field","field-no", "field-value"))
             );
@@ -73,8 +73,11 @@ public class XmlTaskParser implements TaskParser {
                 );
             });
             String optimizedName = StringUtils.normalizeSpace(taskName).replaceAll(" ", "_");
-            long formattedStartDate = DateHandler.parseDateToLongFromFormat(startDate, "dd-MM-yyyy, HH:mm:ss");
-            long formattedEndDate = DateHandler.parseDateToLongFromFormat(endDate, "dd-MM-yyyy, HH:mm:ss");
+            String defaultTime = "01-01-1970, 00:00:00";
+            long formattedStartDate = DateHandler
+                    .parseDateToLongFromFormat(startDate.orElse(defaultTime), "dd-MM-yyyy, HH:mm:ss");
+            long formattedEndDate = DateHandler
+                    .parseDateToLongFromFormat(endDate.orElse(defaultTime), "dd-MM-yyyy, HH:mm:ss");
             taskBuilder
                     .name(optimizedName)
                     .id(taskId)

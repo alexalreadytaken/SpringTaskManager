@@ -38,9 +38,7 @@ public class AdminSchemasController {
     @NonNull private final MasterSchemasService masterSchemasService;
     @NonNull private final StudentSchemasService studentSchemasService;
 
-    private static final Set<String> confirmedFileTypes =
-            Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
-                    "xml","mrp","txt")));
+    private static final Set<String> confirmedFileTypes = Set.of("xml", "mrp", "txt");
 
     @GetMapping(OPEN_TASK_FOR_STUDENT)
     @ResponseStatus(HttpStatus.OK)
@@ -69,7 +67,7 @@ public class AdminSchemasController {
 
     @GetMapping(ADD_MASTER_SCHEMA_TO_STUDENT)
     @ResponseStatus(HttpStatus.OK)
-    public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String studentId, HttpServletRequest request){
+    public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String studentId){
         studentSchemasService.setSchemaToStudent(studentId,schemaId);
     }
 
@@ -93,7 +91,6 @@ public class AdminSchemasController {
 
     @GetMapping(MASTER_SCHEMAS)
     public List<AbstractTask> masterSchemasOverview(){
-        log.trace("Request for all master schemas");
         return masterSchemasService.schemasRootTasks();
     }
 

@@ -20,7 +20,9 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 
 @Service
 @RequiredArgsConstructor
@@ -35,26 +37,18 @@ public class UserTaskRelationService {
         AbstractTask task = masterSchemasService.taskByIdInSchema(taskId, schemaId);
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
         List<DependencyWithRelationType> dependencies = schema.getDependencies();
-
         // TODO: 4/4/21 reopen
         if (existsBySchemaIdAndUserIdAndTaskId(schemaId,userId,taskId)){
             throw new TaskInWorkException("Задание уже начато");
         }else if (task.isTheme()){
             throw new TaskIsThemeException("Тему начать невозможно!");
         }
-
-        Set<String> finishedTasksId =
-                getAllCompletedTasksOfSchemaForTheStudent(schemaId, userId)
-                        .stream()
-                        .map(AbstractTask::getId)
-                        .collect(Collectors.toSet());
-
+        Set<String> finishedTasksId = getCompletedTasksIdOfSchemaForStudent(schemaId, userId);
         boolean parentsOnlyHierarchical = dependencies.stream()
-                .filter(dep -> dep.getId1().equals(taskId))
-                .allMatch(dep -> dep.getRelationType() == RelationType.HIERARCHICAL);
+                .filter(dep->dep.getId1().equals(taskId))
+                .allMatch(dep->dep.getRelationType()==RelationType.HIERARCHICAL);
 
         boolean taskNotSuccessor;
-
         if (parentsOnlyHierarchical){
             taskNotSuccessor = dependencies.stream()
                     .filter(dep -> dep.getId1().equals(taskId))
@@ -96,9 +90,7 @@ public class UserTaskRelationService {
 
     public void prepareSchema(AbstractStudySchema schema, String userId){
         log.trace("start prepare schema '{}' to student '{}'",schema.getId(),userId);
-        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
-
-        tasksMap.values().stream()
+        schema.tasksStream()
                 .filter(task -> !task.isTheme())
                 .filter(task -> firstCheckTask(schema,task))
                 .peek(task->log.trace("task '{}' validated successful",task))
@@ -117,19 +109,25 @@ public class UserTaskRelationService {
         utrRepo.save(userTaskRelation);
     }
 
-    public List<AbstractTask> getAllCompletedTasksOfSchemaForTheStudent(String schemaId, String userId){
+    public Set<String> getCompletedTasksIdOfSchemaForStudent(String schemaId, String userId) {
+        return getCompletedTasksOfSchemaForStudent(schemaId, userId)
+                .stream()
+                .map(AbstractTask::getId)
+                .collect(toSet());
+    }
+
+    public List<AbstractTask> getCompletedTasksOfSchemaForStudent(String schemaId, String userId){
         AbstractStudySchema schema = masterSchemasService.schemaById(schemaId);
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
-
-        return getAllOpenedTasksOfSchemaForTheStudent(schemaId, userId)
+        return getOpenedTasksOfSchemaForStudent(schemaId, userId)
                 .stream()
                 .filter(utr->utr.getStatus()==Status.FINISHED)
                 .filter(utr->utr.getGrade().getIntValue()>=3)
                 .map(utr->tasksMap.get(utr.getTaskId()))
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
-    public List<UserTaskRelation> getAllOpenedTasksOfSchemaForTheStudent(String schemaId, String userId) {
+    public List<UserTaskRelation> getOpenedTasksOfSchemaForStudent(String schemaId, String userId) {
         return utrRepo.getAllBySchemaIdAndUserId(schemaId, userId);
     }
 

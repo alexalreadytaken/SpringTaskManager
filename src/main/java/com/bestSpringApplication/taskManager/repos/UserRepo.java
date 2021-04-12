@@ -8,5 +8,4 @@ import java.util.Optional;
 
 public interface UserRepo extends JpaRepository<User,Long> {
     Optional<User> findByMail(String mail);
-    int countByRole(Role role);
 }

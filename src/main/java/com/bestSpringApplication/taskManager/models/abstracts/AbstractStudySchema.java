@@ -9,6 +9,7 @@ import lombok.ToString;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 
 @Data
@@ -24,5 +25,10 @@ public abstract class AbstractStudySchema{
     @JsonIgnore
     public String getId(){
         return this.rootTask.getName();
+    }
+
+    public Stream<AbstractTask> tasksStream(){
+        return this.tasksMap
+                .values().stream();
     }
 }

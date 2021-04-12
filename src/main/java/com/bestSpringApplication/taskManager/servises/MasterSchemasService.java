@@ -19,7 +19,9 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 @Slf4j
@@ -45,22 +47,21 @@ public class MasterSchemasService {
         log.trace("Started initialization");
         File tasksDir = new File(xmlTaskPoolPath);
         if (tasksDir.exists()){
-            Optional<File[]> files = Optional
-                    .ofNullable(tasksDir.listFiles(el -> !el.isDirectory()));
-            files.ifPresent(files0 -> Arrays.stream(files0).forEach(file -> {
-                String fileName = file.getName();
-                try {
-                    log.trace("getting file '{}' to parse", fileName);
-                    AbstractStudySchema schemaFromDir = schemaParser.parse(file);
-                    log.trace("putting schema to map,file:{}", fileName);
-                    put(schemaFromDir);
-                }  catch (ParseException e) {
-                    log.error("error with parse:{}",e.getMessage());
-                    log.error("deleting file '{}' ",fileName);
-                    //fixme later
-//                    FileDeleter.deleteAsync(file,2000);
-                }
-            }));
+            Arrays.stream(tasksDir.listFiles(File::isFile))
+                    .forEach(file -> {
+                        String fileName = file.getName();
+                        try {
+                            log.trace("getting file '{}' to parse", fileName);
+                            AbstractStudySchema schemaFromDir = schemaParser.parse(file);
+                            log.trace("putting schema to map,file:{}", fileName);
+                            put(schemaFromDir);
+                        }  catch (ParseException e) {
+                            log.error("error with parse:{}",e.getMessage());
+                            log.error("deleting file '{}' ",fileName);
+                            //fixme later
+                            //FileDeleter.deleteAsync(file,2000);
+                        }
+                    });
         }else {
             log.warn("directory '{}' not found,try to create...", xmlTaskPoolPath);
             tasksDir.mkdir();
@@ -68,24 +69,18 @@ public class MasterSchemasService {
     }
 
     public List<String> schemasFileList() {
-        File file = new File(xmlTaskPoolPath);
-        Optional<File[]> filesOpt = Optional
-                .ofNullable(file.listFiles(file0->!file0.isDirectory()));
-        List<String> fileNames = new ArrayList<>();
-        filesOpt
-                .ifPresent(files-> Arrays.stream(files)
-                        .map(File::getName)
-                        .forEach(fileNames::add));
-        return fileNames;
+        File dir = new File(xmlTaskPoolPath);
+        return Arrays.stream(dir.listFiles(File::isFile))
+                .map(File::getName)
+                .collect(toList());
     }
 
     public List<AbstractTask> schemasRootTasks(){
         return masterSchemas
-                .values()
-                .stream()
+                .values().stream()
                 .map(VersionedList::getNewest)
                 .map(AbstractStudySchema::getRootTask)
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 
     public AbstractStudySchema schemaById(String schemaId) {
@@ -125,13 +120,16 @@ public class MasterSchemasService {
         }
     }
 
+    // FIXME: 4/12/21 not beautiful
     public void put(AbstractStudySchema studySchema){
         String id = studySchema.getId();
-        VersionedList<AbstractStudySchema> schemaList = Optional
-                .ofNullable(masterSchemas.get(id))
-                .orElseGet(VersionedList::new);
-        schemaList.put(studySchema);
-        masterSchemas.put(id,schemaList);
+        if (masterSchemas.containsKey(id)){
+            masterSchemas.get(id).put(studySchema);
+        }else {
+            VersionedList<AbstractStudySchema> versionedList = new VersionedList<>();
+            versionedList.put(studySchema);
+            masterSchemas.put(id,versionedList);
+        }
     }
 
     public void saveFile(MultipartFile file) throws IOException {

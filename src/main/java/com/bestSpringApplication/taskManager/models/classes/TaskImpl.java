@@ -11,7 +11,7 @@ import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ToString(of = {},callSuper = true)
+@ToString(of={},callSuper = true)
 public class TaskImpl extends AbstractTask {
 
     private Map<String,String> fields;
