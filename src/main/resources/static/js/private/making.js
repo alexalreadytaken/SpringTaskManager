@@ -4,9 +4,6 @@ import {parsTask, parsDepen} from './parsFiels.js';
 
 function makeGraph (arrData) {
     arrData = scheme1
-
-    console.log(parsTask(arrData))
-
     const tasks = parsTask(arrData).splice(2, parsTask(arrData).length) // fix splice 
 
     const depen = parsDepen(arrData)
@@ -14,6 +11,14 @@ function makeGraph (arrData) {
     const data = tasks.filter(el => el.theme)
 
     console.log(depen);
+    console.log(tasks)
+
+
+    tasks.forEach (task => {
+
+    })
+
+
 
     // tasksPars.forEach (el => {
     //     el.connector = [
@@ -35,14 +40,14 @@ function makeGraph (arrData) {
     //     return data 
     // }, [])
 
-    data.forEach( el => {
-        el.children = []
-        depen.forEach(el1 => {
-            if (el1.relationType === 'HIERARCHICAL') {
-                if (el.id === el1.id0) {
+    data.forEach( data => {
+        data.children = []
+        depen.forEach(depen => {
+            if (depen.relationType === 'HIERARCHICAL') {
+                if (data.id === depen.id0) {
                     tasks.forEach (task => {
-                        if (task.id === el1.id1) {
-                            el.children.push(task)
+                        if (task.id === depen.id1) {
+                            data.children.push(task)
                         }
                     })
                 }
