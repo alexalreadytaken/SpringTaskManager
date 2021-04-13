@@ -1,14 +1,19 @@
 import chartMaking from './chartMaking.js';
 import scheme1 from './local-JSON/scheme1.js';
-import parsField from './parsFiels.js';
-
+import {parsTask, parsDepen} from './parsFiels.js';
 
 function makeGraph (arrData) {
     arrData = scheme1
 
-    const responseData = parsField(arrData)
+    console.log(parsTask(arrData))
 
-    console.log(responseData)
+    const tasks = parsTask(arrData).splice(2, parsTask(arrData).length) // fix splice 
+
+    const depen = parsDepen(arrData)
+    
+    const data = tasks.filter(el => el.theme)
+
+    console.log(depen);
 
     // tasksPars.forEach (el => {
     //     el.connector = [
@@ -30,12 +35,12 @@ function makeGraph (arrData) {
     //     return data 
     // }, [])
 
-    responseData[2].forEach( el => {
+    data.forEach( el => {
         el.children = []
-        responseData[1].forEach(el1 => {
+        depen.forEach(el1 => {
             if (el1.relationType === 'HIERARCHICAL') {
                 if (el.id === el1.id0) {
-                    responseData[0].forEach (task => {
+                    tasks.forEach (task => {
                         if (task.id === el1.id1) {
                             el.children.push(task)
                         }
@@ -47,9 +52,8 @@ function makeGraph (arrData) {
 
     // id0 - Parent
     // id1 - Children
-
-    console.log(responseData[2])
-    chartMaking(responseData[2])
+    console.log(data)
+    chartMaking(data)
 }
 
 export default makeGraph
