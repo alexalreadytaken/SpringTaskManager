@@ -3,7 +3,9 @@ import scheme1 from './local-JSON/scheme1.js';
 import {parsTask, parsDepen} from './parsFiels.js';
 
 function makeGraph (arrData) {
+
     arrData = scheme1
+    
     const tasks = parsTask(arrData).splice(2, parsTask(arrData).length) // fix splice 
 
     const depen = parsDepen(arrData)
@@ -15,7 +17,19 @@ function makeGraph (arrData) {
 
 
     tasks.forEach (task => {
-
+        task.connector = []
+        depen.forEach (depen => {
+            if (depen.relationType === "WEAK" && task.id === depen.id0)  {
+                // console.log({
+                //     id: depen.id0,
+                //     id1: depen.id1
+                // })
+                task.connector.push({
+                    connectTo: depen.id1,
+                    // connectType: "finish-start"
+                })
+            }    
+        })
     })
 
 

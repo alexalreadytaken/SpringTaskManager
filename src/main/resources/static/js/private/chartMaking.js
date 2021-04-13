@@ -14,7 +14,7 @@ export default function chartMaking (data) {
 
 // =========================
 //------- pos splitter ----- 
-    chart.splitterPosition('20%')
+    chart.splitterPosition('15%')
 // =========================
     
     chart.data(treeData)
