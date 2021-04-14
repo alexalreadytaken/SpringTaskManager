@@ -1,0 +1,10 @@
+.elemTask {
+    width: 50px;
+    height: 15px;
+    border-radius: 15px;
+    background-color: aquamarine;
+}
+
+.menuNote {
+    display: none;
+}
