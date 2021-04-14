@@ -1,10 +1,7 @@
 import chartMaking from './chartMaking.js';
-import scheme1 from './local-JSON/scheme1.js';
 import {parsTask, parsDepen} from './parsFiels.js';
 
 function makeGraph (arrData) {
-
-    arrData = scheme1
     
     const tasks = parsTask(arrData).splice(2, parsTask(arrData).length) // fix splice 
 
@@ -68,6 +65,12 @@ function makeGraph (arrData) {
             }
         })
     })
+
+    data[2].children[2].progressValue = 0.7
+    data[2].children[2].custom_field =   "#"
+    data[2].children[1].custom_field =   "!"
+
+    console.log(data[2].children[2]);
 
     // id0 - Parent
     // id1 - Children
