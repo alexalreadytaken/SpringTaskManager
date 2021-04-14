@@ -10,17 +10,10 @@ function makeGraph (arrData) {
     
     const data = tasks.filter(el => el.theme)
 
-    // console.log(depen);
-    // console.log(tasks);
-
     tasks.forEach (task => {
         task.connector = []
         depen.forEach (depen => {
             if (depen.relationType === "WEAK" && task.id === depen.id0)  {
-                // console.log({
-                //     id: depen.id0,
-                //     id1: depen.id1
-                // })
                 task.connector.push({
                     connectTo: depen.id1,
                     connectType: "finish-start"

@@ -1,8 +1,5 @@
-
-
 let elem = document.getElementById('elem')
     .addEventListener ('click', el => {
-        
         noteTask(check = true)
     })
 
