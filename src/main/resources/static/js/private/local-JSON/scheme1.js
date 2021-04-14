@@ -44,8 +44,8 @@ export default scheme1 = {
     fields: {
     Вид: "Навык"
     },
-    _start: 1605681900000,
-    _end: 1605681900000
+    actualStart: 1605681900000,
+    actualEnd: 1605681900000
     },
     4: {
     id: "4",
