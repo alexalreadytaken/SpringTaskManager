@@ -4,7 +4,7 @@ import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchem
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DefaultStudySchemaImpl;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
-import com.bestSpringApplication.taskManager.models.classes.TaskImpl;
+import com.bestSpringApplication.taskManager.models.classes.DefaultTask;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.utils.StudyParseHandler;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
@@ -89,8 +89,8 @@ public class XmlSchemaParser implements SchemaParser {
 
     private void addFieldsToTasks(Map<String, AbstractTask> tasks, Map<String, String> schemaFields) {
         tasks.values().stream()
-                .filter(TaskImpl.class::isInstance)
-                .map(TaskImpl.class::cast)
+                .filter(DefaultTask.class::isInstance)
+                .map(DefaultTask.class::cast)
                 .forEach(task -> {
                     Map<String, String> taskFields = task.getFields();
                     if (taskFields!=null){

@@ -2,11 +2,10 @@ package com.bestSpringApplication.taskManager.utils.parsers.xml;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
-import com.bestSpringApplication.taskManager.models.classes.TaskImpl;
+import com.bestSpringApplication.taskManager.models.classes.DefaultTask;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.utils.DateHandler;
 import com.bestSpringApplication.taskManager.utils.StudyParseHandler;
-import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.TaskParseException;
 import com.bestSpringApplication.taskManager.utils.parsers.TaskParser;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,7 @@ public class XmlTaskParser implements TaskParser {
         tasksStack.push(element);
         while (!tasksStack.empty()) {
             Element taskElemFromStack = tasksStack.pop();
-            TaskImpl.TaskImplBuilder taskBuilder = TaskImpl.builder();
+            DefaultTask.DefaultTaskBuilder taskBuilder = DefaultTask.builder();
             String taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"))
                     .orElseThrow(()->new TaskParseException("task id is empty!"));
             String taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"))
@@ -86,7 +85,6 @@ public class XmlTaskParser implements TaskParser {
             taskList.add(taskBuilder.build());
         }
         AbstractTask rootCourseTask = taskList.get(1);
-        rootCourseTask.setOpened(true);
         taskMap.put("root",rootCourseTask);
         taskList.forEach(task->taskMap.put(task.getId(),task));
     }

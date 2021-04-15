@@ -12,6 +12,7 @@ import java.util.List;
 public class VersionedList<T> {
     private final List<T> values = new ArrayList<>();
 
+//    @SafeVarargs
     public static <R> VersionedList<R> of(R... values){
         VersionedList<R> versionedList = new VersionedList<>();
         for (R el:values) versionedList.put(el);

@@ -8,12 +8,10 @@ import lombok.ToString;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(of = {"name","id"})
 public abstract class AbstractTask{
     private String id;
     private String name;
     private int duration;
     private String notes;
     private boolean theme;
-    private boolean opened;
 }

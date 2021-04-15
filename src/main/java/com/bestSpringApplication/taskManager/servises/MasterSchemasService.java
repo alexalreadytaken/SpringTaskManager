@@ -7,6 +7,7 @@ import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentN
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ServerException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
+import com.bestSpringApplication.taskManager.utils.exceptions.internal.PostConstructInitializationException;
 import com.bestSpringApplication.taskManager.utils.parsers.SchemaParser;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,6 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.toList;
 
@@ -30,7 +30,10 @@ public class MasterSchemasService {
 
     @Value("${xml.task.pool.path}")
     private String xmlTaskPoolPath;
+    @Value("${invalid.files.pool.path}")
+    private String invalidFilesPoolPath;
 
+    // TODO: 4/15/21 list of parsers and dirs
     @NonNull private final SchemaParser schemaParser;
 
     // TODO: 4/6/21 really version control
@@ -46,26 +49,28 @@ public class MasterSchemasService {
     private void initFromXml() {
         log.trace("Started initialization");
         File tasksDir = new File(xmlTaskPoolPath);
-        if (tasksDir.exists()){
-            Arrays.stream(tasksDir.listFiles(File::isFile))
-                    .forEach(file -> {
-                        String fileName = file.getName();
-                        try {
-                            log.trace("getting file '{}' to parse", fileName);
-                            AbstractStudySchema schemaFromDir = schemaParser.parse(file);
-                            log.trace("putting schema to map,file:{}", fileName);
-                            put(schemaFromDir);
-                        }  catch (ParseException e) {
-                            log.error("error with parse:{}",e.getMessage());
-                            log.error("deleting file '{}' ",fileName);
-                            //fixme later
-                            //FileDeleter.deleteAsync(file,2000);
-                        }
-                    });
-        }else {
-            log.warn("directory '{}' not found,try to create...", xmlTaskPoolPath);
-            tasksDir.mkdir();
+        File invalidFilesDir = new File(invalidFilesPoolPath);
+        if(!tasksDir.exists()||!invalidFilesDir.exists()){
+            log.error("invalid directories state = tasksDir exists:{},invalidFilesDir exists:{}",
+                    tasksDir.exists(),invalidFilesDir.exists());
+            throw new PostConstructInitializationException("One of the directories was not found");
         }
+
+        Arrays.stream(tasksDir.listFiles(File::isFile))
+                .forEach(file -> {
+                    String fileName = file.getName();
+                    try {
+                        log.trace("getting file '{}' to parse", fileName);
+                        AbstractStudySchema schemaFromDir = schemaParser.parse(file);
+                        log.trace("putting schema to map,file:{}", fileName);
+                        put(schemaFromDir);
+                    }  catch (ParseException e) {
+                        log.error("error with parse:{}",e.getMessage());
+                        log.error("moving file to invalid directory'{}' ",fileName);
+                        file.renameTo(new File(invalidFilesPoolPath+fileName));
+                    }
+                });
+
     }
 
     public List<String> schemasFileList() {
@@ -75,7 +80,7 @@ public class MasterSchemasService {
                 .collect(toList());
     }
 
-    public List<AbstractTask> schemasRootTasks(){
+    public List<AbstractTask> getSchemasRootTasks(){
         return masterSchemas
                 .values().stream()
                 .map(VersionedList::getNewest)
@@ -83,7 +88,7 @@ public class MasterSchemasService {
                 .collect(toList());
     }
 
-    public AbstractStudySchema schemaById(String schemaId) {
+    public AbstractStudySchema getSchemaById(String schemaId) {
         return Optional.ofNullable(masterSchemas.get(schemaId))
                 .map(VersionedList::getNewest)
                 .orElseThrow(()->{
@@ -92,12 +97,12 @@ public class MasterSchemasService {
                 });
     }
 
-    public AbstractTask taskByIdInSchema(String taskId,String schemaId){
-        AbstractStudySchema schema = schemaById(schemaId);
+    public AbstractTask getTaskByIdInSchema(String taskId, String schemaId){
+        AbstractStudySchema schema = getSchemaById(schemaId);
         return Optional.ofNullable(schema.getTasksMap())
                 .map(taskMap->taskMap.get(taskId))
-                .orElseThrow(()->{
-                    log.warn("can`t get task by id '{}' in schema '{}'",taskId,schemaId);
+                .orElseThrow(() -> {
+                    log.warn("can`t get task by id '{}' in schema '{}'", taskId, schemaId);
                     return new ContentNotFoundException("Задание не найдено");
                 });
     }
@@ -120,15 +125,12 @@ public class MasterSchemasService {
         }
     }
 
-    // FIXME: 4/12/21 not beautiful
     public void put(AbstractStudySchema studySchema){
         String id = studySchema.getId();
-        if (masterSchemas.containsKey(id)){
+        if (masterSchemas.containsKey(id)) {
             masterSchemas.get(id).put(studySchema);
-        }else {
-            VersionedList<AbstractStudySchema> versionedList = new VersionedList<>();
-            versionedList.put(studySchema);
-            masterSchemas.put(id,versionedList);
+        } else {
+            masterSchemas.put(id,VersionedList.of(studySchema));
         }
     }
 

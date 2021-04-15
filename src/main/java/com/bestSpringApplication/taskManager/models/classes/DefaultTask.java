@@ -11,20 +11,18 @@ import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@ToString(of={},callSuper = true)
-public class TaskImpl extends AbstractTask {
+public class DefaultTask extends AbstractTask {
 
     private Map<String,String> fields;
-
     @JsonProperty("actualStart")
     private long startDate;
     @JsonProperty("actualEnd")
     private long endDate;
 
     @Builder
-    public TaskImpl(String id, String name, int duration, String notes, boolean theme, boolean opened,
-                    Map<String, String> fields, long startDate, long endDate){
-        super(id, name, duration, notes, theme,opened);
+    public DefaultTask(String id, String name, int duration, String notes, boolean theme,
+                       Map<String, String> fields, long startDate, long endDate){
+        super(id, name, duration, notes, theme);
 
         this.endDate=endDate;
         this.fields=fields;

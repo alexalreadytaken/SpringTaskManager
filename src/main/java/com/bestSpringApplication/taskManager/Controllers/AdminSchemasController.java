@@ -1,11 +1,13 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 
+import com.bestSpringApplication.taskManager.models.classes.GroupTaskSummary;
+import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.servises.MasterSchemasService;
-import com.bestSpringApplication.taskManager.servises.StudentSchemasService;
+import com.bestSpringApplication.taskManager.servises.UsersSchemasService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 @RestController
@@ -27,20 +28,27 @@ public class AdminSchemasController {
     private final String MASTER_FILES =                         "/master/files";
     private final String MASTER_FILES_ADD =                     "/master/files/add";
     private final String MASTER_SCHEMA_BY_ID =                  "/master/{schemaId}";
-    private final String ADD_MASTER_SCHEMA_TO_STUDENT =         "/master/{schemaId}/addTo/{studentId}";
+    private final String SCHEMA_SUMMARY =                       "/master/{schemaId}/summary";
+    private final String ADD_MASTER_SCHEMA_TO_USER =            "/master/{schemaId}/addTo/{studentId}";
 
-    private final String OPEN_TASK_FOR_STUDENT =                "/student/{studentId}/{schemaId}/{taskId}/open";
+    private final String OPEN_TASK_FOR_USER =                   "/student/{studentId}/{schemaId}/{taskId}/open";
 
-    private final String STUDENT_SCHEMAS =                      "/student/{studentId}";
-    private final String OPENED_TASKS_OF_SCHEMA_FOR_STUDENT =   "/student/{studentId}/{schemaId}/opened";
+    private final String USER_SCHEMAS =                         "/student/{studentId}";
+    private final String SUMMARY_OF_USER_SCHEMA =               "student/{studentId}/{schemaId}/summary";
+    private final String OPENED_TASKS_OF_SCHEMA_FOR_USER =      "/student/{studentId}/{schemaId}/opened";
 
 
     @NonNull private final MasterSchemasService masterSchemasService;
-    @NonNull private final StudentSchemasService studentSchemasService;
+    @NonNull private final UsersSchemasService usersSchemasService;
 
     private static final Set<String> confirmedFileTypes = Set.of("xml", "mrp", "txt");
 
-    @GetMapping(OPEN_TASK_FOR_STUDENT)
+    @GetMapping(SUMMARY_OF_USER_SCHEMA)
+    public List<UserTaskRelation> summaryOfUserSchema(@PathVariable String studentId, @PathVariable String schemaId){
+        return usersSchemasService.getUserTasksSummary(schemaId,studentId);
+    }
+
+    @GetMapping(OPEN_TASK_FOR_USER)
     @ResponseStatus(HttpStatus.OK)
     public void openTaskForStudent(@RequestParam(required = false,name = "force",defaultValue = "false") String forceOpenQuery,
                                    @PathVariable String schemaId,
@@ -48,27 +56,26 @@ public class AdminSchemasController {
                                    @PathVariable String taskId){
         boolean forceOpen = Boolean.parseBoolean(forceOpenQuery);
         if (forceOpen){
-            studentSchemasService.forceStartTask(schemaId, studentId, taskId);
+            usersSchemasService.forceStartTask(schemaId, studentId, taskId);
         }else{
-            studentSchemasService.startTaskWithValidation(schemaId, studentId, taskId);
+            usersSchemasService.startTaskWithValidation(schemaId, studentId, taskId);
         }
     }
 
-    @GetMapping(OPENED_TASKS_OF_SCHEMA_FOR_STUDENT)
+    @GetMapping(OPENED_TASKS_OF_SCHEMA_FOR_USER)
     public List<AbstractTask> openedStudentTasks(@PathVariable String schemaId,
                                                  @PathVariable String studentId){
-        return studentSchemasService.openedStudentTasksOfSchema(studentId,schemaId);
+        return usersSchemasService.getOpenedUserTasksOfSchema(studentId,schemaId);
     }
 
-    @GetMapping(MASTER_SCHEMA_BY_ID)
-    public AbstractStudySchema masterSchemaById(@PathVariable String schemaId){
-        return masterSchemasService.schemaById(schemaId);
+    @GetMapping(USER_SCHEMAS)
+    public List<AbstractTask> studentSchemas(@PathVariable String studentId){
+        return usersSchemasService.getUserSchemasRootTasks(studentId);
     }
 
-    @GetMapping(ADD_MASTER_SCHEMA_TO_STUDENT)
-    @ResponseStatus(HttpStatus.OK)
-    public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String studentId){
-        studentSchemasService.setSchemaToStudent(studentId,schemaId);
+    @GetMapping(SCHEMA_SUMMARY)
+    public List<GroupTaskSummary> schemaSummary(@PathVariable String schemaId){
+        return usersSchemasService.getAllUsersTasksSummary(schemaId);
     }
 
     @PostMapping(MASTER_FILES_ADD)
@@ -84,14 +91,20 @@ public class AdminSchemasController {
         }
     }
 
-    @GetMapping(STUDENT_SCHEMAS)
-    public List<AbstractTask> studentSchemas(@PathVariable String studentId){
-        return studentSchemasService.studentSchemasRootTasks(studentId);
+    @GetMapping(MASTER_SCHEMA_BY_ID)
+    public AbstractStudySchema masterSchemaById(@PathVariable String schemaId){
+        return masterSchemasService.getSchemaById(schemaId);
+    }
+
+    @GetMapping(ADD_MASTER_SCHEMA_TO_USER)
+    @ResponseStatus(HttpStatus.OK)
+    public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String studentId){
+        usersSchemasService.setSchemaToUser(studentId,schemaId);
     }
 
     @GetMapping(MASTER_SCHEMAS)
     public List<AbstractTask> masterSchemasOverview(){
-        return masterSchemasService.schemasRootTasks();
+        return masterSchemasService.getSchemasRootTasks();
     }
 
     @GetMapping(MASTER_FILES)
