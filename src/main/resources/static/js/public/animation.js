@@ -1,11 +1,28 @@
+let check = document.getElementById('menuNote').style
 let elem = document.getElementById('elem')
     .addEventListener ('click', el => {
-        noteTask(check = true)
+        (check.display === 'block') ? check.display = 'none' : check.display = 'block'
     })
 
+    const student = document.getElementById('nameUser')
+    const kol = document.getElementById('markUser')
 
-noteTask = (check) => {
-    document.getElementById('menuNote').style.display = 'block' // доделать проверку чтобы на каждый клик скрывалась а потом показывалась меню
-    check = false
-    if (!check) document.getElementById('menuNote').style.display = 'none'
-}
+    import {list, pair} from '../private/local-JSON/studentList.js'
+
+    console.log(list);
+    console.log(kol);
+
+    console.log(student)
+
+    list.forEach(el => {
+        student.insertAdjacentHTML('beforeend', `
+            <option>${el}</option>
+        `)
+    })
+
+    pair.forEach (el => {
+        kol.insertAdjacentHTML ('beforeend', `
+            <option>${el}</option>    
+        `)
+    })
+    
