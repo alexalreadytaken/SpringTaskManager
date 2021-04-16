@@ -15,7 +15,7 @@ export default function chartMaking (data, rootTask) {
 
 // =========================
 //------- pos splitter ----- 
-    chart.splitterPosition('15%')
+    chart.splitterPosition('18%')
 // ==========================
 
 // ---- turn on custom field

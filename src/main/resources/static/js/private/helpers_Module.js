@@ -1,6 +1,6 @@
 import makeGraph from './making.js';
 
-export function makeFileList (fileNames) {
+function makeFileList (fileNames) {
     let schemasFileList = document.getElementById("schemasFileList");
     fileNames.forEach(file=>{
         let div = document.createElement('div');
@@ -14,7 +14,7 @@ export function makeFileList (fileNames) {
     })
 }
 
-export function makeUserList (users) {
+function makeUserList (users) {
     let userList = document.getElementById("UsersList")
     users.forEach(user => {
         let userContainer ='<div style="border: 1px solid black">'
@@ -28,7 +28,7 @@ export function makeUserList (users) {
     })
 }
 
-export function multiFetch (url) {
+function multiFetch (url) {
     fetch( url )
     .then(response => response.json())
     .then(result => {
@@ -47,3 +47,5 @@ export function multiFetch (url) {
         }
     })
 }
+
+export {makeFileList, makeUserList, multiFetch}
