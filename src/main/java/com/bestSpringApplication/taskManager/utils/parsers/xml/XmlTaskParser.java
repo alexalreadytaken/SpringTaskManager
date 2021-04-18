@@ -72,6 +72,7 @@ public class XmlTaskParser implements TaskParser {
                 );
             });
             String optimizedName = StringUtils.normalizeSpace(taskName).replaceAll(" ", "_");
+            // FIXME: 4/17/21
             String defaultTime = "01-01-1970, 00:00:00";
             long formattedStartDate = DateHandler
                     .parseDateToLongFromFormat(startDate.orElse(defaultTime), "dd-MM-yyyy, HH:mm:ss");

@@ -7,7 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Status {
-    IN_WORK("in_work"),FINISHED("finished"),DEBT("debt"),NOT_CONFIRMED("not_confirmed");
+
+    DEBT("debt"),
+    CLOSED("closed"),
+    IN_WORK("in_work"),
+    FINISHED("finished"),
+    NOT_CONFIRMED("not_confirmed");
 
     private static final Map<String,Status> VALUES = new HashMap<>();
 
@@ -21,6 +26,10 @@ public enum Status {
 
     @Getter(onMethod = @__({@JsonValue}))
     private final String name;
+
+    public boolean isInstance(Status other){
+        return this==other;
+    }
 
     Status(String name){
         this.name=name;

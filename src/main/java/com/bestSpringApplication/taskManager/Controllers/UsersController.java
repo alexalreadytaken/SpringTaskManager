@@ -15,8 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-// TODO: 3/3/2021 REMOVE
+@Deprecated
 @RestController
 @RequiredArgsConstructor
 public class UsersController{

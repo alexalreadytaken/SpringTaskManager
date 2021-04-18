@@ -6,6 +6,7 @@ import com.bestSpringApplication.taskManager.models.classes.DefaultStudySchemaIm
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.classes.DefaultTask;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
+import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.utils.StudyParseHandler;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.SchemaParseException;
@@ -67,7 +68,7 @@ public class XmlSchemaParser implements SchemaParser {
         Element taskElem = Optional.ofNullable(rootElement.getChild("task"))
                 .orElseThrow(()-> new SchemaParseException("taskElement is empty!"));
         Map<String, String> fieldsMap = StudyParseHandler.xmlFieldToMap(fieldListElem, "field", "no", "name");
-        List<DependencyWithRelationType> dependenciesList = parseDependenciesList(dependencyListElem);
+        List<Dependency> dependenciesList = parseDependenciesList(dependencyListElem);
         TaskParser taskParser = applicationContext.getBean(XmlTaskParser.class, taskElem);
         Map<String, AbstractTask> tasksMap = taskParser.getTasks();
         dependenciesList.addAll(taskParser.getHierarchicalDependencies());
@@ -76,7 +77,7 @@ public class XmlSchemaParser implements SchemaParser {
         return new DefaultStudySchemaImpl(tasksMap,dependenciesList,tasksMap.remove("root"));
     }
 
-    private List<DependencyWithRelationType> parseDependenciesList(Element dependencyListElem) {
+    private List<Dependency> parseDependenciesList(Element dependencyListElem) {
         log.trace("Starting parse dependencies list xml element = {}",dependencyListElem);
         List<Element> DependencyElements = dependencyListElem.getChildren("task-dependency");
         return DependencyElements.stream()
