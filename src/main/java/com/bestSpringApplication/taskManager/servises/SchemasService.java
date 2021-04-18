@@ -2,6 +2,7 @@ package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.utils.VersionedList;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
@@ -26,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class MasterSchemasService {
+public class SchemasService implements SchemasProvider {
 
     @Value("${xml.task.pool.path}")
     private String xmlTaskPoolPath;

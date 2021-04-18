@@ -19,6 +19,8 @@ public interface UserTaskRelationRepo extends JpaRepository<UserTaskRelation,Int
 
     List<UserTaskRelation> getAllBySchemaId(String schemaId);
 
+    List<UserTaskRelation> getAllBySchemaIdAndTaskId(String schemaId,String taskId);
+
     // FIXME: 4/17/21 params like update ?
     @Query(value = "select distinct schemaId from user_task_relation where userId=userId")
     List<String> getOpenedSchemasIdByUserId(String userId);

@@ -2,7 +2,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.user.User;
-import com.bestSpringApplication.taskManager.servises.UsersSchemasService;
+import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudentSchemasController {
 
-    @NonNull private final UsersSchemasService schemasService;
+    @NonNull private final StudyService studyService;
 
     private final String OPENED_SCHEMAS =       "/schemas/opened";
     private final String OPENED_SCHEMAS_TASKS = "/schemas/{schemaId}/opened";
@@ -29,13 +29,13 @@ public class StudentSchemasController {
     @GetMapping(OPENED_SCHEMAS)
     public List<AbstractTask> openedSchemas(@AuthenticationPrincipal User user){
         String studentId = String.valueOf(user.getId());
-        return schemasService.getUserSchemasRootTasks(studentId);
+        return studyService.getUserSchemasRootTasks(studentId);
     }
 
     @GetMapping(OPENED_SCHEMAS_TASKS)
     public List<AbstractTask> openedSchemasTasks(@PathVariable String schemaId, @AuthenticationPrincipal User user){
         String studentId = String.valueOf(user.getId());
-        return schemasService.getOpenedUserTasksOfSchema(studentId,schemaId);
+        return studyService.getOpenedUserTasksOfSchema(studentId,schemaId);
     }
 
 }

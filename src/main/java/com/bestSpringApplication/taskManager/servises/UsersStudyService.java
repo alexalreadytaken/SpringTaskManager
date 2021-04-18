@@ -8,6 +8,7 @@ import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.servises.interfaces.*;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskClosedException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskInWorkException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskIsThemeException;
@@ -28,32 +29,34 @@ import static java.util.stream.Collectors.toMap;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UsersSchemasService {
+public class UsersStudyService implements SummaryProvider, StudyService {
 
-    @NonNull private final MasterSchemasService masterSchemasService;
     @NonNull private final UserService userService;
-    @NonNull private final UserTaskRelationService utrService;
+
+    @NonNull private final SchemasProvider schemasProvider;
+    @NonNull private final StudyStateService studyStateService;
+    @NonNull private final SummaryHandler summaryHandler;
 
     public void setSchemaToUser(String userId,String schemaId){
         log.trace("trying prepare schema '{}' to student '{}'",schemaId,userId);
         userService.validateExistsAndContainsRole(userId,Role.STUDENT);
-        utrService.prepareSchema(masterSchemasService.getSchemaById(schemaId),userId);
+        studyStateService.prepareSchema(schemasProvider.getSchemaById(schemaId),userId);
     }
 
     public boolean canStartTask(String schemaId, String userId, String taskId){
-        AbstractStudySchema schema = masterSchemasService.getSchemaById(schemaId);
-        AbstractTask task = masterSchemasService.getTaskByIdInSchema(taskId, schemaId);
+        AbstractStudySchema schema = schemasProvider.getSchemaById(schemaId);
+        AbstractTask task = schemasProvider.getTaskByIdInSchema(taskId, schemaId);
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
         List<DependencyWithRelationType> dependencies = schema.getDependenciesWithRelationType();
 
         // TODO: 4/4/21 reopen
-        if (utrService.taskInWork(schemaId,userId,taskId)){
+        if (studyStateService.taskInWork(schemaId,userId,taskId)){
             throw new TaskInWorkException("Задание уже начато");
         }else if (task.isTheme()){
             throw new TaskIsThemeException("Тему начать невозможно!");
         }
 
-        List<String> ids = utrService.getCompletedTasksIdOfSchemaForUser(schemaId, userId);
+        List<String> ids = studyStateService.getCompletedTasksIdOfSchemaForUser(schemaId, userId);
         Set<String> finishedTasksId = new HashSet<>(ids);
 
         boolean parentsOnlyHierarchical = dependencies.stream()
@@ -85,9 +88,9 @@ public class UsersSchemasService {
 
     public Map<String, AbstractStudySchema> getUserSchemas(String userId) {
         userService.validateExistsAndContainsRole(userId,Role.STUDENT);
-        List<String> allOpenedSchemasToUser = utrService.getOpenedSchemasIdOfUser(userId);
+        List<String> allOpenedSchemasToUser = studyStateService.getOpenedSchemasIdOfUser(userId);
         Map<String, AbstractStudySchema> schemasMap = allOpenedSchemasToUser.stream()
-                .map(masterSchemasService::getSchemaById)
+                .map(schemasProvider::getSchemaById)
                 .collect(toMap(AbstractStudySchema::getId, Function.identity()));
         log.trace("request for all schemas of student '{}',return = {} ",userId,schemasMap.keySet());
         return schemasMap;
@@ -101,16 +104,16 @@ public class UsersSchemasService {
     }
 
     public List<AbstractTask> getOpenedUserTasksOfSchema(String userId, String schemaId){
-        List<String> tasksId = utrService.getOpenedTasksIdBySchemaOfUser(userId, schemaId);
-        Map<String, AbstractTask> tasksMap = masterSchemasService.getSchemaById(schemaId).getTasksMap();
+        List<String> tasksId = studyStateService.getOpenedTasksIdBySchemaOfUser(userId, schemaId);
+        Map<String, AbstractTask> tasksMap = schemasProvider.getSchemaById(schemaId).getTasksMap();
         return tasksId.stream()
                 .map(tasksMap::get)
                 .collect(toList());
     }
 
     // TODO: 4/15/21 similar for user
-    public List<GroupTaskSummary> getAllUsersTasksSummary(String schemaId){
-        List<UserTaskRelation> relations = utrService.getAllRelationsBySchemaId(schemaId);
+    public List<GroupTaskSummary> getTasksSummaryBySchema(String schemaId){
+        List<UserTaskRelation> relations = studyStateService.getAllRelationsBySchemaId(schemaId);
         return relations.stream()
                 .map(UserTaskRelation::getTaskId)
                 .distinct()
@@ -119,20 +122,28 @@ public class UsersSchemasService {
                             .filter(utr -> utr.getTaskId().equals(id))
                             .collect(toList());
                     return new GroupTaskSummary(id,
-                            utrService.getPercentCompleteTasks(taskRelations),
-                            utrService.getAverageTasksGrade(taskRelations).orElse(0.0),
-                            utrService.getCountByTasksGrade(taskRelations));
+                            summaryHandler.getPercentCompleteTasks(taskRelations),
+                            summaryHandler.getAverageTasksGrade(taskRelations).orElse(0.0),
+                            summaryHandler.getCountByTasksGrade(taskRelations));
                 }).collect(toList());
     }
 
+    public GroupTaskSummary getSummaryBySchemaIdAndTaskId(String schemaId,String taskId){
+        List<UserTaskRelation> relations = studyStateService.getRelationsBySchemaIdAndTaskId(schemaId, taskId);
+        return new GroupTaskSummary(taskId,
+                summaryHandler.getPercentCompleteTasks(relations),
+                summaryHandler.getAverageTasksGrade(relations).orElse(0.0),
+                summaryHandler.getCountByTasksGrade(relations));
+    }
+
     public List<UserTaskRelation> getUserTasksSummary(String schemaId, String userId){
-        return utrService.getSchemaStateByUserId(userId,schemaId);
+        return studyStateService.getSchemaStateByUserId(userId,schemaId);
     }
 
     private void startTask(String schemaId, String userId, String taskId) {
         log.trace("trying start task '{}' in schema '{}' for student '{}'",taskId,schemaId,userId);
-        masterSchemasService.getTaskByIdInSchema(taskId, schemaId);
-        utrService.openTask(schemaId, userId, taskId);
+        schemasProvider.getTaskByIdInSchema(taskId, schemaId);
+        studyStateService.openTask(schemaId, userId, taskId);
     }
 
     private boolean defaultCheck(String taskId, List<DependencyWithRelationType> dependencies, Set<String> finishedTasksId) {

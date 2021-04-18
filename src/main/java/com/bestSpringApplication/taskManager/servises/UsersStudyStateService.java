@@ -8,6 +8,8 @@ import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
+import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
+import com.bestSpringApplication.taskManager.servises.interfaces.SummaryHandler;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -23,24 +25,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UserTaskRelationService {
+public class UsersStudyStateService implements SummaryHandler,StudyStateService {
 
     @NonNull private final UserTaskRelationRepo utrRepo;
-
-    public boolean firstCheckTask(AbstractStudySchema schema,AbstractTask task){
-        List<DependencyWithRelationType> dependencies = schema.getDependenciesWithRelationType();
-        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
-
-        return dependencies.stream()
-                .filter(dependency -> dependency.getId1().equals(task.getId()))
-                .allMatch(dependency -> {
-                    AbstractTask taskParent = tasksMap.get(dependency.getId0());
-                    boolean parentHierarchicalAndTheme = taskParent.isTheme() &&
-                            dependency.getRelationType() == RelationType.HIERARCHICAL;
-                    boolean parentsOfParentValid = firstCheckTask(schema, taskParent);
-                    return parentHierarchicalAndTheme&&parentsOfParentValid;
-                });
-    }
 
     public void prepareSchema(AbstractStudySchema schema, String userId){
         log.trace("start prepare schema '{}' to student '{}'",schema.getId(),userId);
@@ -61,29 +48,6 @@ public class UserTaskRelationService {
                 .grade(Grade.ONE)
                 .build();
         utrRepo.save(userTaskRelation);
-    }
-
-    public double getPercentCompleteTasks(List<UserTaskRelation> taskRelations) {
-        long finishedCount = taskRelations.stream()
-                .map(UserTaskRelation::getStatus)
-                .filter(Status.FINISHED::isInstance)
-                .count();
-        // FIXME: 4/18/21
-        return (double)finishedCount/(double)taskRelations.size();
-    }
-
-    public OptionalDouble getAverageTasksGrade(List<UserTaskRelation> taskRelations) {
-        return taskRelations.stream()
-                .map(UserTaskRelation::getGrade)
-                .map(Grade::getIntValue)
-                .mapToDouble(Integer::doubleValue)
-                .average();
-    }
-
-    public Map<Grade, Long> getCountByTasksGrade(List<UserTaskRelation> taskRelations) {
-        return taskRelations.stream()
-                .map(UserTaskRelation::getGrade)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     }
 
     public List<String> getCompletedTasksIdOfSchemaForUser(String schemaId, String userId) {
@@ -116,9 +80,51 @@ public class UserTaskRelationService {
         return schemasId;
     }
 
+    public List<UserTaskRelation> getRelationsBySchemaIdAndTaskId(String schemaId,String taskId){
+        return utrRepo.getAllBySchemaIdAndTaskId(schemaId, taskId);
+    }
+
     public List<String> getOpenedTasksIdBySchemaOfUser(String userId, String schemaId){
         List<String> tasksId = utrRepo.getOpenedTasksIdBySchemaIdAndUserId(userId, schemaId);
         if (tasksId.size()==0)throw new ContentNotFoundException("Данный курс не назначен");
         return tasksId;
+    }
+
+    public double getPercentCompleteTasks(List<UserTaskRelation> taskRelations) {
+        long finishedCount = taskRelations.stream()
+                .map(UserTaskRelation::getStatus)
+                .filter(Status.FINISHED::isInstance)
+                .count();
+        // FIXME: 4/18/21
+        return (double)finishedCount/(double)taskRelations.size();
+    }
+
+    public OptionalDouble getAverageTasksGrade(List<UserTaskRelation> taskRelations) {
+        return taskRelations.stream()
+                .map(UserTaskRelation::getGrade)
+                .map(Grade::getIntValue)
+                .mapToDouble(Integer::doubleValue)
+                .average();
+    }
+
+    public Map<Grade, Long> getCountByTasksGrade(List<UserTaskRelation> taskRelations) {
+        return taskRelations.stream()
+                .map(UserTaskRelation::getGrade)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+    }
+
+    private boolean firstCheckTask(AbstractStudySchema schema,AbstractTask task){
+        List<DependencyWithRelationType> dependencies = schema.getDependenciesWithRelationType();
+        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
+
+        return dependencies.stream()
+                .filter(dependency -> dependency.getId1().equals(task.getId()))
+                .allMatch(dependency -> {
+                    AbstractTask taskParent = tasksMap.get(dependency.getId0());
+                    boolean parentHierarchicalAndTheme = taskParent.isTheme() &&
+                            dependency.getRelationType() == RelationType.HIERARCHICAL;
+                    boolean parentsOfParentValid = firstCheckTask(schema, taskParent);
+                    return parentHierarchicalAndTheme&&parentsOfParentValid;
+                });
     }
 }
