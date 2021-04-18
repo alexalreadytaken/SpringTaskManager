@@ -15,8 +15,7 @@ function makeGraph (arrData) {
         depen.forEach (depen => {
             if (depen.relationType === "WEAK" && task.id === depen.id0)  {
                 task.connector.push({
-                    connectTo: depen.id1,
-                    connectType: "finish-start"
+                    connectTo: depen.id1
                 })
             }    
         })
