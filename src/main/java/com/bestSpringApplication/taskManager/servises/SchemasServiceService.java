@@ -2,7 +2,7 @@ package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
+import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProviderService;
 import com.bestSpringApplication.taskManager.utils.VersionedList;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
@@ -27,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SchemasService implements SchemasProvider {
+public class SchemasServiceService implements SchemasProviderService {
 
     @Value("${xml.task.pool.path}")
     private String xmlTaskPoolPath;
@@ -56,7 +56,6 @@ public class SchemasService implements SchemasProvider {
                     tasksDir.exists(),invalidFilesDir.exists());
             throw new PostConstructInitializationException("One of the directories was not found");
         }
-
         Arrays.stream(tasksDir.listFiles(File::isFile))
                 .forEach(file -> {
                     String fileName = file.getName();
@@ -74,7 +73,7 @@ public class SchemasService implements SchemasProvider {
 
     }
 
-    public List<String> schemasFileList() {
+    public List<String> schemasFilenamesList() {
         File dir = new File(xmlTaskPoolPath);
         return Arrays.stream(dir.listFiles(File::isFile))
                 .map(File::getName)
@@ -118,10 +117,12 @@ public class SchemasService implements SchemasProvider {
         }catch (ParseException ex){
             log.error("error with parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
             throw new IllegalFileFormatException("загрузка файла не удалась,проверьте структуру своего файла");
-        } catch (IOException e) {
-            masterSchemas.remove(studySchema.getId());
-
-            log.error("unknown io exception = {}, removing schema from map",e.getMessage());
+        } catch (IOException ex) {
+            masterSchemas.computeIfPresent(studySchema.getId(),(id,list)->{
+                AbstractStudySchema removed = list.removeNewets();
+                log.error("unknown io exception = {}, removing schema '{}'",ex.getMessage(),removed);
+                return list;
+            });
             throw new ServerException("Ошибка при загрузке файла,пожалуйста,повторите позже");
         }
     }

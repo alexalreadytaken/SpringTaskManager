@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.user.User;
+import com.bestSpringApplication.taskManager.models.User;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -28,14 +28,14 @@ public class StudentSchemasController {
 
     @GetMapping(OPENED_SCHEMAS)
     public List<AbstractTask> openedSchemas(@AuthenticationPrincipal User user){
-        String studentId = String.valueOf(user.getId());
-        return studyService.getUserSchemasRootTasks(studentId);
+        String userId = String.valueOf(user.getId());
+        return studyService.getUserSchemasRootTasks(userId);
     }
 
     @GetMapping(OPENED_SCHEMAS_TASKS)
     public List<AbstractTask> openedSchemasTasks(@PathVariable String schemaId, @AuthenticationPrincipal User user){
-        String studentId = String.valueOf(user.getId());
-        return studyService.getOpenedUserTasksOfSchema(studentId,schemaId);
+        String userId = String.valueOf(user.getId());
+        return studyService.getOpenedUserTasksOfSchema(userId,schemaId);
     }
 
 }

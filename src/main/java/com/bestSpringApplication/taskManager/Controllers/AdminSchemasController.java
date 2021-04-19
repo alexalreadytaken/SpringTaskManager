@@ -5,9 +5,9 @@ import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchem
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.GroupTaskSummary;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
-import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
+import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProviderService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
-import com.bestSpringApplication.taskManager.servises.interfaces.SummaryProvider;
+import com.bestSpringApplication.taskManager.servises.interfaces.SummaryProviderService;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Set;
 
 @RestController
-                    @CrossOrigin
+@CrossOrigin
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/schemas")
@@ -32,53 +32,53 @@ public class AdminSchemasController {
     private final String MASTER_FILES_ADD =                     "/master/files/add";
     private final String MASTER_SCHEMA_BY_ID =                  "/master/{schemaId}";
     private final String SCHEMA_SUMMARY =                       "/master/{schemaId}/summary";
-    private final String ADD_MASTER_SCHEMA_TO_USER =            "/master/{schemaId}/addTo/{studentId}";
+    private final String ADD_MASTER_SCHEMA_TO_USER =            "/master/{schemaId}/addTo/{userId}";
 
-    private final String OPEN_TASK_FOR_USER =                   "/student/{studentId}/{schemaId}/{taskId}/open";
+    private final String OPEN_TASK_FOR_USER =                   "/user/{userId}/{schemaId}/{taskId}/open";
 
-    private final String USER_SCHEMAS =                         "/student/{studentId}";
-    private final String SUMMARY_OF_USER_SCHEMA =               "student/{studentId}/{schemaId}/summary";
-    private final String OPENED_TASKS_OF_SCHEMA_FOR_USER =      "/student/{studentId}/{schemaId}/opened";
+    private final String USER_SCHEMAS =                         "/user/{userId}";
+    private final String SUMMARY_OF_USER_SCHEMA =               "user/{userId}/{schemaId}/summary";
+    private final String OPENED_TASKS_OF_SCHEMA_FOR_USER =      "/user/{userId}/{schemaId}/opened";
 
-    @NonNull private final SchemasProvider schemasProvider;
+    @NonNull private final SchemasProviderService schemasProviderService;
     @NonNull private final StudyService usersStudyService;
-    @NonNull private final SummaryProvider summaryProvider;
+    @NonNull private final SummaryProviderService summaryProviderService;
 
     private static final Set<String> confirmedFileTypes = Set.of("xml", "mrp", "txt");
 
     @GetMapping(SUMMARY_OF_USER_SCHEMA)
-    public List<UserTaskRelation> summaryOfUserSchema(@PathVariable String studentId, @PathVariable String schemaId){
-        return summaryProvider.getUserTasksSummary(schemaId,studentId);
+    public List<UserTaskRelation> summaryOfUserSchema(@PathVariable String userId, @PathVariable String schemaId){
+        return summaryProviderService.getUserTasksSummary(schemaId,userId);
     }
 
     @GetMapping(SCHEMA_SUMMARY)
     public List<GroupTaskSummary> schemaSummary(@PathVariable String schemaId){
-        return summaryProvider.getTasksSummaryBySchema(schemaId);
+        return summaryProviderService.getTasksSummaryBySchema(schemaId);
     }
 
     @GetMapping(OPEN_TASK_FOR_USER)
     @ResponseStatus(HttpStatus.OK)
     public void openTaskForStudent(@RequestParam(required = false,name = "force",defaultValue = "false") String forceOpenQuery,
                                    @PathVariable String schemaId,
-                                   @PathVariable String studentId,
+                                   @PathVariable String userId,
                                    @PathVariable String taskId){
         boolean forceOpen = Boolean.parseBoolean(forceOpenQuery);
         if (forceOpen){
-            usersStudyService.forceStartTask(schemaId, studentId, taskId);
+            usersStudyService.forceStartTask(schemaId, userId, taskId);
         }else{
-            usersStudyService.startTaskWithValidation(schemaId, studentId, taskId);
+            usersStudyService.startTaskWithValidation(schemaId, userId, taskId);
         }
     }
 
     @GetMapping(OPENED_TASKS_OF_SCHEMA_FOR_USER)
     public List<AbstractTask> openedStudentTasks(@PathVariable String schemaId,
-                                                 @PathVariable String studentId){
-        return usersStudyService.getOpenedUserTasksOfSchema(studentId,schemaId);
+                                                 @PathVariable String userId){
+        return usersStudyService.getOpenedUserTasksOfSchema(userId,schemaId);
     }
 
     @GetMapping(USER_SCHEMAS)
-    public List<AbstractTask> studentSchemas(@PathVariable String studentId){
-        return usersStudyService.getUserSchemasRootTasks(studentId);
+    public List<AbstractTask> userSchemas(@PathVariable String userId){
+        return usersStudyService.getUserSchemasRootTasks(userId);
     }
 
     @PostMapping(MASTER_FILES_ADD)
@@ -87,7 +87,7 @@ public class AdminSchemasController {
         String[] fileNameAndType = Objects.requireNonNull(file.getOriginalFilename()).split("\\.", 2);
         log.trace("Receive file:{}", file.getOriginalFilename());
         if (confirmedFileTypes.contains(fileNameAndType[1])) {
-            schemasProvider.putAndSaveFile(file);
+            schemasProviderService.putAndSaveFile(file);
         } else {
             log.warn("unsupported file type sent,file:{}", file.getOriginalFilename());
             throw new IllegalFileFormatException(String.format("файл с расширением %s не поддерживается", fileNameAndType[1]));
@@ -96,23 +96,23 @@ public class AdminSchemasController {
 
     @GetMapping(MASTER_SCHEMA_BY_ID)
     public AbstractStudySchema masterSchemaById(@PathVariable String schemaId){
-        return schemasProvider.getSchemaById(schemaId);
+        return schemasProviderService.getSchemaById(schemaId);
     }
 
     @GetMapping(ADD_MASTER_SCHEMA_TO_USER)
     @ResponseStatus(HttpStatus.OK)
-    public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String studentId){
-        usersStudyService.setSchemaToUser(studentId,schemaId);
+    public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String userId){
+        usersStudyService.setSchemaToUser(userId,schemaId);
     }
 
     @GetMapping(MASTER_SCHEMAS)
     public List<AbstractTask> masterSchemasOverview(){
-        return schemasProvider.getSchemasRootTasks();
+        return schemasProviderService.getSchemasRootTasks();
     }
 
     @GetMapping(MASTER_FILES)
     public List<String> schemasFileList() {
-        List<String> fileNames = schemasProvider.schemasFileList();
+        List<String> fileNames = schemasProviderService.schemasFilenamesList();
         log.trace("Request for master schemas files, return={}",fileNames);
         return fileNames;
     }

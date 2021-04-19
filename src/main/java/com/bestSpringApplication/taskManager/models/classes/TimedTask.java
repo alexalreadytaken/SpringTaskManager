@@ -11,7 +11,8 @@ import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class DefaultTask extends AbstractTask {
+@ToString(callSuper = true)
+public class TimedTask extends AbstractTask {
 
     private Map<String,String> fields;
     @JsonProperty("actualStart")
@@ -20,8 +21,8 @@ public class DefaultTask extends AbstractTask {
     private long endDate;
 
     @Builder
-    public DefaultTask(String id, String name, int duration, String notes, boolean theme,
-                       Map<String, String> fields, long startDate, long endDate){
+    public TimedTask(String id, String name, int duration, String notes, boolean theme,
+                     Map<String, String> fields, long startDate, long endDate){
         super(id, name, duration, notes, theme);
 
         this.endDate=endDate;

@@ -51,7 +51,7 @@ public class UsersStudyStateService implements SummaryHandler,StudyStateService 
     }
 
     public List<String> getCompletedTasksIdOfSchemaForUser(String schemaId, String userId) {
-        return utrRepo.getCompletedTasksIdBySchemaIdAndUserId(userId, schemaId);
+        return utrRepo.getCompletedTasksIdOfSchemaIdAndUserId(userId, schemaId);
     }
 
     public List<UserTaskRelation> getAllRelationsBySchemaId(String schemaId){
@@ -75,7 +75,7 @@ public class UsersStudyStateService implements SummaryHandler,StudyStateService 
     }
 
     public List<String> getOpenedSchemasIdOfUser(String userId){
-        List<String> schemasId = utrRepo.getOpenedSchemasIdByUserId(userId);
+        List<String> schemasId = utrRepo.getOpenedSchemasIdOfUser(userId);
         if (schemasId.size()==0)throw new ContentNotFoundException("Курсы не назначены");
         return schemasId;
     }
@@ -85,7 +85,7 @@ public class UsersStudyStateService implements SummaryHandler,StudyStateService 
     }
 
     public List<String> getOpenedTasksIdBySchemaOfUser(String userId, String schemaId){
-        List<String> tasksId = utrRepo.getOpenedTasksIdBySchemaIdAndUserId(userId, schemaId);
+        List<String> tasksId = utrRepo.getOpenedTasksIdOfSchemaIdAndUserId(userId, schemaId);
         if (tasksId.size()==0)throw new ContentNotFoundException("Данный курс не назначен");
         return tasksId;
     }

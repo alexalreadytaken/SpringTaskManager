@@ -6,10 +6,10 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 
-// TODO: 3/24/2021 may will better
 @NoArgsConstructor
 @ToString
 public class VersionedList<T> {
+
     private final List<T> values = new ArrayList<>();
 
 //    @SafeVarargs
@@ -37,6 +37,14 @@ public class VersionedList<T> {
 
     public boolean put(T elem){
         return values.add(elem);
+    }
+
+    public T removeOldest(){
+        return values.remove(0);
+    }
+
+    public T removeNewets(){
+        return values.remove(values.size()-1);
     }
 
 }

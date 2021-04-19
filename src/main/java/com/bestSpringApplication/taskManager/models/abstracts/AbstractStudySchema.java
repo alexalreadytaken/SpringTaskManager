@@ -21,7 +21,6 @@ public abstract class AbstractStudySchema{
 
     private Map<String, AbstractTask> tasksMap;
     private List<Dependency> dependencies;
-
     private AbstractTask rootTask;
 
     @JsonIgnore
@@ -29,6 +28,7 @@ public abstract class AbstractStudySchema{
         return this.rootTask.getName();
     }
 
+    @JsonIgnore
     public List<DependencyWithRelationType> getDependenciesWithRelationType(){
         return this.dependencies
                 .stream()
@@ -37,6 +37,7 @@ public abstract class AbstractStudySchema{
                 .collect(Collectors.toList());
     }
 
+    @JsonIgnore
     public Stream<AbstractTask> tasksStream(){
         return this.tasksMap
                 .values().stream();

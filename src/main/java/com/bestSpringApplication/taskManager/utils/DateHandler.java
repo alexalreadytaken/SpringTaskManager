@@ -7,15 +7,18 @@ import java.time.format.DateTimeFormatter;
 
 public class DateHandler {
 
-    public static final String SQL_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
-
     public static LocalDateTime parseDateFromFormat(String date, String format){
         DateTimeFormatter inputFormat = DateTimeFormatter.ofPattern(format);
         return LocalDateTime.from(inputFormat.parse(date));
     }
 
     public static long parseDateToLongFromFormat(String date, String format){
-        LocalDateTime localDateTime = parseDateFromFormat(date, format);
+        LocalDateTime localDateTime;
+        if (date!=null&&format!=null) {
+            localDateTime = parseDateFromFormat(date, format);
+        }else {
+            localDateTime = LocalDateTime.now();
+        }
         return ZonedDateTime
                 .of(localDateTime,ZoneId.systemDefault())
                 .toInstant()

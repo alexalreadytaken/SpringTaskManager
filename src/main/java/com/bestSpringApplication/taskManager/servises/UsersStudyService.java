@@ -29,23 +29,23 @@ import static java.util.stream.Collectors.toMap;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UsersStudyService implements SummaryProvider, StudyService {
+public class UsersStudyService implements SummaryProviderService, StudyService {
 
     @NonNull private final UserService userService;
 
-    @NonNull private final SchemasProvider schemasProvider;
+    @NonNull private final SchemasProviderService schemasProviderService;
     @NonNull private final StudyStateService studyStateService;
     @NonNull private final SummaryHandler summaryHandler;
 
     public void setSchemaToUser(String userId,String schemaId){
-        log.trace("trying prepare schema '{}' to student '{}'",schemaId,userId);
+        log.trace("trying prepare schema '{}' to user '{}'",schemaId,userId);
         userService.validateExistsAndContainsRole(userId,Role.STUDENT);
-        studyStateService.prepareSchema(schemasProvider.getSchemaById(schemaId),userId);
+        studyStateService.prepareSchema(schemasProviderService.getSchemaById(schemaId),userId);
     }
 
     public boolean canStartTask(String schemaId, String userId, String taskId){
-        AbstractStudySchema schema = schemasProvider.getSchemaById(schemaId);
-        AbstractTask task = schemasProvider.getTaskByIdInSchema(taskId, schemaId);
+        AbstractStudySchema schema = schemasProviderService.getSchemaById(schemaId);
+        AbstractTask task = schemasProviderService.getTaskByIdInSchema(taskId, schemaId);
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
         List<DependencyWithRelationType> dependencies = schema.getDependenciesWithRelationType();
 
@@ -90,9 +90,9 @@ public class UsersStudyService implements SummaryProvider, StudyService {
         userService.validateExistsAndContainsRole(userId,Role.STUDENT);
         List<String> allOpenedSchemasToUser = studyStateService.getOpenedSchemasIdOfUser(userId);
         Map<String, AbstractStudySchema> schemasMap = allOpenedSchemasToUser.stream()
-                .map(schemasProvider::getSchemaById)
+                .map(schemasProviderService::getSchemaById)
                 .collect(toMap(AbstractStudySchema::getId, Function.identity()));
-        log.trace("request for all schemas of student '{}',return = {} ",userId,schemasMap.keySet());
+        log.trace("request for all schemas of user '{}',return = {} ",userId,schemasMap.keySet());
         return schemasMap;
     }
 
@@ -105,7 +105,7 @@ public class UsersStudyService implements SummaryProvider, StudyService {
 
     public List<AbstractTask> getOpenedUserTasksOfSchema(String userId, String schemaId){
         List<String> tasksId = studyStateService.getOpenedTasksIdBySchemaOfUser(userId, schemaId);
-        Map<String, AbstractTask> tasksMap = schemasProvider.getSchemaById(schemaId).getTasksMap();
+        Map<String, AbstractTask> tasksMap = schemasProviderService.getSchemaById(schemaId).getTasksMap();
         return tasksId.stream()
                 .map(tasksMap::get)
                 .collect(toList());
@@ -141,8 +141,8 @@ public class UsersStudyService implements SummaryProvider, StudyService {
     }
 
     private void startTask(String schemaId, String userId, String taskId) {
-        log.trace("trying start task '{}' in schema '{}' for student '{}'",taskId,schemaId,userId);
-        schemasProvider.getTaskByIdInSchema(taskId, schemaId);
+        log.trace("trying start task '{}' in schema '{}' for user '{}'",taskId,schemaId,userId);
+        schemasProviderService.getTaskByIdInSchema(taskId, schemaId);
         studyStateService.openTask(schemaId, userId, taskId);
     }
 
@@ -157,15 +157,15 @@ public class UsersStudyService implements SummaryProvider, StudyService {
     private boolean deepCheck(String taskId, Map<String, AbstractTask> tasksMap,
                               List<DependencyWithRelationType> dependencies,
                               Set<String> finishedTasksId) {
-        //bug in future if task in root theme
+        //may bug in future if task in root theme
         return dependencies.stream()
                 .filter(dep -> dep.getId1().equals(taskId))
                 .map(Dependency::getId0)
-                .flatMap(id -> dependencies.stream()
-                        .filter(dep -> dep.getId1().equals(id)))
+                .flatMap(taskParentId -> dependencies.stream()
+                        .filter(dep -> dep.getId1().equals(taskParentId)))
                 .map(Dependency::getId0)
-                .flatMap(id -> dependencies.stream()
-                        .filter(dep -> dep.getId0().equals(id))
+                .flatMap(parentIdOfTaskParent -> dependencies.stream()
+                        .filter(dep -> dep.getId0().equals(parentIdOfTaskParent))
                         .map(Dependency::getId1))
                 .filter(id -> !tasksMap.get(id).isTheme())
                 .allMatch(finishedTasksId::contains);

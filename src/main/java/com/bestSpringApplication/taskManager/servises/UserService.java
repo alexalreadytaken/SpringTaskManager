@@ -2,7 +2,7 @@ package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.UserNotFoundException;
 import com.bestSpringApplication.taskManager.models.enums.Role;
-import com.bestSpringApplication.taskManager.models.user.User;
+import com.bestSpringApplication.taskManager.models.User;
 import com.bestSpringApplication.taskManager.repos.UserRepo;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 

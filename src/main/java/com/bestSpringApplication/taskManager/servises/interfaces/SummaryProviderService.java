@@ -5,7 +5,7 @@ import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 
 import java.util.List;
 
-public interface SummaryProvider {
+public interface SummaryProviderService {
     List<GroupTaskSummary> getTasksSummaryBySchema(String schemaId);
 
     GroupTaskSummary getSummaryBySchemaIdAndTaskId(String schemaId,String taskId);

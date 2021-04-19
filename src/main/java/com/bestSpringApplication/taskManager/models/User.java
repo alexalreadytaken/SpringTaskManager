@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.models.user;
+package com.bestSpringApplication.taskManager.models;
 
 import com.bestSpringApplication.taskManager.utils.enumConverters.RoleConverter;
 import com.bestSpringApplication.taskManager.models.enums.Role;

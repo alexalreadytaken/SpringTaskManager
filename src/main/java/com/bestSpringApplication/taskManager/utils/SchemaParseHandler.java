@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class StudyParseHandler {
+public class SchemaParseHandler {
 
     public static Map<String,String> xmlFieldToMap(Element element, String field, String key, String value){
         List<Element> fields = element.getChildren(field);
