@@ -16,13 +16,20 @@ let elem = document.getElementById('elem')
 
     list.forEach(el => {
         student.insertAdjacentHTML('beforeend', `
-            <option>${el}</option>
+            <div>${el}</div>
         `)
     })
+    
+// make for everyone student form for pair
 
-    pair.forEach (el => {
-        kol.insertAdjacentHTML ('beforeend', `
-            <option>${el}</option>    
-        `)
-    })
+    // for (let i = 0; i < pair.length; i++) {
+    //     pair.forEach (el1 => {
+    //         kol.insertAdjacentHTML ('beforeend', `
+    //             <select>
+    //                 <option>${el1}</option>    
+    //             </select>
+    //         `)
+    //     })
+    // }
+    
     
