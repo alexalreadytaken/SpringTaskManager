@@ -1,6 +1,6 @@
-import chartMaking from './chartMaking.js';
+import {chartMaking} from './chartMaking.js';
 import {parsTask, parsDepen} from './parsFiels.js';
-import makeChildren from './addChildrenToData.js';
+import {makeChildren} from './addChildrenToData.js';
 import {makeWeakDepen} from './makeWeakDepen.js';
 
 function makeGraph (arrData) {

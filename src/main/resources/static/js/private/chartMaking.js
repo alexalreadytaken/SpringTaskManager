@@ -1,4 +1,6 @@
-export default function chartMaking (data, rootTask) {
+import {eventChart} from './eventChart.js'
+
+function chartMaking (data, rootTask) {
     var treeData = anychart.data.tree (data, 'as-tree')
 
     var chart = anychart.ganttProject()
@@ -24,6 +26,9 @@ export default function chartMaking (data, rootTask) {
     column_1.labels().fontWeight(600);
     column_1.labels().format("{%linearIndex}.");
 
+
+    eventChart(chart)
+
 // =========================
     
     chart.data(treeData)
@@ -31,7 +36,9 @@ export default function chartMaking (data, rootTask) {
 
     chart.draw()
     chart.fitAll()
+    
     document.getElementsByClassName('anychart-credits')[0].remove() // удаление информации о библиотеке
+    console.log('%c we are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px')
 }
 
-console.log('%c we are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px')
+export {chartMaking}

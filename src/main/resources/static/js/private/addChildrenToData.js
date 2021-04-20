@@ -13,4 +13,4 @@ function makeChildren (data, depen, tasks) {
     })
 }
 
-export default makeChildren
+export {makeChildren}
