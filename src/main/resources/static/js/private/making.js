@@ -6,7 +6,7 @@ import {makeWeakDepen} from './makeWeakDepen.js';
 function makeGraph (arrData) {
     const rootTask = arrData.rootTask.name.replaceAll('_', ' ')
 
-    const tasks = parsTask(arrData).splice(2, parsTask(arrData).length) // fix splice 
+    const tasks = parsTask(arrData).splice(2, parsTask(arrData).length)
     const depen = parsDepen(arrData)
     
     const data = tasks.filter(el => el.theme)
@@ -21,4 +21,4 @@ function makeGraph (arrData) {
     chartMaking(data, rootTask)
 }
 
-export default makeGraph
+export {makeGraph}
