@@ -1,6 +1,7 @@
 import chartMaking from './chartMaking.js';
 import {parsTask, parsDepen} from './parsFiels.js';
 import makeChildren from './addChildrenToData.js';
+import {makeWeakDepen} from './makeWeakDepen.js';
 
 function makeGraph (arrData) {
     const rootTask = arrData.rootTask.name.replaceAll('_', ' ')
@@ -10,18 +11,9 @@ function makeGraph (arrData) {
     
     const data = tasks.filter(el => el.theme)
 
-    tasks.forEach (task => {
-        task.connector = []
-        depen.forEach (depen => {
-            if (depen.relationType === "WEAK" && task.id === depen.id0)  {
-                task.connector.push({
-                    connectTo: depen.id1
-                })
-            }    
-        })
-    })
+    makeWeakDepen(tasks, depen)
 
-   makeChildren(data, depen, tasks)
+    makeChildren(data, depen, tasks)
 
     // id0 - Parent
     // id1 - Children
