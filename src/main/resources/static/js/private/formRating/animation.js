@@ -7,7 +7,7 @@ let elem = document.getElementById('elem')
     const student = document.getElementById('nameUser')
     const kol = document.getElementById('markUser')
 
-    import {list, pair} from '../private/local-JSON/studentList.js'
+    import {list, pair} from '../local-JSON/studentList.js'
 
     console.log(list);
     console.log(kol);
