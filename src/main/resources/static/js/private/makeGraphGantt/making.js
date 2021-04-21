@@ -1,7 +1,8 @@
-import {chartMaking} from './chartMaking.js';
-import {parsTask, parsDepen} from './parsFiels.js';
-import {makeChildren} from './addChildrenToData.js';
-import {makeWeakDepen} from './makeWeakDepen.js';
+import { chartMaking } from './chartMaking.js';
+import { parsTask, parsDepen } from './parsFiels.js';
+import { makeChildren } from './addChildrenToData.js';
+import { makeWeakDepen } from './makeWeakDepen.js';
+import { makePercent } from "./percentForTasks.js";
 
 function makeGraph (arrData) {
     const rootTask = arrData.rootTask.name.replaceAll('_', ' ')
@@ -15,6 +16,7 @@ function makeGraph (arrData) {
 
     makeChildren(data, depen, tasks)
 
+    makePercent(tasks)
     // id0 - Parent
     // id1 - Children
     console.log(data)
