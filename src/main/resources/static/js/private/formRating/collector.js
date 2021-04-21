@@ -10,9 +10,14 @@ const elem = document.getElementById('elem')
     import {list, pair} from '../local-JSON/studentList.js'
     import {makeObjPair} from './makeObjForPair.js'
 
-    const result = makeObjPair(list)
+    // import {sendData} from '../rest_Post/post.js'
+    // import {config} from '../config.js'
 
-    console.log(result)
+    function createDataForm () {
+        makeObjPair(list)
+        .then(result => console.log(result)) // fix send to server
+    }
 
     createFormMark(list, student, pair)
-    
+
+export {createDataForm}
