@@ -5,9 +5,14 @@ const elem = document.getElementById('elem')
     })
 
     const student = document.getElementById('menuNote')
-    
+
     import {createFormMark} from './dinamicCreate.js'
     import {list, pair} from '../local-JSON/studentList.js'
+    import {makeObjPair} from './makeObjForPair.js'
+
+    const result = makeObjPair(list)
+
+    console.log(result)
 
     createFormMark(list, student, pair)
     

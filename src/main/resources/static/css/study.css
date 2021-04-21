@@ -8,3 +8,20 @@
 .menuNote {
     display: none;
 }
+
+.menuNote button {
+    margin-left: 65px;
+    margin-top: 20px;
+}
+
+.st_Name {
+    float: left;
+    background-color: aqua;
+    width: 70px;
+    height: 20px;
+    padding-right: 10px;
+}
+
+.st_Pair {
+    margin-left: 100px;
+}
