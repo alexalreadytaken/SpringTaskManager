@@ -10,7 +10,5 @@ const list = [
 
 ]
 
-const pair = [
-    1,2,3,4,5
-]
+const pair = [2,3,4,5]
 export {list, pair}
