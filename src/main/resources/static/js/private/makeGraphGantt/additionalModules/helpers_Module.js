@@ -1,4 +1,4 @@
-import {makeGraph} from './making.js';
+import {makeGraph} from '../parsingData/making.js';
 
 function makeFileList (fileNames) {
     let schemasFileList = document.getElementById("schemasFileList");

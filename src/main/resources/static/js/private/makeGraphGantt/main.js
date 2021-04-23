@@ -1,5 +1,5 @@
-import {multiFetch} from './helpers_Module.js';
-import {makeGraph} from './making.js';
+import {multiFetch} from './additionalModules/helpers_Module.js';
+import {makeGraph} from './parsingData/making.js';
 import scheme1 from '../local-JSON/scheme1.js';
 
 

@@ -1,4 +1,4 @@
-import {eventChart} from './eventChart.js'
+import { eventChart } from './dinamicFormExecute/eventChart.js'
 
 function chartMaking (data, rootTask) {
     var treeData = anychart.data.tree (data, 'as-tree')
