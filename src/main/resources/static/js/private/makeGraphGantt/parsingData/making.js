@@ -19,7 +19,7 @@ function makeGraph (arrData) {
     makePercent(tasks)
     // id0 - Parent
     // id1 - Children
-    console.log(data)
+    console.log('Data elem', data)
     chartMaking(data, rootTask)
 }
 
