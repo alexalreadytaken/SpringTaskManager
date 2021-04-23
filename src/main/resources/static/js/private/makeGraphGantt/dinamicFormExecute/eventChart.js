@@ -9,10 +9,10 @@ function eventChart (chart) {
         const themeTask = e.item.get( 'theme' )
         const notesTask = e.item.get( 'notes' )
 
-        if ( !oneComplete ) {oneComplete = true; createModalForm(notesTask)}
+        if ( !oneComplete ) {oneComplete = true; createModalForm()}
 
         showFormExecute( themeTask )
-        addNotesForTask( notesTask )
+        if (!themeTask) {addNotesForTask( notesTask )}
     })
 }
 
