@@ -1,6 +1,11 @@
 import { showFormExecute } from './executeTask.js'
 import { createModalForm } from './createModalForm.js'
 import { addNotesForTask } from './addNotesForTask.js'
+import { acceptTask } from './acceptTask.js'
+
+import scheme1 from '../../local-JSON/scheme1.js'
+import { parsTask } from '../parsingData/parsFiels.js'
+
 
 function eventChart (chart) {
     let oneComplete = false
@@ -13,6 +18,12 @@ function eventChart (chart) {
 
         showFormExecute( themeTask )
         if (!themeTask) {addNotesForTask( notesTask )}
+        
+        document.getElementById('submitTask')
+        .addEventListener('click', e => {
+            const tasks = parsTask(scheme1).splice(2, parsTask(scheme1).length)
+            acceptTask(taskId, tasks)
+        })
     })
 }
 
