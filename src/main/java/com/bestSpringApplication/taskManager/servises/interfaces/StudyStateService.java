@@ -3,6 +3,7 @@ package com.bestSpringApplication.taskManager.servises.interfaces;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
+import com.bestSpringApplication.taskManager.models.enums.Status;
 
 import java.util.List;
 
@@ -14,6 +15,10 @@ public interface StudyStateService {
     void openTask(String schemaId, String userId, String taskId);
 
     boolean taskExists(String schemaId, String userId, String taskId);
+
+    boolean taskFinished(String schemaId,String userId,String taskId);
+
+    boolean taskContainsStatus(String schemaId, String userId, String taskId, Status status);
 
     boolean taskInWork(String schemaId, String userId, String taskId);
 

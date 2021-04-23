@@ -9,7 +9,6 @@ import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
-import com.bestSpringApplication.taskManager.servises.interfaces.SummaryHandler;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -18,14 +17,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalDouble;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class UsersStudyStateService implements SummaryHandler,StudyStateService {
+public class UsersStudyStateService implements StudyStateService {
 
     @NonNull private final UserTaskRelationRepo utrRepo;
 
@@ -66,12 +62,20 @@ public class UsersStudyStateService implements SummaryHandler,StudyStateService 
         utrRepo.setStatusForTask(schemaId, userId, taskId,Status.IN_WORK);
     }
 
-    public boolean taskExists(String schemaId, String userId, String taskId){
-        return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaId, userId, taskId);
+    public boolean taskFinished(String schemaId, String userId, String taskId) {
+        return utrRepo.existsByTaskIdAndSchemaIdAndUserIdAndStatus(taskId,schemaId,userId,Status.FINISHED);
+    }
+
+    public boolean taskContainsStatus(String schemaId, String userId, String taskId, Status status) {
+        return utrRepo.existsByTaskIdAndSchemaIdAndUserIdAndStatus(taskId,schemaId,userId,status);
     }
 
     public boolean taskInWork(String schemaId, String userId, String taskId){
         return utrRepo.existsByTaskIdAndSchemaIdAndUserIdAndStatus(taskId,schemaId,userId,Status.IN_WORK);
+    }
+
+    public boolean taskExists(String schemaId, String userId, String taskId){
+        return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaId, userId, taskId);
     }
 
     public List<String> getOpenedSchemasIdOfUser(String userId){
@@ -88,29 +92,6 @@ public class UsersStudyStateService implements SummaryHandler,StudyStateService 
         List<String> tasksId = utrRepo.getOpenedTasksIdOfSchemaIdAndUserId(userId, schemaId);
         if (tasksId.size()==0)throw new ContentNotFoundException("Данный курс не назначен");
         return tasksId;
-    }
-
-    public double getPercentCompleteTasks(List<UserTaskRelation> taskRelations) {
-        long finishedCount = taskRelations.stream()
-                .map(UserTaskRelation::getStatus)
-                .filter(Status.FINISHED::isInstance)
-                .count();
-        // FIXME: 4/18/21
-        return (double)finishedCount/(double)taskRelations.size();
-    }
-
-    public OptionalDouble getAverageTasksGrade(List<UserTaskRelation> taskRelations) {
-        return taskRelations.stream()
-                .map(UserTaskRelation::getGrade)
-                .map(Grade::getIntValue)
-                .mapToDouble(Integer::doubleValue)
-                .average();
-    }
-
-    public Map<Grade, Long> getCountByTasksGrade(List<UserTaskRelation> taskRelations) {
-        return taskRelations.stream()
-                .map(UserTaskRelation::getGrade)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
     }
 
     private boolean firstCheckTask(AbstractStudySchema schema,AbstractTask task){

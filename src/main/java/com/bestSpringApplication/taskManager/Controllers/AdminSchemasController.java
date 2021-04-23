@@ -5,9 +5,9 @@ import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchem
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.GroupTaskSummary;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
-import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProviderService;
+import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
-import com.bestSpringApplication.taskManager.servises.interfaces.SummaryProviderService;
+import com.bestSpringApplication.taskManager.servises.interfaces.SummaryProvider;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -40,20 +40,20 @@ public class AdminSchemasController {
     private final String SUMMARY_OF_USER_SCHEMA =               "user/{userId}/{schemaId}/summary";
     private final String OPENED_TASKS_OF_SCHEMA_FOR_USER =      "/user/{userId}/{schemaId}/opened";
 
-    @NonNull private final SchemasProviderService schemasProviderService;
+    @NonNull private final SchemasProvider schemasProvider;
     @NonNull private final StudyService usersStudyService;
-    @NonNull private final SummaryProviderService summaryProviderService;
+    @NonNull private final SummaryProvider summaryProvider;
 
     private static final Set<String> confirmedFileTypes = Set.of("xml", "mrp", "txt");
 
     @GetMapping(SUMMARY_OF_USER_SCHEMA)
     public List<UserTaskRelation> summaryOfUserSchema(@PathVariable String userId, @PathVariable String schemaId){
-        return summaryProviderService.getUserTasksSummary(schemaId,userId);
+        return summaryProvider.getUserTasksSummary(schemaId,userId);
     }
 
     @GetMapping(SCHEMA_SUMMARY)
     public List<GroupTaskSummary> schemaSummary(@PathVariable String schemaId){
-        return summaryProviderService.getTasksSummaryBySchema(schemaId);
+        return summaryProvider.getTasksSummaryBySchema(schemaId);
     }
 
     @GetMapping(OPEN_TASK_FOR_USER)
@@ -87,7 +87,7 @@ public class AdminSchemasController {
         String[] fileNameAndType = Objects.requireNonNull(file.getOriginalFilename()).split("\\.", 2);
         log.trace("Receive file:{}", file.getOriginalFilename());
         if (confirmedFileTypes.contains(fileNameAndType[1])) {
-            schemasProviderService.putAndSaveFile(file);
+            schemasProvider.putAndSaveFile(file);
         } else {
             log.warn("unsupported file type sent,file:{}", file.getOriginalFilename());
             throw new IllegalFileFormatException(String.format("файл с расширением %s не поддерживается", fileNameAndType[1]));
@@ -96,7 +96,7 @@ public class AdminSchemasController {
 
     @GetMapping(MASTER_SCHEMA_BY_ID)
     public AbstractStudySchema masterSchemaById(@PathVariable String schemaId){
-        return schemasProviderService.getSchemaById(schemaId);
+        return schemasProvider.getSchemaById(schemaId);
     }
 
     @GetMapping(ADD_MASTER_SCHEMA_TO_USER)
@@ -107,12 +107,12 @@ public class AdminSchemasController {
 
     @GetMapping(MASTER_SCHEMAS)
     public List<AbstractTask> masterSchemasOverview(){
-        return schemasProviderService.getSchemasRootTasks();
+        return schemasProvider.getSchemasRootTasks();
     }
 
     @GetMapping(MASTER_FILES)
     public List<String> schemasFileList() {
-        List<String> fileNames = schemasProviderService.schemasFilenamesList();
+        List<String> fileNames = schemasProvider.schemasFilenamesList();
         log.trace("Request for master schemas files, return={}",fileNames);
         return fileNames;
     }

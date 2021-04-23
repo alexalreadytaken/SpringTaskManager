@@ -29,31 +29,31 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         String[] permittedMappings = {"/favicon.ico","/js/**","/register/**","/schemas/**","/admin/**"};
         http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers(permittedMappings).permitAll()
+                    .csrf().disable()
+                    .authorizeRequests()
+                    .antMatchers(permittedMappings).permitAll()
 //                    .antMatchers("/schemas/**","/js/private/**")
 //                        .hasAnyAuthority(Role.ADMIN.getStrValue(),Role.TEACHER.getStrValue())
 //                    .antMatchers("/study/**")
 //                        .hasAuthority(Role.STUDENT.getStrValue())
-                .anyRequest()
-                .authenticated()
+                    .anyRequest()
+                    .authenticated()
                 .and()
-                .httpBasic()
+                    .httpBasic()
                 .and()
-                .formLogin().loginPage("/login").permitAll()
-                .defaultSuccessUrl("/home", true)
+                    .formLogin().loginPage("/login").permitAll()
+                    .defaultSuccessUrl("/home", true)
                 .and()
-                .rememberMe()
-                .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(31))
-                .key("superKey")
+                    .rememberMe()
+                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(31))
+                    .key("superKey")
                 .and()
-                .logout().logoutUrl("/logout")
-                .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))//need?
-                .clearAuthentication(true)
-                .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID","remember-me")
-                .logoutSuccessUrl("/login");
+                    .logout().logoutUrl("/logout")
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))//need?
+                    .clearAuthentication(true)
+                    .invalidateHttpSession(true)
+                    .deleteCookies("JSESSIONID","remember-me")
+                    .logoutSuccessUrl("/login");
     }
 
     @Override

@@ -15,10 +15,9 @@ public interface StudyService {
 
     void startTaskWithValidation(String schemaId, String userId, String taskId);
 
-    Map<String, AbstractStudySchema> getUserSchemas(String userId);
+    List<AbstractStudySchema> getUserSchemas(String userId);
 
     List<AbstractTask> getUserSchemasRootTasks(String userId);
 
     List<AbstractTask> getOpenedUserTasksOfSchema(String userId, String schemaId);
-
 }

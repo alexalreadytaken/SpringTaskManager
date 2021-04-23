@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum Role {
-    STUDENT("user"),
+    STUDENT("student"),
     TEACHER("teacher"),
     ADMIN("admin");
 

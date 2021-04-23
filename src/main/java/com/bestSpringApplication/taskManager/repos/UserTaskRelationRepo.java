@@ -21,24 +21,24 @@ public interface UserTaskRelationRepo extends JpaRepository<UserTaskRelation,Int
 
     List<UserTaskRelation> getAllBySchemaIdAndTaskId(String schemaId,String taskId);
 
-    // FIXME: 4/17/21 params like update ?
-    @Query(value = "select distinct schemaId from user_task_relation where userId=userId")
-    List<String> getOpenedSchemasIdOfUser(String userId);
+    @Query("select distinct schemaId from user_task_relation where userId=:userId")
+    List<String> getOpenedSchemasIdOfUser(@Param("userId") String userId);
 
     @Transactional
     @Modifying
-    @Query(value = "update user_task_relation set status=:status where taskId=:taskId "+
+    @Query("update user_task_relation set status=:status where taskId=:taskId "+
             "and schemaId=:schemaId and userId=:userId")
     void setStatusForTask(@Param("schemaId")String schemaId,
                           @Param("userId")String userId,
                           @Param("taskId")String taskId,
                           @Param("status")Status status);
 
-    String query_tasksBySchemaIdAndUserId = "select taskId from user_task_relation where userId=userId and schemaId=schemaId ";
+    @Query("select taskId from user_task_relation where userId=:userId and schemaId=:schemaId and status='in_work'")
+    List<String> getOpenedTasksIdOfSchemaIdAndUserId(@Param("userId") String userId,
+                                                     @Param("schemaId") String schemaId);
 
-    @Query(value = query_tasksBySchemaIdAndUserId+"and status='in_work'")
-    List<String> getOpenedTasksIdOfSchemaIdAndUserId(String userId, String schemaId);
-
-    @Query(value = query_tasksBySchemaIdAndUserId+"and status='finished' and grade>=3")
-    List<String> getCompletedTasksIdOfSchemaIdAndUserId(String userId, String schemaId);
+    @Query("select taskId from user_task_relation where userId=:userId and schemaId=:schemaId " +
+            "and status='finished' and grade>=3")
+    List<String> getCompletedTasksIdOfSchemaIdAndUserId(@Param("userId") String userId,
+                                                        @Param("schemaId") String schemaId);
 }
