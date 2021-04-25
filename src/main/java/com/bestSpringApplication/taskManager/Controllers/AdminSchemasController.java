@@ -104,6 +104,7 @@ public class AdminSchemasController {
 
     @GetMapping(MASTER_SCHEMA_BY_ID)
     public AbstractStudySchema masterSchemaById(@PathVariable String schemaId){
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
         return schemasProvider.getSchemaById(schemaId);
     }
 

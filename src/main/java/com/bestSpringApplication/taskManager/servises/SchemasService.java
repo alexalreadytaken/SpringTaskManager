@@ -107,7 +107,37 @@ public class SchemasService implements SchemasProvider {
                 });
     }
 
+    public boolean schemaExists(String schemaId) {
+        return masterSchemas.containsKey(schemaId);
+    }
+
+    public boolean taskInSchemaExists(String schemaId, String taskId) {
+        if (schemaExists(schemaId)){
+            return getSchemaById(schemaId)
+                    .tasksStream()
+                    .map(AbstractTask::getId)
+                    .anyMatch(taskId0->taskId0.equals(taskId));
+        }else {
+            return false;
+        }
+    }
+
+    public void validateSchemaExistsOrThrow(String schemaId) {
+        log.trace("checking existence of schema '{}'",schemaId);
+        if (!schemaExists(schemaId)) throw new ContentNotFoundException("Курс не найден");
+    }
+
+    public void validateTaskInSchemaExistsOrThrow(String schemaId, String taskId) {
+        log.trace("checking existence of schema '{}' and task '{}'",schemaId,taskId);
+        validateSchemaExistsOrThrow(schemaId);
+        if (!taskInSchemaExists(schemaId,taskId)) throw new ContentNotFoundException("Задание не найдено");
+    }
+
     public void putAndSaveFile(MultipartFile file)  {
+        String filename = file.getOriginalFilename();
+        if (containsFilenameInTasksPool(filename)) {
+            throw new IllegalFileFormatException("Имя файла занято");
+        }
         //костыльно
         AbstractStudySchema studySchema = null;
         try {
@@ -115,7 +145,7 @@ public class SchemasService implements SchemasProvider {
             put(studySchema);
             saveFile(file);
         }catch (ParseException ex){
-            log.error("error with parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
+            log.error("error with parse:{} file:{}",ex.getLocalizedMessage(), filename);
             throw new IllegalFileFormatException("загрузка файла не удалась, проверьте структуру своего файла");
         } catch (IOException ex) {
             masterSchemas.computeIfPresent(studySchema.getId(),(id,list)->{
@@ -130,7 +160,8 @@ public class SchemasService implements SchemasProvider {
     public void put(AbstractStudySchema studySchema){
         String id = studySchema.getId();
         if (masterSchemas.containsKey(id)) {
-            masterSchemas.get(id)
+            masterSchemas
+                    .get(id)
                     .put(studySchema);
         } else {
             masterSchemas.put(id,VersionedList.of(studySchema));
@@ -141,6 +172,12 @@ public class SchemasService implements SchemasProvider {
         File initialFile = new File(xmlTaskPoolPath + file.getOriginalFilename());
         log.trace("transfer file to '{}'",initialFile.getAbsolutePath());
         file.transferTo(initialFile);
+    }
+
+    private boolean containsFilenameInTasksPool(String filename){
+        return Arrays.stream(new File(xmlTaskPoolPath).listFiles())
+                .map(File::getName)
+                .anyMatch(filename0->filename0.equals(filename));
     }
 
 }

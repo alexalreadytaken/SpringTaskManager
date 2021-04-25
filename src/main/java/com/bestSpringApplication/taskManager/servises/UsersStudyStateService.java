@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +47,7 @@ public class UsersStudyStateService implements StudyStateService {
         utrRepo.save(userTaskRelation);
     }
 
+    // TODO: 4/25/21 empty lists
     public List<String> getCompletedTasksIdOfSchemaForUser(String schemaId, String userId) {
         return utrRepo.getCompletedTasksIdOfSchemaIdAndUserId(userId, schemaId);
     }
@@ -62,6 +64,18 @@ public class UsersStudyStateService implements StudyStateService {
         utrRepo.setStatusForTask(schemaId, userId, taskId,Status.IN_WORK);
     }
 
+    public List<String> getOpenedSchemasIdOfUser(String userId){
+        return utrRepo.getOpenedSchemasIdOfUser(userId);
+    }
+
+    public List<UserTaskRelation> getRelationsBySchemaIdAndTaskId(String schemaId,String taskId){
+        return utrRepo.getAllBySchemaIdAndTaskId(schemaId, taskId);
+    }
+
+    public List<String> getOpenedTasksIdBySchemaOfUser(String userId, String schemaId){
+        return utrRepo.getOpenedTasksIdOfSchemaIdAndUserId(userId, schemaId);
+    }
+
     public boolean taskFinished(String schemaId, String userId, String taskId) {
         return utrRepo.existsByTaskIdAndSchemaIdAndUserIdAndStatus(taskId,schemaId,userId,Status.FINISHED);
     }
@@ -76,22 +90,6 @@ public class UsersStudyStateService implements StudyStateService {
 
     public boolean taskExists(String schemaId, String userId, String taskId){
         return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaId, userId, taskId);
-    }
-
-    public List<String> getOpenedSchemasIdOfUser(String userId){
-        List<String> schemasId = utrRepo.getOpenedSchemasIdOfUser(userId);
-        if (schemasId.size()==0)throw new ContentNotFoundException("Курсы не назначены");
-        return schemasId;
-    }
-
-    public List<UserTaskRelation> getRelationsBySchemaIdAndTaskId(String schemaId,String taskId){
-        return utrRepo.getAllBySchemaIdAndTaskId(schemaId, taskId);
-    }
-
-    public List<String> getOpenedTasksIdBySchemaOfUser(String userId, String schemaId){
-        List<String> tasksId = utrRepo.getOpenedTasksIdOfSchemaIdAndUserId(userId, schemaId);
-        if (tasksId.size()==0)throw new ContentNotFoundException("Нет открытых заданий");
-        return tasksId;
     }
 
     private boolean firstCheckTask(AbstractStudySchema schema,AbstractTask task){

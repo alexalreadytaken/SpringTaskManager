@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 // TODO: 4/13/21 ldap
+// FIXME: 4/25/21 all
 @Deprecated
 @Slf4j
 @Service
@@ -41,17 +42,19 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public void validateExistsAndContainsRole(String userId,Role role){
-        Optional.ofNullable(getUserById(userId)
-                .orElseThrow(()-> {
-                    log.warn("user by id '{}' not found",userId);
-                    return new ContentNotFoundException("Пользователь не найден");
-                }))
+    @Deprecated
+    public void validateUserExistsAndContainsRoleOrThrow(String userId, Role role){
+        getUserByIdOrThrow(userId)
                 .filter(el->el.getRole()==role)
                 .orElseThrow(()-> {
                     log.warn("user by id '{}' not contains role '{}'",userId,role);
                     return new ContentNotFoundException("Роль пользователя не соответствует требованиям");
                 });
+    }
+
+    @Deprecated
+    public void validateUserExistsOrThrow(String userId){
+        getUserByIdOrThrow(userId);
     }
 
     public void saveUser(User user){
@@ -77,10 +80,10 @@ public class UserService implements UserDetailsService {
             return false;
         }
     }
+
     public boolean existsUserById(Long id){
         return userRepo.existsById(id);
     }
-
     public Optional<User> getUserById(Long id){
         return userRepo.findById(id);
     }
@@ -91,6 +94,14 @@ public class UserService implements UserDetailsService {
         }catch (NumberFormatException ex){
             return Optional.empty();
         }
+    }
+
+    private Optional<User> getUserByIdOrThrow(String userId) {
+        return Optional.ofNullable(getUserById(userId)
+                .orElseThrow(() -> {
+                    log.warn("user by id '{}' not found", userId);
+                    return new ContentNotFoundException("Пользователь не найден");
+                }));
     }
 }
 

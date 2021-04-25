@@ -4,6 +4,7 @@ import com.bestSpringApplication.taskManager.models.classes.Summary;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.Status;
+import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
 import com.bestSpringApplication.taskManager.servises.interfaces.SummaryProvider;
 import lombok.NonNull;
@@ -24,8 +25,12 @@ import static java.util.stream.Collectors.toList;
 public class SummaryService implements SummaryProvider {
 
     @NonNull private final StudyStateService studyStateService;
+    @NonNull private final SchemasProvider schemasProvider;
+    @NonNull private final UserService userService;
 
     public List<Summary> getTasksSummaryBySchema(String schemaId){
+        log.trace("trying get summary of schema '{}'",schemaId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
         List<UserTaskRelation> relations = studyStateService.getAllRelationsBySchemaId(schemaId);
         return relations.stream()
                 .map(UserTaskRelation::getTaskId)
@@ -39,16 +44,24 @@ public class SummaryService implements SummaryProvider {
     }
 
     public Summary getSummaryBySchemaIdAndTaskId(String schemaId, String taskId){
+        log.trace("trying get summary of schema '{}' and task '{}'",schemaId,taskId);
+        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId, taskId);
         List<UserTaskRelation> relations = studyStateService.getRelationsBySchemaIdAndTaskId(schemaId, taskId);
         return getSummaryUniversal(taskId, relations);
     }
 
     public Summary getUserSchemaSummary(String schemaId,String userId){
+        log.trace("trying get schema '{}' summary of user '{}'",schemaId,userId);
+        userService.validateUserExistsOrThrow(userId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
         List<UserTaskRelation> schemaStateByUserId = studyStateService.getSchemaStateByUserId(userId, schemaId);
-        return getSummaryUniversal(schemaId,schemaStateByUserId);
+        return getSummaryUniversal(schemaId, schemaStateByUserId);
     }
 
     public List<UserTaskRelation> getUserTasksState(String schemaId, String userId){
+        log.trace("trying get schema '{}' state of user '{}'",schemaId,userId);
+        userService.validateUserExistsOrThrow(userId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
         return studyStateService.getSchemaStateByUserId(userId,schemaId);
     }
 

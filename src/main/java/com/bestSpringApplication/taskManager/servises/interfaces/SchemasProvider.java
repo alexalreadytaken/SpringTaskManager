@@ -16,6 +16,14 @@ public interface SchemasProvider {
 
     AbstractTask getTaskByIdInSchema(String taskId, String schemaId);
 
+    boolean schemaExists(String schemaId);
+
+    boolean taskInSchemaExists(String schemaId, String taskId);
+
+    void validateSchemaExistsOrThrow(String schemaId);
+
+    void validateTaskInSchemaExistsOrThrow(String schemaId,String taskId);
+
     void putAndSaveFile(MultipartFile file);
 
     void put(AbstractStudySchema studySchema);

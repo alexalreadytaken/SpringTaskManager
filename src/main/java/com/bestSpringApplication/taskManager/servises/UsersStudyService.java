@@ -37,32 +37,31 @@ public class UsersStudyService implements StudyService {
 
     public void setSchemaToUser(String userId,String schemaId){
         log.trace("trying prepare schema '{}' to user '{}'",schemaId,userId);
-        userService.validateExistsAndContainsRole(userId,Role.STUDENT);
-        studyStateService.prepareSchema(schemasProvider.getSchemaById(schemaId),userId);
+        userService.validateUserExistsAndContainsRoleOrThrow(userId,Role.STUDENT);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
+        AbstractStudySchema schema = schemasProvider.getSchemaById(schemaId);
+        studyStateService.prepareSchema(schema,userId);
     }
 
     // TODO: 4/4/21 reopen
     public boolean canStartTask(String schemaId, String userId, String taskId){
-        log.trace("check possibility starting task '{}' in schema '{}' for user '{}'",
-                taskId,schemaId,userId);
+        log.trace("check possibility starting task '{}' in schema '{}' for user '{}'",taskId,schemaId,userId);
+        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId, taskId);
+        userService.validateUserExistsOrThrow(userId);
         AbstractStudySchema schema = schemasProvider.getSchemaById(schemaId);
         AbstractTask task = schemasProvider.getTaskByIdInSchema(taskId, schemaId);
+        validateTaskCondition(schemaId, userId, taskId, task);
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
         List<DependencyWithRelationType> dependencies = schema.getDependenciesWithRelationType();
-        validateTaskCondition(schemaId, userId, taskId, task);
         List<String> ids = studyStateService.getCompletedTasksIdOfSchemaForUser(schemaId, userId);
         Set<String> finishedTasksId = new HashSet<>(ids);
         boolean parentsOnlyHierarchical = dependencies.stream()
                 .filter(dep->dep.getId1().equals(taskId))
                 .map(DependencyWithRelationType::getRelationType)
                 .allMatch(RelationType.HIERARCHICAL::isInstance);
-        boolean taskNotSuccessor;
-        if (parentsOnlyHierarchical){
-            taskNotSuccessor = deepCheck(taskId, tasksMap, dependencies, finishedTasksId);
-        }else {
-            taskNotSuccessor = defaultCheck(taskId, dependencies, finishedTasksId);
-        }
-        return taskNotSuccessor;
+        return parentsOnlyHierarchical
+                ? deepCheck(taskId, tasksMap, dependencies, finishedTasksId)
+                : defaultCheck(taskId, dependencies, finishedTasksId);
     }
 
     public void forceStartTask(String schemaId, String userId, String taskId){
@@ -78,10 +77,11 @@ public class UsersStudyService implements StudyService {
     }
 
     public List<AbstractStudySchema> getUserSchemas(String userId) {
-        userService.validateExistsAndContainsRole(userId,Role.STUDENT);
+        userService.validateUserExistsAndContainsRoleOrThrow(userId,Role.STUDENT);
         List<AbstractStudySchema> schemas = studyStateService
                 .getOpenedSchemasIdOfUser(userId)
                 .stream()
+                .filter(schemasProvider::schemaExists)
                 .map(schemasProvider::getSchemaById)
                 .collect(toList());
         log.trace("request for all schemas of user '{}',return = {} ",userId,schemas);
@@ -95,6 +95,7 @@ public class UsersStudyService implements StudyService {
     }
 
     public List<AbstractTask> getOpenedUserTasksOfSchema(String userId, String schemaId){
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
         List<String> tasksId = studyStateService.getOpenedTasksIdBySchemaOfUser(userId, schemaId);
         Map<String, AbstractTask> tasksMap = schemasProvider.getSchemaById(schemaId).getTasksMap();
         return tasksId.stream()
@@ -104,6 +105,7 @@ public class UsersStudyService implements StudyService {
 
     private void startTask(String schemaId, String userId, String taskId) {
         log.trace("trying start task '{}' in schema '{}' for user '{}'",taskId,schemaId,userId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
         schemasProvider.getTaskByIdInSchema(taskId, schemaId);
         studyStateService.openTask(schemaId, userId, taskId);
     }
