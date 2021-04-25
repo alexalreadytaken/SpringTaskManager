@@ -14,11 +14,12 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class TimedTask extends AbstractTask {
 
-    private Map<String,String> fields;
     @JsonProperty("actualStart")
     private long startDate;
     @JsonProperty("actualEnd")
     private long endDate;
+
+    private Map<String,String> fields;
 
     @Builder
     public TimedTask(String id, String name, int duration, String notes, boolean theme,

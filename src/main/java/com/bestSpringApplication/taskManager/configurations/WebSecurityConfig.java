@@ -1,6 +1,7 @@
 package com.bestSpringApplication.taskManager.configurations;
 
 
+import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.servises.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,12 +28,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        String[] permittedMappings = {"/favicon.ico","/js/**","/register/**","/schemas/**","/admin/**"};
+        String[] permittedMappings = {"/**","/v/login.html","/v/register.html","/favicon.ico","/js/public/**","/register/**"};
         http
                     .csrf().disable()
                     .authorizeRequests()
                     .antMatchers(permittedMappings).permitAll()
-//                    .antMatchers("/schemas/**","/js/private/**")
+//                    .antMatchers("/schemas/**","/js/private/**","/v/admin.html")
 //                        .hasAnyAuthority(Role.ADMIN.getStrValue(),Role.TEACHER.getStrValue())
 //                    .antMatchers("/study/**")
 //                        .hasAuthority(Role.STUDENT.getStrValue())
@@ -41,8 +42,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .httpBasic()
                 .and()
-                    .formLogin().loginPage("/login").permitAll()
-                    .defaultSuccessUrl("/home", true)
+                    .formLogin().loginPage("/v/login.html").permitAll()
+                    .defaultSuccessUrl("/v/home.html", true)
                 .and()
                     .rememberMe()
                     .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(31))

@@ -1,18 +1,20 @@
 package com.bestSpringApplication.taskManager.utils;
 
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@NoArgsConstructor
 @ToString
 public class VersionedList<T> {
 
-    private final List<T> values = new ArrayList<>();
+    private final List<T> values;
 
-//    @SafeVarargs
+    public VersionedList() {
+        values = new ArrayList<>();
+    }
+
+    @SafeVarargs
     public static <R> VersionedList<R> of(R... values){
         VersionedList<R> versionedList = new VersionedList<>();
         for (R el:values) versionedList.put(el);

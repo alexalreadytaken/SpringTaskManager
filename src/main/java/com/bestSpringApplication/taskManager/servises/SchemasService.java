@@ -116,21 +116,22 @@ public class SchemasService implements SchemasProvider {
             saveFile(file);
         }catch (ParseException ex){
             log.error("error with parse:{} file:{}",ex.getLocalizedMessage(),file.getOriginalFilename());
-            throw new IllegalFileFormatException("загрузка файла не удалась,проверьте структуру своего файла");
+            throw new IllegalFileFormatException("загрузка файла не удалась, проверьте структуру своего файла");
         } catch (IOException ex) {
             masterSchemas.computeIfPresent(studySchema.getId(),(id,list)->{
                 AbstractStudySchema removed = list.removeNewets();
                 log.error("unknown io exception = {}, removing schema '{}'",ex.getMessage(),removed);
                 return list;
             });
-            throw new ServerException("Ошибка при загрузке файла,пожалуйста,повторите позже");
+            throw new ServerException("Ошибка при загрузке файла, пожалуйста, повторите позже");
         }
     }
 
     public void put(AbstractStudySchema studySchema){
         String id = studySchema.getId();
         if (masterSchemas.containsKey(id)) {
-            masterSchemas.get(id).put(studySchema);
+            masterSchemas.get(id)
+                    .put(studySchema);
         } else {
             masterSchemas.put(id,VersionedList.of(studySchema));
         }

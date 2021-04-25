@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.models.classes.GroupTaskSummary;
+import com.bestSpringApplication.taskManager.models.classes.Summary;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.Status;
@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalDouble;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -26,8 +25,7 @@ public class SummaryService implements SummaryProvider {
 
     @NonNull private final StudyStateService studyStateService;
 
-    // TODO: 4/15/21 similar for user
-    public List<GroupTaskSummary> getTasksSummaryBySchema(String schemaId){
+    public List<Summary> getTasksSummaryBySchema(String schemaId){
         List<UserTaskRelation> relations = studyStateService.getAllRelationsBySchemaId(schemaId);
         return relations.stream()
                 .map(UserTaskRelation::getTaskId)
@@ -36,23 +34,29 @@ public class SummaryService implements SummaryProvider {
                     List<UserTaskRelation> taskRelations = relations.stream()
                             .filter(utr -> utr.getTaskId().equals(id))
                             .collect(toList());
-                    return new GroupTaskSummary(id,
-                            getPercentCompleteTasks(taskRelations),
-                            getAverageTasksGrade(taskRelations).orElse(0.0),
-                            getCountByTasksGrade(taskRelations));
+                    return getSummaryUniversal(id, taskRelations);
                 }).collect(toList());
     }
 
-    public GroupTaskSummary getSummaryBySchemaIdAndTaskId(String schemaId,String taskId){
+    public Summary getSummaryBySchemaIdAndTaskId(String schemaId, String taskId){
         List<UserTaskRelation> relations = studyStateService.getRelationsBySchemaIdAndTaskId(schemaId, taskId);
-        return new GroupTaskSummary(taskId,
-                getPercentCompleteTasks(relations),
-                getAverageTasksGrade(relations).orElse(0.0),
-                getCountByTasksGrade(relations));
+        return getSummaryUniversal(taskId, relations);
     }
 
-    public List<UserTaskRelation> getUserTasksSummary(String schemaId, String userId){
+    public Summary getUserSchemaSummary(String schemaId,String userId){
+        List<UserTaskRelation> schemaStateByUserId = studyStateService.getSchemaStateByUserId(userId, schemaId);
+        return getSummaryUniversal(schemaId,schemaStateByUserId);
+    }
+
+    public List<UserTaskRelation> getUserTasksState(String schemaId, String userId){
         return studyStateService.getSchemaStateByUserId(userId,schemaId);
+    }
+
+    private Summary getSummaryUniversal(String entityId, List<UserTaskRelation> relations) {
+        return new Summary(entityId,
+                getPercentCompleteTasks(relations),
+                getAverageTasksGrade(relations),
+                getCountByTasksGrade(relations));
     }
 
     private double getPercentCompleteTasks(List<UserTaskRelation> taskRelations) {
@@ -60,21 +64,23 @@ public class SummaryService implements SummaryProvider {
                 .map(UserTaskRelation::getStatus)
                 .filter(Status.FINISHED::isInstance)
                 .count();
-        // FIXME: 4/18/21
         return (double)finishedCount/(double)taskRelations.size();
     }
 
-    private OptionalDouble getAverageTasksGrade(List<UserTaskRelation> taskRelations) {
+    private double getAverageTasksGrade(List<UserTaskRelation> taskRelations) {
         return taskRelations.stream()
                 .map(UserTaskRelation::getGrade)
                 .map(Grade::getIntValue)
                 .mapToDouble(Integer::doubleValue)
-                .average();
+                .average()
+                .orElse(0.0);
     }
 
     private Map<Grade, Long> getCountByTasksGrade(List<UserTaskRelation> taskRelations) {
         return taskRelations.stream()
                 .map(UserTaskRelation::getGrade)
-                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+                .collect(Collectors.groupingBy(
+                        Function.identity(),
+                        Collectors.counting()));
     }
 }

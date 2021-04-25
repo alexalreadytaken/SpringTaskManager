@@ -12,9 +12,10 @@ public enum Status {
     CLOSED("closed"),
     IN_WORK("in_work"),
     FINISHED("finished"),
-    NOT_CONFIRMED("not_confirmed");
+    NOT_CONFIRMED("not_confirmed"),
+    REOPENED("reopened");
 
-    private static final Map<String,Status> VALUES = new HashMap<>();
+    private static final Map<String,Status> VALUES = new HashMap<>(Status.values().length);
 
     static {
         for(Status el: values()) VALUES.put(el.getName(),el);

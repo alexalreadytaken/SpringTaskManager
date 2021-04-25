@@ -1,14 +1,16 @@
 package com.bestSpringApplication.taskManager.servises.interfaces;
 
-import com.bestSpringApplication.taskManager.models.classes.GroupTaskSummary;
+import com.bestSpringApplication.taskManager.models.classes.Summary;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 
 import java.util.List;
 
 public interface SummaryProvider {
-    List<GroupTaskSummary> getTasksSummaryBySchema(String schemaId);
+    List<Summary> getTasksSummaryBySchema(String schemaId);
 
-    GroupTaskSummary getSummaryBySchemaIdAndTaskId(String schemaId,String taskId);
+    Summary getSummaryBySchemaIdAndTaskId(String schemaId, String taskId);
 
-    List<UserTaskRelation> getUserTasksSummary(String schemaId, String userId);
+    Summary getUserSchemaSummary(String schemaId,String userId);
+
+    List<UserTaskRelation> getUserTasksState(String schemaId, String userId);
 }

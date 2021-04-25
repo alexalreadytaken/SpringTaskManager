@@ -8,7 +8,6 @@ import com.bestSpringApplication.taskManager.models.classes.TimedTask;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.utils.DateHandler;
-import com.bestSpringApplication.taskManager.utils.SchemaParseHandler;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.SchemaParseException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.TaskParseException;
@@ -33,6 +32,7 @@ import static java.util.stream.Collectors.toList;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+//NOT SEE HERE
 public class XmlSchemaParser implements SchemaParser {
 
     @Override
@@ -64,10 +64,10 @@ public class XmlSchemaParser implements SchemaParser {
                 .orElseThrow(()-> new SchemaParseException("dependencyListElement is empty!"));
         Element taskElem = Optional.ofNullable(rootElement.getChild("task"))
                 .orElseThrow(()-> new SchemaParseException("taskElement is empty!"));
-        Map<String, String> fieldsMap = SchemaParseHandler.xmlFieldToMap(fieldListElem, "field", "no", "name");
+        Map<String, String> schemaFieldsMap = xmlFieldToMap(fieldListElem, "no", "name");
         List<Dependency> dependenciesList = parseDependenciesList(dependencyListElem);
         Map<String, AbstractTask> tasksMap = parseTasksAndAddDependencies(taskElem,dependenciesList);
-        addFieldsToTasks(tasksMap,fieldsMap);
+        addFieldsToTasks(tasksMap,schemaFieldsMap);
         log.trace("Returning study schema = {}",tasksMap.get("root"));
         return new DefaultStudySchemaImpl(tasksMap,dependenciesList,tasksMap.remove("root"));
     }
@@ -80,23 +80,18 @@ public class XmlSchemaParser implements SchemaParser {
         while (!tasksStack.empty()) {
             Element taskElemFromStack = tasksStack.pop();
             TimedTask.TimedTaskBuilder taskBuilder = TimedTask.builder();
-            String taskName = Optional.ofNullable(taskElemFromStack.getChildText("task-name"))
-                    .filter(str -> str.length() != 0)
-                    .orElseThrow(() -> new TaskParseException("task id is empty!"));
-            String taskId = Optional.ofNullable(taskElemFromStack.getChildText("task-id"))
-                    .filter(str -> str.length() != 0)
-                    .orElseThrow(() -> new TaskParseException("task name is empty!"));
-            Optional<String> startDate = Optional.ofNullable(taskElemFromStack.getChildText("task-start-date"));
-            Optional<String> endDate = Optional.ofNullable(taskElemFromStack.getChildText("task-end-date"));
-            Optional<Element> fieldListElem = Optional.ofNullable(taskElemFromStack.getChild("field-list"));
-            Optional<Element> taskListElem = Optional.ofNullable(taskElemFromStack.getChild("task-list"));
-            Optional<Element> taskNotesElem = Optional.ofNullable(taskElemFromStack.getChild("task-notes"));
-            fieldListElem.ifPresent(fieldList ->
-                    taskBuilder.fields(SchemaParseHandler.xmlFieldToMap(fieldList, "field","field-no", "field-value"))
-            );
-            taskNotesElem.ifPresent(notes ->
-                    taskBuilder.notes(StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
-            );
+            String taskName = StringUtils.normalizeSpace(
+                    getImportantElemText(taskElemFromStack, "task-name"))
+                    .replaceAll(" ", "_");
+            String taskId = getImportantElemText(taskElemFromStack, "task-id");
+            Optional<Element> taskListElem = getChildElemOpt(taskElemFromStack, "task-list");
+            taskBuilder
+                    .name(taskName)
+                    .id(taskId)
+                    .fields(parseFieldListElem(taskElemFromStack))
+                    .notes(parseTaskNotes(taskElemFromStack))
+                    .startDate(parseDate(taskElemFromStack,"task-start-date"))
+                    .endDate(parseDate(taskElemFromStack,"task-end-date"));
             taskListElem.ifPresent(tasksOpt->{
                 taskBuilder.theme(true);
                 Optional<List<Element>> tasks = Optional.ofNullable(tasksOpt.getChildren("task"));
@@ -108,17 +103,6 @@ public class XmlSchemaParser implements SchemaParser {
                         })
                 );
             });
-            String format = "dd-MM-yyyy, HH:mm:ss";
-            long formattedStartDate = DateHandler
-                    .parseDateToLongFromFormat(startDate.orElse(null), format);
-            long formattedEndDate = DateHandler
-                    .parseDateToLongFromFormat(endDate.orElse(null), format);
-            String optimizedName = StringUtils.normalizeSpace(taskName).replaceAll(" ", "_");
-            taskBuilder
-                    .name(optimizedName)
-                    .id(taskId)
-                    .startDate(formattedStartDate)
-                    .endDate(formattedEndDate);
             taskList.add(taskBuilder.build());
         }
         Map<String, AbstractTask> tasksMap = new HashMap<>();
@@ -146,7 +130,7 @@ public class XmlSchemaParser implements SchemaParser {
                 .forEach(task -> {
                     Map<String, String> taskFields = task.getFields();
                     if (taskFields!=null){
-                        for (int i = 0;i <  taskFields.size(); i++) {
+                        for (int i=0;i<taskFields.size();i++) {
                             String i0 = String.valueOf(i);
                             String key = schemaFields.get(i0);
                             String value = taskFields.remove(i0);
@@ -154,5 +138,44 @@ public class XmlSchemaParser implements SchemaParser {
                         }
                     }
                 });
+    }
+
+    private Map<String,String> xmlFieldToMap(Element element, String key, String value){
+        List<Element> fields = element.getChildren("field");
+        Map<String,String> fieldsMap = new HashMap<>(fields.size());
+        fields.forEach(el->fieldsMap.put(el.getChildText(key),el.getChildText(value)));
+        return fieldsMap;
+    }
+
+    private Map<String, String> parseFieldListElem(Element taskElemFromStack) {
+        return getChildElemOpt(taskElemFromStack, "field-list")
+                .map(fieldList -> xmlFieldToMap(fieldList, "field-no", "field-value"))
+                .orElseGet(HashMap::new);
+    }
+
+    private String parseTaskNotes(Element taskElemFromStack) {
+        return getChildElemOpt(taskElemFromStack, "task-notes")
+                .map(notes -> StringUtils.normalizeSpace(StringEscapeUtils.unescapeHtml4(notes.getValue())))
+                .orElse("");
+    }
+
+    private long parseDate(Element element,String dateTag){
+        String format = "dd-MM-yyyy, HH:mm:ss";
+        Optional<String> dateOpt = getChildTextOpt(element, dateTag);
+        return DateHandler.parseDateToLongFromFormatOrNow(dateOpt.orElse(null),format);
+    }
+
+    private Optional<String> getChildTextOpt(Element elem, String childTag) {
+        return Optional.ofNullable(elem.getChildText(childTag));
+    }
+
+    private Optional<Element> getChildElemOpt(Element taskElemFromStack, String childTag) {
+        return Optional.ofNullable(taskElemFromStack.getChild(childTag));
+    }
+
+    private String getImportantElemText(Element taskElemFromStack, String childTag) {
+        return Optional.ofNullable(taskElemFromStack.getChildText(childTag))
+                .filter(str -> str.length() != 0)
+                .orElseThrow(() -> new TaskParseException(childTag+" is empty!"));
     }
 }

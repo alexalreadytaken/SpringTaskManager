@@ -17,7 +17,7 @@ public enum Grade {
     @Getter(onMethod = @__({ @JsonValue }))
     private final int intValue;
 
-    private static final Map<Integer,Grade> VALUES = new HashMap<>();
+    private static final Map<Integer,Grade> VALUES = new HashMap<>(Grade.values().length);
 
     static {
         for (Grade el: values()) VALUES.put(el.getIntValue(),el);

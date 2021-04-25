@@ -90,7 +90,7 @@ public class UsersStudyStateService implements StudyStateService {
 
     public List<String> getOpenedTasksIdBySchemaOfUser(String userId, String schemaId){
         List<String> tasksId = utrRepo.getOpenedTasksIdOfSchemaIdAndUserId(userId, schemaId);
-        if (tasksId.size()==0)throw new ContentNotFoundException("Данный курс не назначен");
+        if (tasksId.size()==0)throw new ContentNotFoundException("Нет открытых заданий");
         return tasksId;
     }
 

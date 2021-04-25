@@ -10,8 +10,8 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @Builder
-public class GroupTaskSummary {
-    private String taskId;
+public class Summary {
+    private String entityId;
     private double percentComplete;
     private double averageGrade;
     private Map<Grade,Long> countByGrade;

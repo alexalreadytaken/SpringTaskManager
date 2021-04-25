@@ -3,7 +3,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.classes.GroupTaskSummary;
+import com.bestSpringApplication.taskManager.models.classes.Summary;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
@@ -37,7 +37,8 @@ public class AdminSchemasController {
     private final String OPEN_TASK_FOR_USER =                   "/user/{userId}/{schemaId}/{taskId}/open";
 
     private final String USER_SCHEMAS =                         "/user/{userId}";
-    private final String SUMMARY_OF_USER_SCHEMA =               "user/{userId}/{schemaId}/summary";
+    private final String SUMMARY_OF_USER_SCHEMA =               "/user/{userId}/{schemaId}/summary";
+    private final String STATE_OF_USER_SCHEMA =                 "/user/{userId}/{schemaId}/state";
     private final String OPENED_TASKS_OF_SCHEMA_FOR_USER =      "/user/{userId}/{schemaId}/opened";
 
     @NonNull private final SchemasProvider schemasProvider;
@@ -47,12 +48,17 @@ public class AdminSchemasController {
     private static final Set<String> confirmedFileTypes = Set.of("xml", "mrp", "txt");
 
     @GetMapping(SUMMARY_OF_USER_SCHEMA)
-    public List<UserTaskRelation> summaryOfUserSchema(@PathVariable String userId, @PathVariable String schemaId){
-        return summaryProvider.getUserTasksSummary(schemaId,userId);
+    public Summary summaryOfUserSchema(@PathVariable String schemaId, @PathVariable String userId){
+        return summaryProvider.getUserSchemaSummary(schemaId,userId);
+    }
+
+    @GetMapping(STATE_OF_USER_SCHEMA)
+    public List<UserTaskRelation> stateOfUserSchema(@PathVariable String userId, @PathVariable String schemaId){
+        return summaryProvider.getUserTasksState(schemaId,userId);
     }
 
     @GetMapping(SCHEMA_SUMMARY)
-    public List<GroupTaskSummary> schemaSummary(@PathVariable String schemaId){
+    public List<Summary> schemaSummary(@PathVariable String schemaId){
         return summaryProvider.getTasksSummaryBySchema(schemaId);
     }
 
@@ -80,6 +86,8 @@ public class AdminSchemasController {
     public List<AbstractTask> userSchemas(@PathVariable String userId){
         return usersStudyService.getUserSchemasRootTasks(userId);
     }
+
+
 
     @PostMapping(MASTER_FILES_ADD)
     @ResponseStatus(HttpStatus.OK)

@@ -1,9 +1,9 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.UserNotFoundException;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.User;
 import com.bestSpringApplication.taskManager.repos.UserRepo;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,12 +45,12 @@ public class UserService implements UserDetailsService {
         Optional.ofNullable(getUserById(userId)
                 .orElseThrow(()-> {
                     log.warn("user by id '{}' not found",userId);
-                    return new UserNotFoundException("Пользователь не найден");
+                    return new ContentNotFoundException("Пользователь не найден");
                 }))
                 .filter(el->el.getRole()==role)
                 .orElseThrow(()-> {
                     log.warn("user by id '{}' not contains role '{}'",userId,role);
-                    return new UserNotFoundException("Роль пользователя не соответствует требованиям");
+                    return new ContentNotFoundException("Роль пользователя не соответствует требованиям");
                 });
     }
 

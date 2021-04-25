@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
@@ -13,27 +12,28 @@ public class StaticResolver implements WebMvcConfigurer {
 
     @Value("${xml.task.pool.path}")
     private String taskPoolPath;
+    @Value("${js.files.path}")
+    private String jsFilesPath;
+    @Value("${html.files.path}")
+    private String htmlFilesPath;
+    @Value("${css.files.path}")
+    private String cssFilesPath;
+    @Value("${favicon.path}")
+    private String faviconPath;
 
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/register").setViewName("register");
-        registry.addViewController("/").setViewName("redirect:/home");
-        registry.addViewController("/login").setViewName("login");
-        registry.addViewController("/admin").setViewName("admin");
-        registry.addViewController("/home").setViewName("home");
-    }
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        String file = "file:";
+        registry.addResourceHandler("/v/**")
+                .addResourceLocations(file.concat(htmlFilesPath));
         registry.addResourceHandler("/js/**")
-                .addResourceLocations("classpath:/static/js/");
+                .addResourceLocations(file.concat(jsFilesPath));
         registry.addResourceHandler("/css/**")
-                .addResourceLocations("classpath:/static/css/");
+                .addResourceLocations(file.concat(cssFilesPath));
         registry.addResourceHandler("favicon.ico")
-                .addResourceLocations("classpath:/static/favicon.ico");
-
-        String filePath = "file:///".concat(taskPoolPath);
+                .addResourceLocations(file.concat(faviconPath));
         registry.addResourceHandler("/schemas/file/**")
-                .addResourceLocations(filePath);
+                .addResourceLocations(file.concat(taskPoolPath));
     }
 
 }

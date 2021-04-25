@@ -12,7 +12,7 @@ public class DateHandler {
         return LocalDateTime.from(inputFormat.parse(date));
     }
 
-    public static long parseDateToLongFromFormat(String date, String format){
+    public static long parseDateToLongFromFormatOrNow(String date, String format){
         LocalDateTime localDateTime;
         if (date!=null&&format!=null) {
             localDateTime = parseDateFromFormat(date, format);

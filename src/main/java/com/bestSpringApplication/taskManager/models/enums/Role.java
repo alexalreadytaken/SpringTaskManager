@@ -10,7 +10,7 @@ public enum Role {
     TEACHER("teacher"),
     ADMIN("admin");
 
-    private static final Map<String,Role> VALUES = new HashMap<>();
+    private static final Map<String,Role> VALUES = new HashMap<>(Role.values().length);
 
     static {
         for(Role el: values()) VALUES.put(el.getStrValue(),el);
