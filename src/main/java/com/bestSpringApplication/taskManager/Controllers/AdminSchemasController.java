@@ -8,7 +8,6 @@ import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
 import com.bestSpringApplication.taskManager.servises.interfaces.SummaryProvider;
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
 
 @RestController
 @CrossOrigin
@@ -34,7 +31,7 @@ public class AdminSchemasController {
     private final String SCHEMA_SUMMARY =                       "/master/{schemaId}/summary";
     private final String ADD_MASTER_SCHEMA_TO_USER =            "/master/{schemaId}/addTo/{userId}";
 
-    private final String OPEN_TASK_FOR_USER =                   "/user/{userId}/{schemaId}/{taskId}/open";
+    private final String INTERACTIONS_WITH_USER_TASK =          "/user/{userId}/{schemaId}/{taskId}";
 
     private final String USER_SCHEMAS =                         "/user/{userId}";
     private final String SUMMARY_OF_USER_SCHEMA =               "/user/{userId}/{schemaId}/summary";
@@ -44,8 +41,6 @@ public class AdminSchemasController {
     @NonNull private final SchemasProvider schemasProvider;
     @NonNull private final StudyService usersStudyService;
     @NonNull private final SummaryProvider summaryProvider;
-
-    private static final Set<String> confirmedFileTypes = Set.of("xml", "mrp", "txt");
 
     @GetMapping(SUMMARY_OF_USER_SCHEMA)
     public Summary summaryOfUserSchema(@PathVariable String schemaId, @PathVariable String userId){
@@ -62,17 +57,25 @@ public class AdminSchemasController {
         return summaryProvider.getTasksSummaryBySchema(schemaId);
     }
 
-    @GetMapping(OPEN_TASK_FOR_USER)
+    @GetMapping(INTERACTIONS_WITH_USER_TASK)
     @ResponseStatus(HttpStatus.OK)
-    public void openTaskForStudent(@RequestParam(required = false,name = "force",defaultValue = "false") String forceOpenQuery,
-                                   @PathVariable String schemaId,
-                                   @PathVariable String userId,
-                                   @PathVariable String taskId){
-        boolean forceOpen = Boolean.parseBoolean(forceOpenQuery);
-        if (forceOpen){
-            usersStudyService.forceStartTask(schemaId, userId, taskId);
-        }else{
-            usersStudyService.startTaskWithValidation(schemaId, userId, taskId);
+    public void interactionsWithUserTask(@RequestParam(required = false,name = "force",defaultValue = "false") String forceOpenQuery,
+                                         @RequestParam(name = "action")String actionQuery,
+                                         @PathVariable String schemaId,
+                                         @PathVariable String userId,
+                                         @PathVariable String taskId){
+        switch (actionQuery.toLowerCase()){
+            case "open":
+                boolean forceOpen = Boolean.parseBoolean(forceOpenQuery);
+                if (forceOpen) {
+                    usersStudyService.forceStartTask(schemaId, userId, taskId);
+                } else {
+                    usersStudyService.startTaskWithValidation(schemaId, userId, taskId);
+                }
+                break;
+            case "reopen":
+                usersStudyService.reopenTask(schemaId, userId, taskId);
+                break;
         }
     }
 
@@ -92,14 +95,8 @@ public class AdminSchemasController {
     @PostMapping(MASTER_FILES_ADD)
     @ResponseStatus(HttpStatus.OK)
     public void newSchema(@RequestParam("file") MultipartFile file){
-        String[] fileNameAndType = Objects.requireNonNull(file.getOriginalFilename()).split("\\.", 2);
-        log.trace("Receive file:{}", file.getOriginalFilename());
-        if (confirmedFileTypes.contains(fileNameAndType[1])) {
-            schemasProvider.putAndSaveFile(file);
-        } else {
-            log.warn("unsupported file type sent,file:{}", file.getOriginalFilename());
-            throw new IllegalFileFormatException(String.format("файл с расширением %s не поддерживается", fileNameAndType[1]));
-        }
+        log.trace("Receive file:'{}' trying parse", file.getOriginalFilename());
+        schemasProvider.putAndSaveFile(file);
     }
 
     @GetMapping(MASTER_SCHEMA_BY_ID)

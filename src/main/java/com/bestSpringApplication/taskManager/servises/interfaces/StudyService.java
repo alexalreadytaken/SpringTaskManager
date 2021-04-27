@@ -9,6 +9,8 @@ import java.util.Map;
 public interface StudyService {
     void setSchemaToUser(String userId,String schemaId);
 
+    void reopenTask(String schemaId, String userId, String taskId);
+
     boolean canStartTask(String schemaId, String userId, String taskId);
 
     void forceStartTask(String schemaId, String userId, String taskId);

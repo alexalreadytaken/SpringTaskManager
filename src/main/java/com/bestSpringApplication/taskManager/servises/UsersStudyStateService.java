@@ -9,13 +9,11 @@ import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -62,6 +60,18 @@ public class UsersStudyStateService implements StudyStateService {
 
     public void openTask(String schemaId, String userId, String taskId){
         utrRepo.setStatusForTask(schemaId, userId, taskId,Status.IN_WORK);
+    }
+
+    public void setStatusForUserTask(String schemaId, String userId, String taskId, Status status) {
+        utrRepo.setStatusForTask(schemaId, userId, taskId, status);
+    }
+
+    public void setGradeForUserTask(String schemaId, String userId, String taskId, Grade grade) {
+        utrRepo.setGradeForTask(schemaId, userId, taskId, grade);
+    }
+
+    public void setStatusAndGradeForUserTask(String schemaId, String userId, String taskId, Status status, Grade grade) {
+        utrRepo.setStatusAndGradeForTask(schemaId, userId, taskId, grade, status);
     }
 
     public List<String> getOpenedSchemasIdOfUser(String userId){

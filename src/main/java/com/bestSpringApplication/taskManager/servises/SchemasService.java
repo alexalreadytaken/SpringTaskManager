@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -169,7 +170,9 @@ public class SchemasService implements SchemasProvider {
     }
 
     public void saveFile(MultipartFile file) throws IOException {
-        File initialFile = new File(xmlTaskPoolPath + file.getOriginalFilename());
+        long unixTimeNow = Instant.now().toEpochMilli();
+        String pathname = xmlTaskPoolPath + unixTimeNow + "---" + file.getOriginalFilename();
+        File initialFile = new File(pathname);
         log.trace("transfer file to '{}'",initialFile.getAbsolutePath());
         file.transferTo(initialFile);
     }

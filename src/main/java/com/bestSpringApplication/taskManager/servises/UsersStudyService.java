@@ -5,14 +5,12 @@ import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Role;
+import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskClosedException;
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskFinishedException;
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskInWorkException;
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskIsThemeException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +62,13 @@ public class UsersStudyService implements StudyService {
                 : defaultCheck(taskId, dependencies, finishedTasksId);
     }
 
+    public void reopenTask(String schemaId, String userId, String taskId){
+        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
+        // TODO: 4/26/21 same validation
+        if(!studyStateService.taskExists(schemaId, userId, taskId))throw new ContentNotFoundException("Задание не назначено");
+        studyStateService.setStatusForUserTask(schemaId,userId,taskId,Status.REOPENED);
+    }
+
     public void forceStartTask(String schemaId, String userId, String taskId){
         startTask(schemaId, userId, taskId);
     }
@@ -105,8 +110,10 @@ public class UsersStudyService implements StudyService {
 
     private void startTask(String schemaId, String userId, String taskId) {
         log.trace("trying start task '{}' in schema '{}' for user '{}'",taskId,schemaId,userId);
+        userService.validateUserExistsOrThrow(userId);
         schemasProvider.validateSchemaExistsOrThrow(schemaId);
-        schemasProvider.getTaskByIdInSchema(taskId, schemaId);
+        // TODO: 4/26/21 same validation
+        if(!studyStateService.taskExists(schemaId, userId, taskId))throw new ContentNotFoundException("Задание не назначено");
         studyStateService.openTask(schemaId, userId, taskId);
     }
 
