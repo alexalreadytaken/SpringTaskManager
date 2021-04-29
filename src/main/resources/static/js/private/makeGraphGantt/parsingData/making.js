@@ -1,5 +1,5 @@
 import { chartMaking } from '../chartMaking.js';
-import { parsTask, parsDepen } from './parsFiels.js';
+import { parsTask, parsDepen } from './parsFields.js';
 import { makeChildren } from './addChildrenToData.js';
 import { makeWeakDepen } from './makeWeakDepen.js';
 import { makePercent } from "./percentForTasks.js";
