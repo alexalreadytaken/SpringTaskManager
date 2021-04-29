@@ -1,5 +1,4 @@
-function acceptTask (taskId, tasks) {
-
+function acceptTask ({taskId, tasks}) {
 
     console.log('allTasks', tasks);
 
