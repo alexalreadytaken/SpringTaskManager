@@ -1,3 +1,8 @@
+import { parsTask } from '../parsingData/parsFields.js'
+import { acceptTask } from './acceptTask.js'
+import scheme1 from '../../local-JSON/scheme1.js'
+
+
 function createModalForm () {
     document.getElementById('body').insertAdjacentHTML('beforebegin', `
         <div class="form_Execute" id="form_Execute">
@@ -17,6 +22,14 @@ function createModalForm () {
             document.getElementById('body').style.filter = 'grayscale(0)'
             document.getElementById('notesTask').innerHTML = ''
         }
+    })
+
+    document.getElementById('submitTask')
+    .addEventListener('click', e => {
+        const tasks = parsTask(scheme1).splice(2, parsTask(scheme1).length)
+        acceptTask({
+            tasks: tasks
+        })
     })
 }
 
