@@ -1,6 +1,6 @@
 // парсит мапу приходящуюю от сервера на массив объектов с тасками
 function parsTask(info) {    
-    return Object.entries(info.tasksMap).map(el => el[1]).splice(0, 2)
+    return Object.entries(info.tasksMap).map(el => el[1]).splice(2, Object.entries(info.tasksMap).map(el => el[1]).length)
 }
 
 
