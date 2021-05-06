@@ -5,7 +5,7 @@ import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentN
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.EmailExistsException;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.User;
-import com.bestSpringApplication.taskManager.servises.UserService;
+import com.bestSpringApplication.taskManager.servises.UserServiceImpl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class UsersController{
 
     @NonNull
-    private final UserService userService;
+    private final UserServiceImpl userServiceImpl;
 
     private final String REGISTER_MAPPING = "/register/new";
 
@@ -32,7 +32,7 @@ public class UsersController{
     @PostMapping(REGISTER_MAPPING)
     @ResponseStatus(HttpStatus.OK)
     public void register(@RequestBody Map<String,String> body){
-        if (userService.containsMail(body.get("mail"))){
+        if (userServiceImpl.containsMail(body.get("mail"))){
             throw new EmailExistsException("Пользователь с такой почтой уже существует");
         }else{
             User user = User.builder()
@@ -41,13 +41,13 @@ public class UsersController{
                     .password(body.get("password"))
                     .role(Role.STUDENT)
                     .build();
-            userService.saveUser(user);
+            userServiceImpl.saveUser(user);
         }
     }
 
     @GetMapping(USERS_LIST_MAPPING)
     public List<User> userList(){
-        return userService.getAllUsers();
+        return userServiceImpl.getAllUsers();
     }
 
     @GetMapping(USER_BY_ID_MAPPING)
@@ -60,7 +60,7 @@ public class UsersController{
         Map<String,Boolean> response = new HashMap<>();
         try {
             User user = findUserById(id);
-            userService.deleteUser(user);
+            userServiceImpl.deleteUser(user);
             response.put("delete",true);
         }catch (ContentNotFoundException ex){
             response.put("delete",false);
@@ -69,7 +69,7 @@ public class UsersController{
     }
 
     private User findUserById(String id){
-        return userService.getUserById(id).orElseThrow(
+        return userServiceImpl.getUserById(id).orElseThrow(
             ()->new ContentNotFoundException(
                 String.format("user with id=%s not found",id)));
     }

@@ -3,6 +3,7 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.User;
 import com.bestSpringApplication.taskManager.repos.UserRepo;
+import com.bestSpringApplication.taskManager.servises.interfaces.UserService;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,7 @@ import java.util.Optional;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UserService implements UserDetailsService {
+public class UserServiceImpl implements UserService {
 
     @NonNull private final UserRepo userRepo;
     @NonNull private final PasswordEncoder encoder;

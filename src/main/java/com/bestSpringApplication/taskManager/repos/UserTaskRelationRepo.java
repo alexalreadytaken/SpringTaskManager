@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 import javax.transaction.Transactional;
 import java.util.List;
 
-// TODO: 4/26/21 optimize queries ?
 public interface UserTaskRelationRepo extends JpaRepository<UserTaskRelation,Integer> {
     boolean existsBySchemaIdAndUserIdAndTaskId(String schemaId, String userId, String taskId);
 
@@ -54,9 +53,10 @@ public interface UserTaskRelationRepo extends JpaRepository<UserTaskRelation,Int
                           @Param("taskId")String taskId,
                           @Param("status")Status status);
 
-    @Query("select taskId from user_task_relation where userId=:userId and schemaId=:schemaId and status='in_work'")
-    List<String> getOpenedTasksIdOfSchemaIdAndUserId(@Param("userId") String userId,
-                                                     @Param("schemaId") String schemaId);
+    @Query("select taskId from user_task_relation where userId=:userId and schemaId=:schemaId and status=:status")
+    List<String> getTasksIdOfSchemaIdAndUserIdAndStatus(@Param("userId") String userId,
+                                                        @Param("schemaId") String schemaId,
+                                                        @Param("status") Status status);
 
     @Query("select taskId from user_task_relation where userId=:userId and schemaId=:schemaId " +
             "and status='finished' and grade>=3")

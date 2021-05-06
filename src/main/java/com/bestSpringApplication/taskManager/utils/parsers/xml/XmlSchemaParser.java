@@ -80,9 +80,7 @@ public class XmlSchemaParser implements SchemaParser {
         while (!tasksStack.empty()) {
             Element taskElemFromStack = tasksStack.pop();
             TimedTask.TimedTaskBuilder taskBuilder = TimedTask.builder();
-            String taskName = StringUtils.normalizeSpace(
-                    getImportantElemText(taskElemFromStack, "task-name"))
-                    .replaceAll(" ", "_");
+            String taskName = getImportantElemText(taskElemFromStack, "task-name");
             String taskId = getImportantElemText(taskElemFromStack, "task-id");
             Optional<Element> taskListElem = getChildElemOpt(taskElemFromStack, "task-list");
             taskBuilder

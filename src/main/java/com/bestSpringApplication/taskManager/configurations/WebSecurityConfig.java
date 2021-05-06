@@ -1,20 +1,17 @@
 package com.bestSpringApplication.taskManager.configurations;
 
 
-import com.bestSpringApplication.taskManager.models.enums.Role;
-import com.bestSpringApplication.taskManager.servises.UserService;
+import com.bestSpringApplication.taskManager.servises.UserServiceImpl;
+import com.bestSpringApplication.taskManager.servises.interfaces.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.web.filter.GenericFilterBean;
 
 import java.util.concurrent.TimeUnit;
 

@@ -4,7 +4,6 @@ import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchem
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
-import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
@@ -31,21 +30,16 @@ public class UsersStudyService implements StudyService {
     @NonNull private final SchemasProvider schemasProvider;
     @NonNull private final StudyStateService studyStateService;
 
-    @NonNull private final UserService userService;
+    @NonNull private final UserServiceImpl userServiceImpl;
 
     public void setSchemaToUser(String userId,String schemaId){
         log.trace("trying prepare schema '{}' to user '{}'",schemaId,userId);
-        userService.validateUserExistsAndContainsRoleOrThrow(userId,Role.STUDENT);
-        schemasProvider.validateSchemaExistsOrThrow(schemaId);
         AbstractStudySchema schema = schemasProvider.getSchemaById(schemaId);
         studyStateService.prepareSchema(schema,userId);
     }
 
-    // TODO: 4/4/21 reopen
     public boolean canStartTask(String schemaId, String userId, String taskId){
         log.trace("check possibility starting task '{}' in schema '{}' for user '{}'",taskId,schemaId,userId);
-        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId, taskId);
-        userService.validateUserExistsOrThrow(userId);
         AbstractStudySchema schema = schemasProvider.getSchemaById(schemaId);
         AbstractTask task = schemasProvider.getTaskByIdInSchema(taskId, schemaId);
         validateTaskCondition(schemaId, userId, taskId, task);
@@ -63,9 +57,6 @@ public class UsersStudyService implements StudyService {
     }
 
     public void reopenTask(String schemaId, String userId, String taskId){
-        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
-        // TODO: 4/26/21 same validation
-        if(!studyStateService.taskExists(schemaId, userId, taskId))throw new ContentNotFoundException("Задание не назначено");
         studyStateService.setStatusForUserTask(schemaId,userId,taskId,Status.REOPENED);
     }
 
@@ -82,7 +73,6 @@ public class UsersStudyService implements StudyService {
     }
 
     public List<AbstractStudySchema> getUserSchemas(String userId) {
-        userService.validateUserExistsAndContainsRoleOrThrow(userId,Role.STUDENT);
         List<AbstractStudySchema> schemas = studyStateService
                 .getOpenedSchemasIdOfUser(userId)
                 .stream()
@@ -100,7 +90,6 @@ public class UsersStudyService implements StudyService {
     }
 
     public List<AbstractTask> getOpenedUserTasksOfSchema(String userId, String schemaId){
-        schemasProvider.validateSchemaExistsOrThrow(schemaId);
         List<String> tasksId = studyStateService.getOpenedTasksIdBySchemaOfUser(userId, schemaId);
         Map<String, AbstractTask> tasksMap = schemasProvider.getSchemaById(schemaId).getTasksMap();
         return tasksId.stream()
@@ -110,10 +99,6 @@ public class UsersStudyService implements StudyService {
 
     private void startTask(String schemaId, String userId, String taskId) {
         log.trace("trying start task '{}' in schema '{}' for user '{}'",taskId,schemaId,userId);
-        userService.validateUserExistsOrThrow(userId);
-        schemasProvider.validateSchemaExistsOrThrow(schemaId);
-        // TODO: 4/26/21 same validation
-        if(!studyStateService.taskExists(schemaId, userId, taskId))throw new ContentNotFoundException("Задание не назначено");
         studyStateService.openTask(schemaId, userId, taskId);
     }
 

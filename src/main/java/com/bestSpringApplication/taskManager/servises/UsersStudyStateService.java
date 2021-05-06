@@ -9,6 +9,7 @@ import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.BadRequestException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,19 +46,6 @@ public class UsersStudyStateService implements StudyStateService {
         utrRepo.save(userTaskRelation);
     }
 
-    // TODO: 4/25/21 empty lists
-    public List<String> getCompletedTasksIdOfSchemaForUser(String schemaId, String userId) {
-        return utrRepo.getCompletedTasksIdOfSchemaIdAndUserId(userId, schemaId);
-    }
-
-    public List<UserTaskRelation> getAllRelationsBySchemaId(String schemaId){
-        return utrRepo.getAllBySchemaId(schemaId);
-    }
-
-    public List<UserTaskRelation> getSchemaStateByUserId(String userId,String schemaId){
-        return utrRepo.getAllBySchemaIdAndUserId(schemaId,userId);
-    }
-
     public void openTask(String schemaId, String userId, String taskId){
         utrRepo.setStatusForTask(schemaId, userId, taskId,Status.IN_WORK);
     }
@@ -74,16 +62,40 @@ public class UsersStudyStateService implements StudyStateService {
         utrRepo.setStatusAndGradeForTask(schemaId, userId, taskId, grade, status);
     }
 
+    public List<String> getCompletedTasksIdOfSchemaForUser(String schemaId, String userId) {
+        List<String> ids = utrRepo.getCompletedTasksIdOfSchemaIdAndUserId(userId, schemaId);
+        throwIfListEmpty(ids,"курс не назначен или нет завершенных заданий");
+        return ids;
+    }
+
+    public List<UserTaskRelation> getAllRelationsBySchemaId(String schemaId){
+        List<UserTaskRelation> schemaRelations = utrRepo.getAllBySchemaId(schemaId);
+        throwIfListEmpty(schemaRelations,"курс не назначен ни одному человеку");
+        return schemaRelations;
+    }
+
+    public List<UserTaskRelation> getSchemaStateByUserId(String userId,String schemaId){
+        List<UserTaskRelation> userSchemaState = utrRepo.getAllBySchemaIdAndUserId(schemaId, userId);
+        throwIfListEmpty(userSchemaState,"курс не назначен данному человеку");
+        return userSchemaState;
+    }
+
     public List<String> getOpenedSchemasIdOfUser(String userId){
-        return utrRepo.getOpenedSchemasIdOfUser(userId);
+        List<String> openedSchemasIdOfUser = utrRepo.getOpenedSchemasIdOfUser(userId);
+        throwIfListEmpty(openedSchemasIdOfUser,"человеку не назначен ни один курс");
+        return openedSchemasIdOfUser;
     }
 
     public List<UserTaskRelation> getRelationsBySchemaIdAndTaskId(String schemaId,String taskId){
-        return utrRepo.getAllBySchemaIdAndTaskId(schemaId, taskId);
+        List<UserTaskRelation> taskOfSchemaState = utrRepo.getAllBySchemaIdAndTaskId(schemaId, taskId);
+        throwIfListEmpty(taskOfSchemaState,"данное задание никому не назначено");
+        return taskOfSchemaState;
     }
 
     public List<String> getOpenedTasksIdBySchemaOfUser(String userId, String schemaId){
-        return utrRepo.getOpenedTasksIdOfSchemaIdAndUserId(userId, schemaId);
+        List<String> openedSchemaTasks = utrRepo.getTasksIdOfSchemaIdAndUserIdAndStatus(userId, schemaId, Status.IN_WORK);
+        throwIfListEmpty(openedSchemaTasks,"у человека нет активных заданий на текущем курсе");
+        return openedSchemaTasks;
     }
 
     public boolean taskFinished(String schemaId, String userId, String taskId) {
@@ -115,5 +127,9 @@ public class UsersStudyStateService implements StudyStateService {
                     boolean parentsOfParentValid = firstCheckTask(schema, taskParent);
                     return parentHierarchicalAndTheme&&parentsOfParentValid;
                 });
+    }
+
+    private void throwIfListEmpty(List<?> list,String exceptionMessage){
+        if (list.isEmpty())throw new BadRequestException(exceptionMessage);
     }
 }

@@ -8,6 +8,7 @@ import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
 import com.bestSpringApplication.taskManager.servises.interfaces.SummaryProvider;
+import com.bestSpringApplication.taskManager.servises.interfaces.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,19 +42,28 @@ public class AdminSchemasController {
     @NonNull private final SchemasProvider schemasProvider;
     @NonNull private final StudyService usersStudyService;
     @NonNull private final SummaryProvider summaryProvider;
+    @NonNull private final UserService userService;
 
     @GetMapping(SUMMARY_OF_USER_SCHEMA)
     public Summary summaryOfUserSchema(@PathVariable String schemaId, @PathVariable String userId){
+        log.trace("request for summary of user '{}' by schema '{}'",userId,schemaId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
+        userService.validateUserExistsOrThrow(userId);
         return summaryProvider.getUserSchemaSummary(schemaId,userId);
     }
 
     @GetMapping(STATE_OF_USER_SCHEMA)
     public List<UserTaskRelation> stateOfUserSchema(@PathVariable String userId, @PathVariable String schemaId){
+        log.trace("request for state of schema '{}' by user '{}'",schemaId,userId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
+        userService.validateUserExistsOrThrow(userId);
         return summaryProvider.getUserTasksState(schemaId,userId);
     }
 
     @GetMapping(SCHEMA_SUMMARY)
     public List<Summary> schemaSummary(@PathVariable String schemaId){
+        log.trace("request for schema '{}' summary of all users",schemaId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
         return summaryProvider.getTasksSummaryBySchema(schemaId);
     }
 
@@ -64,29 +74,35 @@ public class AdminSchemasController {
                                          @PathVariable String schemaId,
                                          @PathVariable String userId,
                                          @PathVariable String taskId){
-        switch (actionQuery.toLowerCase()){
-            case "open":
-                boolean forceOpen = Boolean.parseBoolean(forceOpenQuery);
-                if (forceOpen) {
-                    usersStudyService.forceStartTask(schemaId, userId, taskId);
-                } else {
-                    usersStudyService.startTaskWithValidation(schemaId, userId, taskId);
-                }
-                break;
-            case "reopen":
-                usersStudyService.reopenTask(schemaId, userId, taskId);
-                break;
+        log.trace("request for '{}' task '{}' of schema '{}' for user '{}'",actionQuery,taskId,schemaId,userId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
+        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
+        userService.validateUserExistsOrThrow(userId);
+        if ("open".equalsIgnoreCase(actionQuery)) {
+            boolean forceOpen = Boolean.parseBoolean(forceOpenQuery);
+            if (forceOpen) {
+                usersStudyService.forceStartTask(schemaId, userId, taskId);
+            } else {
+                usersStudyService.startTaskWithValidation(schemaId, userId, taskId);
+            }
+        } else if ("reopen".equalsIgnoreCase(actionQuery)) {
+            usersStudyService.reopenTask(schemaId, userId, taskId);
         }
     }
 
     @GetMapping(OPENED_TASKS_OF_SCHEMA_FOR_USER)
     public List<AbstractTask> openedStudentTasks(@PathVariable String schemaId,
                                                  @PathVariable String userId){
+        log.trace("request for opened tasks of schema '{}' for user '{}'",schemaId,userId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
+        userService.validateUserExistsOrThrow(userId);
         return usersStudyService.getOpenedUserTasksOfSchema(userId,schemaId);
     }
 
     @GetMapping(USER_SCHEMAS)
     public List<AbstractTask> userSchemas(@PathVariable String userId){
+        log.trace("request for opened schemas for user '{}'",userId);
+        userService.validateUserExistsOrThrow(userId);
         return usersStudyService.getUserSchemasRootTasks(userId);
     }
 
@@ -101,6 +117,7 @@ public class AdminSchemasController {
 
     @GetMapping(MASTER_SCHEMA_BY_ID)
     public AbstractStudySchema masterSchemaById(@PathVariable String schemaId){
+        log.trace("request for schema '{}' information",schemaId);
         schemasProvider.validateSchemaExistsOrThrow(schemaId);
         return schemasProvider.getSchemaById(schemaId);
     }
@@ -108,6 +125,9 @@ public class AdminSchemasController {
     @GetMapping(ADD_MASTER_SCHEMA_TO_USER)
     @ResponseStatus(HttpStatus.OK)
     public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String userId){
+        log.trace("request for adding schema '{}' for user '{}'",schemaId,userId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
+        userService.validateUserExistsOrThrow(userId);
         usersStudyService.setSchemaToUser(userId,schemaId);
     }
 
@@ -118,9 +138,7 @@ public class AdminSchemasController {
 
     @GetMapping(MASTER_FILES)
     public List<String> schemasFileList() {
-        List<String> fileNames = schemasProvider.schemasFilenamesList();
-        log.trace("Request for master schemas files, return={}",fileNames);
-        return fileNames;
+        return schemasProvider.schemasFilenamesList();
     }
 }
 

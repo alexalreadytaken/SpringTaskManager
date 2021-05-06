@@ -1,6 +1,7 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.PostConstructInitializationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -13,6 +14,7 @@ import java.util.stream.Stream;
 
 @Configuration
 @EnableWebMvc
+@Slf4j
 public class StaticResolver implements WebMvcConfigurer {
 
     @Value("${xml.task.pool.path}")
@@ -28,8 +30,10 @@ public class StaticResolver implements WebMvcConfigurer {
 
     @PostConstruct
     private void validateDirs(){
+        log.trace("Started initialization");
         boolean filesValid = Stream.of(new File(taskPoolPath),new File(jsFilesPath),
                 new File(htmlFilesPath),new File(cssFilesPath),new File(faviconPath))
+                .peek(file->log.trace("file '{}' exists = {}",file.getPath(),file.exists()))
                 .allMatch(File::exists);
         if (!filesValid){
             throw new PostConstructInitializationException("One of the directories was not found");

@@ -35,7 +35,6 @@ public class SchemasService implements SchemasProvider {
     @Value("${invalid.files.pool.path}")
     private String invalidFilesPoolPath;
 
-    // TODO: 4/15/21 list of parsers and dirs
     @NonNull private final SchemaParser schemaParser;
 
     // TODO: 4/6/21 really version control
@@ -47,7 +46,7 @@ public class SchemasService implements SchemasProvider {
         initFromXml();
     }
 
-    @SuppressWarnings("ResultOfMethodCallIgnored")
+    @SuppressWarnings({"ResultOfMethodCallIgnored","ConstantConditions"})
     private void initFromXml() {
         log.trace("Started initialization");
         File tasksDir = new File(xmlTaskPoolPath);
@@ -74,6 +73,7 @@ public class SchemasService implements SchemasProvider {
 
     }
 
+    @SuppressWarnings("ConstantConditions")
     public List<String> schemasFilenamesList() {
         File dir = new File(xmlTaskPoolPath);
         return Arrays.stream(dir.listFiles(File::isFile))
@@ -124,14 +124,18 @@ public class SchemasService implements SchemasProvider {
     }
 
     public void validateSchemaExistsOrThrow(String schemaId) {
-        log.trace("checking existence of schema '{}'",schemaId);
-        if (!schemaExists(schemaId)) throw new ContentNotFoundException("Курс не найден");
+        if (!schemaExists(schemaId)){
+            log.warn("schema by id '{}' not found",schemaId);
+            throw new ContentNotFoundException("Курс не найден");
+        }
     }
 
     public void validateTaskInSchemaExistsOrThrow(String schemaId, String taskId) {
-        log.trace("checking existence of schema '{}' and task '{}'",schemaId,taskId);
         validateSchemaExistsOrThrow(schemaId);
-        if (!taskInSchemaExists(schemaId,taskId)) throw new ContentNotFoundException("Задание не найдено");
+        if (!taskInSchemaExists(schemaId,taskId)){
+            log.warn("task by id '{}' in schema '{}' not found",taskId,schemaId);
+            throw new ContentNotFoundException("Задание не найдено");
+        }
     }
 
     public void putAndSaveFile(MultipartFile file)  {
@@ -149,6 +153,7 @@ public class SchemasService implements SchemasProvider {
             log.error("error with parse:{} file:{}",ex.getLocalizedMessage(), filename);
             throw new IllegalFileFormatException("загрузка файла не удалась, проверьте структуру своего файла");
         } catch (IOException ex) {
+            // TODO: 5/6/21 not leave empty list
             masterSchemas.computeIfPresent(studySchema.getId(),(id,list)->{
                 AbstractStudySchema removed = list.removeNewets();
                 log.error("unknown io exception = {}, removing schema '{}'",ex.getMessage(),removed);
@@ -177,6 +182,7 @@ public class SchemasService implements SchemasProvider {
         file.transferTo(initialFile);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private boolean containsFilenameInTasksPool(String filename){
         return Arrays.stream(new File(xmlTaskPoolPath).listFiles())
                 .map(File::getName)
