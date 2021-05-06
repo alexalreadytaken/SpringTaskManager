@@ -1,5 +1,6 @@
 import {makeGraph} from '../parsingData/making.js';
-import {makePercent} from '../parsingData/percentForTasks.js'
+import {makePercent} from '../parsingData/percentForTasks.js';
+import {parsTask} from '../parsingData/parsFields.js';
 
 function makeFileList (fileNames) {
     let schemasFileList = document.getElementById("schemasFileList");
@@ -46,13 +47,18 @@ function multiFetch (url) {
                 makeGraph(result)
             break
 
-            case 'http://10.3.0.87:2000/schemas/master/Предмет_1/summary':
-                makePercent({
-                    summary: result
-                })
-            break
         }
     })
 }
 
-export {makeFileList, makeUserList, multiFetch}
+function getSummary ({url, tasks}) {
+   return fetch (url).then(response => response.json())
+    .then(result => {
+        return makePercent({
+            data: parsTask(tasks),
+            summary: result
+        })
+    })
+}
+
+export {makeFileList, makeUserList, multiFetch, getSummary}

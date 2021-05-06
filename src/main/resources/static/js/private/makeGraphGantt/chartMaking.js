@@ -1,9 +1,11 @@
 import { eventChart } from './dinamicFormExecute/eventChart.js'
 
+let chart = anychart.ganttProject()
+
 function chartMaking (data, rootTask) {
     var treeData = anychart.data.tree (data, 'as-tree')
 
-    var chart = anychart.ganttProject()
+    
 // ------------------------ title and font-settings
     var title = chart.title()
 
@@ -41,4 +43,10 @@ function chartMaking (data, rootTask) {
     console.log('%c we are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px')
 }
 
-export {chartMaking}
+function refreshChart (data) {
+    chart.data(anychart.data.tree (data, 'as-tree'))
+    chart.draw()
+    chart.fitAll()
+}
+
+export {chartMaking, refreshChart}

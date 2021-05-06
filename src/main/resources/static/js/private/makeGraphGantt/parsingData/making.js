@@ -3,33 +3,42 @@ import { parsTask, parsDepen } from './parsFields.js';
 import { makeChildren } from './addChildrenToData.js';
 import { makeWeakDepen } from './makeWeakDepen.js';
 
-import { makePercent } from "./percentForTasks.js";
-import { summary } from '../../local-JSON/percent.js';
+import { getSummary } from '../additionalModules/helpers_Module.js'
 
+import { refreshChart } from '../chartMaking.js'
 
+// import { summary } from '../../local-JSON/percent.js';
 
 function makeGraph (response) {
-    const rootTask = response.rootTask.name.replaceAll('_', ' ')
-
-    const parsedTasks = parsTask(response)
-
-    const tasks = makePercent({
-        summary: summary,
-        tasks: parsedTasks
-    })
-
-    const depen = parsDepen(response)
+        const rootTask = response.rootTask.name.replaceAll('_', ' ')
     
-    const data = tasks.filter(el => el.theme)
-
-    makeWeakDepen(tasks, depen)
+        let tasks = parsTask(response)
     
-    makeChildren(data, depen, tasks)
+        const depen = parsDepen(response)
 
-    console.log('Data elem', data)
-    console.log('AllTasks: ', tasks)
+        console.log(tasks)
 
-    chartMaking(data, rootTask)
+        
+        const data = tasks.filter(el => el.theme) // filter tasks of themes
+    
+        makeWeakDepen(tasks, depen) // make WEAK depen in tasks
+        
+        makeChildren(data, depen, tasks) // make HIERARCHICAL depen in data
+        
+        console.log('Data elem', data)
+        console.log(depen)
+
+        getSummary({
+            url: 'http://10.3.0.87:2000/schemas/master/Предмет_1/summary',
+            tasks: response
+        }).then(res => {
+            tasks = res            
+            refreshChart(data)
+        }) // для обновления процентов, с дальнейшей возможностью расшерения до обновления каждого куска схемы в percentForTask
+
+        chartMaking(data, rootTask)
+        
 }
 
-export {makeGraph}
+
+export {makeGraph, parsTask}
