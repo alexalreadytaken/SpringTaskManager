@@ -51,14 +51,13 @@ function multiFetch (url) {
     })
 }
 
-function getSummary ({url, tasks}) {
-   return fetch (url).then(response => response.json())
-    .then(result => {
-        return makePercent({
-            data: parsTask(tasks),
-            summary: result
-        })
-    })
+async function getSummary ({url, tasks}) {
+   const response = await fetch(url);
+    const result_1 = await response.json();
+    return makePercent({
+        data: parsTask(tasks),
+        summary: result_1
+    });
 }
 
 export {makeFileList, makeUserList, multiFetch, getSummary}
