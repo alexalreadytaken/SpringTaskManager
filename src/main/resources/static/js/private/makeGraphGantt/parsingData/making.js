@@ -10,33 +10,35 @@ import { refreshChart } from '../chartMaking.js'
 // import { summary } from '../../local-JSON/percent.js';
 
 function makeGraph (response) {
-        const rootTask = response.rootTask.name.replaceAll('_', ' ')
+
+    console.log(response)
+    const rootTask = response.rootTask.name.replaceAll('_', ' ')
+
+    let tasks = parsTask(response)
+
+    const depen = parsDepen(response)
+
+    console.log(tasks)
+
     
-        let tasks = parsTask(response)
+    const data = tasks.filter(el => el.theme) // filter tasks of themes
+
+    makeWeakDepen(tasks, depen) // make WEAK depen in tasks
     
-        const depen = parsDepen(response)
-
-        console.log(tasks)
-
-        
-        const data = tasks.filter(el => el.theme) // filter tasks of themes
+    makeChildren(data, depen, tasks) // make HIERARCHICAL depen in data
     
-        makeWeakDepen(tasks, depen) // make WEAK depen in tasks
-        
-        makeChildren(data, depen, tasks) // make HIERARCHICAL depen in data
-        
-        console.log('Data elem', data)
-        console.log(depen)
+    console.log('Data elem', data)
+    console.log(depen)
 
-        getSummary({
-            url: 'http://10.3.0.87:2000/schemas/master/Предмет_1/summary',
-            tasks: response
-        }).then(res => {
-            tasks = res            
-            refreshChart(data)
-        }) // для обновления процентов, с дальнейшей возможностью расшерения до обновления каждого куска схемы в percentForTask
+    getSummary({
+        url: 'http://192.168.3.2:3000/summary',
+        tasks: response
+    }).then(res => {
+        tasks = res            
+        refreshChart(data)
+    }) // для обновления процентов, с дальнейшей возможностью расшерения до обновления каждого куска схемы в percentForTask
 
-        chartMaking(data, rootTask)
+    chartMaking(data, rootTask)
         
 }
 
