@@ -1,5 +1,5 @@
 let check = document.getElementById('menuNote').style
-const elem = document.getElementById('elem')
+document.getElementById('elem')
     .addEventListener ('click', el => {
         (check.display === 'block') ? check.display = 'none' : check.display = 'block'
     })
@@ -14,8 +14,10 @@ const elem = document.getElementById('elem')
     // import {config} from '../config.js'
 
     function createDataForm () {
-        makeObjPair(list)
-        .then(result => console.log(result)) // fix send to server
+        const trs = makeObjPair(list)
+        console.log(trs)
+        // makeObjPair(list)
+        // .then(result => console.log(result)) // fix send to server
     }
 
     createFormMark(list, student, pair)

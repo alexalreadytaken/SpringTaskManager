@@ -1,6 +1,6 @@
 import {createDataForm} from './collector.js'
 
-async function createFormMark (list, student, pair) {
+function createFormMark (list, student, pair) {
     list.forEach((el, x) => {
         student.insertAdjacentHTML('beforeend', `
             <div class = 'st_Name' >${el}</div>
@@ -15,7 +15,7 @@ async function createFormMark (list, student, pair) {
         <button id = "sendForm">Сохранить!</button>
     `)
 
-    await document.getElementById('sendForm')
+     document.getElementById('sendForm')
         .addEventListener('click', createDataForm )
 
     list.forEach ((list, i) => {

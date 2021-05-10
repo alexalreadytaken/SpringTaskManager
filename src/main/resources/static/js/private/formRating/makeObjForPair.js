@@ -1,9 +1,7 @@
-async function makeObjPair (listSt) {
+function makeObjPair (listSt) {
     const obj = []
 
-    await document.getElementById
-
-    listSt.forEach( (el, x) => {
+    listSt.forEach( el=> {
         obj.push({
             nameST: el,
             pair: document.getElementById(x).value
