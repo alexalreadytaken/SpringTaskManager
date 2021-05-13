@@ -21,6 +21,8 @@ public interface StudyStateService {
 
     void setStatusAndGradeForUserTask(String schemaId, String userId, String taskId,Status status,Grade grade);
 
+    boolean schemaOfUserExists(String schemaId, String userId);
+
     boolean taskExists(String schemaId, String userId, String taskId);
 
     boolean taskFinished(String schemaId,String userId,String taskId);

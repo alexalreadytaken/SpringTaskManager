@@ -16,6 +16,8 @@ public interface UserTaskRelationRepo extends JpaRepository<UserTaskRelation,Int
 
     boolean existsByTaskIdAndSchemaIdAndUserIdAndStatus(String taskId,String schemaId,String userId,Status status);
 
+    boolean existsBySchemaIdAndUserId(String schemaId,String userid);
+
     List<UserTaskRelation> getAllBySchemaIdAndUserId(String schemaId, String userId);
 
     List<UserTaskRelation> getAllBySchemaId(String schemaId);

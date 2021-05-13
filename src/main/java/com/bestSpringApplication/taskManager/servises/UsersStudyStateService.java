@@ -10,6 +10,7 @@ import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.BadRequestException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskInWorkException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +61,11 @@ public class UsersStudyStateService implements StudyStateService {
 
     public void setStatusAndGradeForUserTask(String schemaId, String userId, String taskId, Status status, Grade grade) {
         utrRepo.setStatusAndGradeForTask(schemaId, userId, taskId, grade, status);
+    }
+
+    @Override
+    public boolean schemaOfUserExists(String schemaId, String userId) {
+        return utrRepo.existsBySchemaIdAndUserId(schemaId, userId);
     }
 
     public List<String> getCompletedTasksIdOfSchemaForUser(String schemaId, String userId) {

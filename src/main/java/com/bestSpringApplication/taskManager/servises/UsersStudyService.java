@@ -3,6 +3,7 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
+import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
@@ -54,6 +55,18 @@ public class UsersStudyService implements StudyService {
         return parentsOnlyHierarchical
                 ? deepCheck(taskId, tasksMap, dependencies, finishedTasksId)
                 : defaultCheck(taskId, dependencies, finishedTasksId);
+    }
+
+    public void setStatusForTask(String schemaId, String userId, String taskId,Status status){
+        studyStateService.setStatusForUserTask(schemaId, userId, taskId, status);
+    }
+
+    public void setGradeForTask(String schemaId, String userId, String taskId, Grade grade) {
+        studyStateService.setGradeForUserTask(schemaId, userId, taskId, grade);
+    }
+
+    public void setStatusAndGradeForTask(String schemaId, String userId, String taskId,Status status,Grade grade){
+        studyStateService.setStatusAndGradeForUserTask(schemaId, userId, taskId, status, grade);
     }
 
     public void reopenTask(String schemaId, String userId, String taskId){

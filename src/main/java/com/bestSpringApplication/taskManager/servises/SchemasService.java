@@ -154,7 +154,11 @@ public class SchemasService implements SchemasProvider {
             throw new IllegalFileFormatException("загрузка файла не удалась, проверьте структуру своего файла");
         } catch (IOException ex) {
             // TODO: 5/6/21 not leave empty list
-            masterSchemas.computeIfPresent(studySchema.getId(),(id,list)->{
+            String schemaId = studySchema.getId();
+            if (masterSchemas.containsKey(schemaId)){
+                VersionedList<AbstractStudySchema> schemaVersions = masterSchemas.get(schemaId);
+            }
+            masterSchemas.computeIfPresent(schemaId,(id, list)->{
                 AbstractStudySchema removed = list.removeNewets();
                 log.error("unknown io exception = {}, removing schema '{}'",ex.getMessage(),removed);
                 return list;
@@ -182,7 +186,6 @@ public class SchemasService implements SchemasProvider {
         file.transferTo(initialFile);
     }
 
-    @SuppressWarnings("ConstantConditions")
     private boolean containsFilenameInTasksPool(String filename){
         return Arrays.stream(new File(xmlTaskPoolPath).listFiles())
                 .map(File::getName)
