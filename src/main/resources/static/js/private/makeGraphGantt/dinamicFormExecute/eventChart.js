@@ -17,7 +17,7 @@ function eventChart (chart) {
         if (!themeTask) {addNotesForTask( notesTask )}
         
         acceptTask({
-            taskId: taskId,
+            taskId: taskId
         })
     })
 }
