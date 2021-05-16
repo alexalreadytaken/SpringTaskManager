@@ -9,6 +9,7 @@ import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.servises.interfaces.*;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.BadRequestException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.InvalidRequestParamException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskInWorkException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,13 +22,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/schemas")
-public class AdminSchemasController {
+public class AdminController {
 
     private final String MASTER_SCHEMAS =                       "/master";
     private final String MASTER_FILES =                         "/master/files";
@@ -37,7 +39,6 @@ public class AdminSchemasController {
     private final String ADD_MASTER_SCHEMA_TO_USER =            "/master/{schemaId}/addTo/{userId}";
 
     private final String INTERACTIONS_WITH_USER_TASK =          "/user/{userId}/{schemaId}/{taskId}";
-
     private final String OPEN_USER_TASK =                       "/user/{userId}/{schemaId}/{taskId}/open";
     private final String REOPEN_USER_TASK =                     "/user/{userId}/{schemaId}/{taskId}/reopen";
 
@@ -105,18 +106,28 @@ public class AdminSchemasController {
 
     @GetMapping(INTERACTIONS_WITH_USER_TASK)
     @ResponseStatus(HttpStatus.OK)
-    public void interactionsWithUserTask(@RequestParam(name = "setGrade",required = false) String grade,
-                                         @RequestParam(name = "setStatus",required = false) String status,
+    public void interactionsWithUserTask(@RequestParam(name = "setGrade",required = false) Optional<String> grade,
+                                         @RequestParam(name = "setStatus",required = false) Optional<String> status,
                                          @PathVariable String schemaId,
                                          @PathVariable String userId,
                                          @PathVariable String taskId){
-        // TODO: 5/13/21
-//        log.trace("request for '{}' task '{}' of schema '{}' for user '{}'",actionQuery,taskId,schemaId,userId);
-//        schemasProvider.validateSchemaExistsOrThrow(schemaId);
-//        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
-//        userService.validateUserExistsOrThrow(userId);
-//        if (!studyStateService.schemaOfUserExists(schemaId,userId))throw new BadRequestException("схема не назначена");
-
+        log.trace("request for task '{}' interactions of schema '{}' for user '{}'",taskId,schemaId,userId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
+        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
+        userService.validateUserExistsOrThrow(userId);
+        if (!studyStateService.schemaOfUserExists(schemaId,userId))throw new BadRequestException("схема не назначена");
+        grade.ifPresent(gr->{
+            Grade grade1 = Grade.of(gr).orElseThrow(() ->
+                    new InvalidRequestParamException(String.format("оценки со значением %s не существует", gr)));
+            log.trace("set grade '{}' for task '{}' of schema '{}' for user '{}'",grade1,taskId,schemaId,userId);
+            usersStudyService.setGradeForTask(schemaId,userId,taskId,grade1);
+        });
+        status.ifPresent(st->{
+            Status status1 = Status.of(st).orElseThrow(() ->
+                    new InvalidRequestParamException(String.format("статуса со значением %s не существует", st)));
+            log.trace("set status '{}' for task '{}' of schema '{}' for user '{}'",status1,taskId,schemaId,userId);
+            usersStudyService.setStatusForTask(schemaId,userId,taskId,status1);
+        });
     }
 
     @GetMapping(OPENED_TASKS_OF_SCHEMA_FOR_USER)

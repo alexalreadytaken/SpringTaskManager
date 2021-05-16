@@ -5,6 +5,7 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public enum Status {
 
@@ -21,8 +22,8 @@ public enum Status {
         for(Status el: values()) VALUES.put(el.getName(),el);
     }
 
-    public static Status of(String name){
-        return VALUES.get(name);
+    public static Optional<Status> of(String name){
+        return Optional.ofNullable(VALUES.get(name));
     }
 
     @Getter(onMethod = @__({@JsonValue}))

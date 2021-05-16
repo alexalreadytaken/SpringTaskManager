@@ -14,6 +14,7 @@ public class StatusConverter implements AttributeConverter<Status,String> {
 
     @Override
     public Status convertToEntityAttribute(String s) {
-        return s==null?null:Status.of(s);
+        return s==null?null:Status.of(s)
+                .orElse(null);
     }
 }

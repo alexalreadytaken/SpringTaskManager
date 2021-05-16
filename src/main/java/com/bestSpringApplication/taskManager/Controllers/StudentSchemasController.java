@@ -28,13 +28,13 @@ public class StudentSchemasController {
 
     @GetMapping(OPENED_SCHEMAS)
     public List<AbstractTask> openedSchemas(@AuthenticationPrincipal User user){
-        String userId = String.valueOf(user.getId());
+        String userId = user.getId().toString();
         return studyService.getUserSchemasRootTasks(userId);
     }
 
     @GetMapping(OPENED_SCHEMAS_TASKS)
     public List<AbstractTask> openedSchemasTasks(@PathVariable String schemaId, @AuthenticationPrincipal User user){
-        String userId = String.valueOf(user.getId());
+        String userId = user.getId().toString();
         return studyService.getOpenedUserTasksOfSchema(userId,schemaId);
     }
 

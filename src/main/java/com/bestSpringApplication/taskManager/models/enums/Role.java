@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public enum Role {
     STUDENT("student"),
@@ -23,8 +24,8 @@ public enum Role {
         this.strValue=strValue;
     }
 
-    public static Role of(String str) {
-        return VALUES.get(str);
+    public static Optional<Role> of(String str) {
+        return Optional.ofNullable(VALUES.get(str));
     }
 
 }

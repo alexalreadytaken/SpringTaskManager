@@ -17,4 +17,5 @@ public class ErrorMessage {
     private LocalDateTime time;
     private String result;
     private String path;
+    private String query;
 }

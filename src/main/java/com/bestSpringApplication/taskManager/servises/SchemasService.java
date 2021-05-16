@@ -116,8 +116,10 @@ public class SchemasService implements SchemasProvider {
         if (schemaExists(schemaId)){
             return getSchemaById(schemaId)
                     .tasksStream()
-                    .map(AbstractTask::getId)
-                    .anyMatch(taskId0->taskId0.equals(taskId));
+                    .filter(task->task.getId().equals(taskId))
+                    .findAny()
+                    .map(task->!task.isTheme())
+                    .orElse(false);
         }else {
             return false;
         }
@@ -134,7 +136,7 @@ public class SchemasService implements SchemasProvider {
         validateSchemaExistsOrThrow(schemaId);
         if (!taskInSchemaExists(schemaId,taskId)){
             log.warn("task by id '{}' in schema '{}' not found",taskId,schemaId);
-            throw new ContentNotFoundException("Задание не найдено");
+            throw new ContentNotFoundException("Задание не найдено или оно является темой");
         }
     }
 
@@ -153,17 +155,15 @@ public class SchemasService implements SchemasProvider {
             log.error("error with parse:{} file:{}",ex.getLocalizedMessage(), filename);
             throw new IllegalFileFormatException("загрузка файла не удалась, проверьте структуру своего файла");
         } catch (IOException ex) {
-            // TODO: 5/6/21 not leave empty list
             String schemaId = studySchema.getId();
-            if (masterSchemas.containsKey(schemaId)){
+            if (masterSchemas.containsKey(schemaId)) {
                 VersionedList<AbstractStudySchema> schemaVersions = masterSchemas.get(schemaId);
-            }
-            masterSchemas.computeIfPresent(schemaId,(id, list)->{
-                AbstractStudySchema removed = list.removeNewets();
+                AbstractStudySchema removed = schemaVersions.removeNewets();
                 log.error("unknown io exception = {}, removing schema '{}'",ex.getMessage(),removed);
-                return list;
-            });
-            throw new ServerException("Ошибка при загрузке файла, пожалуйста, повторите позже");
+                if (schemaVersions.isEmpty()){
+                    masterSchemas.remove(schemaId);
+                }
+            }
         }
     }
 
@@ -186,6 +186,7 @@ public class SchemasService implements SchemasProvider {
         file.transferTo(initialFile);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private boolean containsFilenameInTasksPool(String filename){
         return Arrays.stream(new File(xmlTaskPoolPath).listFiles())
                 .map(File::getName)
