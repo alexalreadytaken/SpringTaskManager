@@ -6,18 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>template-front</title>
     <!-- scripts for bible anychart -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.js" integrity="sha512-IJBi4MhZGy7BV4es5UQQtueQ1q+M7HnWJ4mLnjEQDDh+aFa5jYeqq1mrayUuJrRzMbntc7IaAwESb6jDkTJhww==" crossorigin="anonymous"></script>
-    <script src="../static/js/private/bibl/anychart-core.min.js" type="text/javascript" ></script>
-    <script src="../static/js/private/bibl/anychart-gantt.min.js" type="text/javascript"></script>
+
+    <script src="https://cdn.anychart.com/releases/8.9.0/js/anychart-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.anychart.com/releases/8.9.0/css/anychart-ui.min.css"/>
     <!-- fontFamily -->
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Akaya+Telivigala&display=swap" rel="stylesheet">
     <!-- styles and favicon (css) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/frappe-gantt/0.5.0/frappe-gantt.css" integrity="sha512-qxE5FnEACGZSuLsbaDLCYuMRrxuLhQz1HtOJ2+3dHXSnFlckToa1rXHajkgLciNSdq+FCE4ey8R8fqjrD3HO0g==" crossorigin="anonymous" />
     <link rel="shortcut icon" href="../static/img/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="../static/css/modalExecute.css">
 </head>
-<body class="container">
+<body id="body" class="container">
 
         <div class="sideBar">
             <div class="logo">
@@ -27,7 +27,7 @@
             <ul>
                 <a href="#"><li>First</li></a>
                 <a href="#"><li>Second</li></a>
-                <a href="#"><li>Trhee</li></a>
+                <a href="#"><li>Three</li></a>
             </ul>
         </div>
     </div>
@@ -39,28 +39,28 @@
             <ul>
                 <a href="#"><li>First</li></a>
                 <a href="#"><li>Second</li></a>
-                <a href="#"><li>Trhee</li></a>
+                <a href="#"><li>Three</li></a>
             </ul>
         </div>
         <div class="leftBarText">
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Ad recusandae totam maxime! Debitis eius officiis error deserunt nam veniam inventore?
         </div>
     </div>
-    
+
+
     <div class="content">
-        
+
         <div class="nav">
             <button>btn1</button>
             <button>btn2</button>
         </div>
-        
-        <!-- <div id="graph-Gant"></div> -->
+
+        <div id="graph-Gant"></div>
         <div style="overflow: hidden;" id="gantt"></div>
-        <input type="file" id="file">
     </div>
 
 </div> 
-    
+
     <footer>
         <h1>FOOTER</h1>
         <div class="info"></div>
@@ -69,8 +69,8 @@
     </footer>
 </body>
     <!-- script working schemes graph parse json -> data -->
-    
-    <script type="module" src="../static/js/private/main.js"></script>
-    
+
+    <script type="module" src="../static/js/private/makeGraphGantt/main.js"></script>
+
     <!-- scripts animation switch schemes in the page -->
 </html>

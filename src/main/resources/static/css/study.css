@@ -1,0 +1,31 @@
+.elemTask {
+    width: 50px;
+    height: 15px;
+    border-radius: 15px;
+    background-color: aquamarine;
+}
+
+.menuNote {
+    display: none;
+    position: relative;
+    left: 42%
+}
+
+.menuNote button {
+    margin-left: 65px;
+    margin-top: 20px;
+}
+
+.st_Name {
+    float: left;
+    background-color: aqua;
+    border-radius: 10px;
+    text-align: center;
+    width: 70px;
+    height: 20px;
+    padding-right: 10px;
+}
+
+.st_Pair {
+    margin-left: 100px;
+}

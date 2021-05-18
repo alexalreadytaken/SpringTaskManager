@@ -1,6 +1,7 @@
-import makeGraph from './making.js';
+import {makeGraph} from '../parsingData/making.js';
+import {makePercent} from '../parsingData/percentForTasks.js'
 
-export function makeFileList (fileNames) {
+function makeFileList (fileNames) {
     let schemasFileList = document.getElementById("schemasFileList");
     fileNames.forEach(file=>{
         let div = document.createElement('div');
@@ -14,7 +15,7 @@ export function makeFileList (fileNames) {
     })
 }
 
-export function makeUserList (users) {
+function makeUserList (users) {
     let userList = document.getElementById("UsersList")
     users.forEach(user => {
         let userContainer ='<div style="border: 1px solid black">'
@@ -28,7 +29,7 @@ export function makeUserList (users) {
     })
 }
 
-export function multiFetch (url) {
+function multiFetch (url) {
     fetch( url )
     .then(response => response.json())
     .then(result => {
@@ -41,9 +42,17 @@ export function multiFetch (url) {
                 makeUserList(result)
             break
             
-            case 'http://10.1.0.64:2000/schemas/master/Предмет_1':
+            case 'http://10.3.0.87:2000/schemas/master/Предмет_1':
                 makeGraph(result)
+            break
+
+            case 'http://10.3.0.87:2000/schemas/master/Предмет_1/summary':
+                makePercent({
+                    summary: result
+                })
             break
         }
     })
 }
+
+export {makeFileList, makeUserList, multiFetch}
