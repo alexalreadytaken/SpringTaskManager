@@ -30,14 +30,14 @@ function makeGraph (response) {
     console.log('Data elem', data)
     console.log(depen)
 
-    getSummary({
-        url: 'http://192.168.3.2:3000/summary',
-        tasks: response
-    }).then(res => {
-        tasks = res            
-        refreshChart(data)
-    }) // для обновления процентов, с дальнейшей возможностью расшерения до обновления каждого куска схемы в percentForTask
-
+// для обновления процентов, с дальнейшей возможностью расшерения до обновления каждого куска схемы в percentForTask
+    // getSummary({
+    //     url: 'http://192.168.3.2:3000/summary',
+    //     tasks: response
+    // }).then(res => {
+    //     tasks = res            
+    //     refreshChart(data)
+    // }) 
     chartMaking(data, rootTask)
         
 }
