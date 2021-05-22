@@ -13,37 +13,34 @@ import com.bestSpringApplication.taskManager.utils.exceptions.forClient.InvalidR
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskInWorkException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @CrossOrigin
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/schemas")
+@RequestMapping("/admin")
 public class AdminController {
 
-    private final String MASTER_SCHEMAS =                       "/master";
-    private final String MASTER_FILES =                         "/master/files";
-    private final String MASTER_FILES_ADD =                     "/master/files/add";
-    private final String MASTER_SCHEMA_BY_ID =                  "/master/schema/{schemaId}";
-    private final String SCHEMA_SUMMARY =                       "/master/schema/{schemaId}/summary";
-    private final String ADD_MASTER_SCHEMA_TO_USER =            "/master/schema/{schemaId}/addTo/user/{userId}";
+    private final String SCHEMAS =                              "/schemas";
+    private final String SCHEMAS_FILES =                        "/schemas/files";
+    private final String ADD_SCHEMA_FILE =                      "/schemas/files/add";
+    private final String SCHEMA_BY_ID =                         "/schema/{schemaId}";
+    private final String SCHEMA_SUMMARY =                       "/schema/{schemaId}/summary";
+    private final String ADD_SCHEMA_TO_USER =                   "/schema/{schemaId}/addTo/user/{userId}";
 
     private final String INTERACTIONS_WITH_USER_TASK =          "/user/{userId}/schema/{schemaId}/task/{taskId}";
     private final String OPEN_USER_TASK =                       "/user/{userId}/schema/{schemaId}/task/{taskId}/open";
     private final String REOPEN_USER_TASK =                     "/user/{userId}/schema/{schemaId}/task/{taskId}/reopen";
 
-    private final String USER_SCHEMAS =                         "/user/{userId}";
-    private final String SUMMARY_OF_USER_SCHEMA =               "/user/{userId}/schemas/{schemaId}/summary";
+    private final String USER_SCHEMAS =                         "/user/{userId}/schemas";
+    private final String SUMMARY_OF_USER_SCHEMA =               "/user/{userId}/schema/{schemaId}/summary";
     private final String STATE_OF_USER_SCHEMA =                 "/user/{userId}/schema/{schemaId}/state";
     private final String OPENED_TASKS_OF_SCHEMA_FOR_USER =      "/user/{userId}/schema/{schemaId}/opened";
 
@@ -148,21 +145,21 @@ public class AdminController {
 
 
 
-    @PostMapping(MASTER_FILES_ADD)
+    @PostMapping(ADD_SCHEMA_FILE)
     @ResponseStatus(HttpStatus.OK)
     public void newSchema(@RequestParam("file") MultipartFile file){
         log.trace("Receive file:'{}' trying parse", file.getOriginalFilename());
         schemasProvider.putAndSaveFile(file);
     }
 
-    @GetMapping(MASTER_SCHEMA_BY_ID)
+    @GetMapping(SCHEMA_BY_ID)
     public AbstractStudySchema masterSchemaById(@PathVariable String schemaId){
         log.trace("request for schema '{}' information",schemaId);
         schemasProvider.validateSchemaExistsOrThrow(schemaId);
         return schemasProvider.getSchemaById(schemaId);
     }
 
-    @GetMapping(ADD_MASTER_SCHEMA_TO_USER)
+    @GetMapping(ADD_SCHEMA_TO_USER)
     @ResponseStatus(HttpStatus.OK)
     public void addSchemaToStudent(@PathVariable String schemaId, @PathVariable String userId){
         log.trace("request for adding schema '{}' for user '{}'",schemaId,userId);
@@ -172,12 +169,12 @@ public class AdminController {
         usersStudyService.setSchemaToUser(userId,schemaId);
     }
 
-    @GetMapping(MASTER_SCHEMAS)
+    @GetMapping(SCHEMAS)
     public List<AbstractTask> masterSchemasOverview(){
         return schemasProvider.getSchemasRootTasks();
     }
 
-    @GetMapping(MASTER_FILES)
+    @GetMapping(SCHEMAS_FILES)
     public List<String> schemasFileList() {
         return schemasProvider.schemasFilenamesList();
     }

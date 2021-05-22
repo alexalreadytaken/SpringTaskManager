@@ -57,18 +57,6 @@ public class UsersStudyService implements StudyService {
                 : defaultCheck(taskId, dependencies, finishedTasksId);
     }
 
-    public void setStatusForTask(String schemaId, String userId, String taskId,Status status){
-        studyStateService.setStatusForUserTask(schemaId, userId, taskId, status);
-    }
-
-    public void setGradeForTask(String schemaId, String userId, String taskId, Grade grade) {
-        studyStateService.setGradeForUserTask(schemaId, userId, taskId, grade);
-    }
-
-    public void setStatusAndGradeForTask(String schemaId, String userId, String taskId,Status status,Grade grade){
-        studyStateService.setStatusAndGradeForUserTask(schemaId, userId, taskId, status, grade);
-    }
-
     public void reopenTask(String schemaId, String userId, String taskId){
         studyStateService.setStatusForUserTask(schemaId,userId,taskId,Status.REOPENED);
     }

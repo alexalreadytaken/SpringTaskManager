@@ -15,12 +15,6 @@ public interface StudyService {
 
     boolean canStartTask(String schemaId, String userId, String taskId);
 
-    void setStatusForTask(String schemaId, String userId, String taskId, Status status);
-
-    void setGradeForTask(String schemaId, String userId, String taskId, Grade grade);
-
-    void setStatusAndGradeForTask(String schemaId, String userId, String taskId, Status status, Grade grade);
-
     void forceStartTask(String schemaId, String userId, String taskId);
 
     void startTaskWithValidation(String schemaId, String userId, String taskId);

@@ -24,7 +24,7 @@ public abstract class AbstractStudySchema{
 
     @JsonIgnore
     public String getId(){
-        return this.rootTask.getName();
+        return this.rootTask.getId();
     }
 
     @JsonIgnore

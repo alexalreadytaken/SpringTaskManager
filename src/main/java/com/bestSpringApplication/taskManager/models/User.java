@@ -3,10 +3,7 @@ package com.bestSpringApplication.taskManager.models;
 import com.bestSpringApplication.taskManager.utils.enumConverters.RoleConverter;
 import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +18,7 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "user_entity")
+@ToString(exclude = "password")
 public class User implements UserDetails {
 
     @Id
@@ -32,6 +30,10 @@ public class User implements UserDetails {
     private String password;
     @Convert(converter = RoleConverter.class)
     private Role role;
+
+    public String getStringId() {
+        return id.toString();
+    }
 
     @Override
     @JsonIgnore
@@ -74,5 +76,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }
