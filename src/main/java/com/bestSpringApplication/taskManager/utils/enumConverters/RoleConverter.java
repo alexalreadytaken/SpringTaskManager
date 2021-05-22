@@ -14,6 +14,7 @@ public class RoleConverter implements AttributeConverter<Role,String> {
 
     @Override
     public Role convertToEntityAttribute(String s) {
-        return s==null?null:Role.of(s);
+        return s==null?null:Role.of(s)
+                .orElse(null);
     }
 }

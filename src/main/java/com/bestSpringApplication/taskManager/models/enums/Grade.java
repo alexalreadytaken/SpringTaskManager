@@ -1,10 +1,12 @@
 package com.bestSpringApplication.taskManager.models.enums;
 
+import com.bestSpringApplication.taskManager.utils.StringUtils;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public enum Grade {
     ONE(1),
@@ -26,7 +28,15 @@ public enum Grade {
         this.intValue=intValue;
     }
 
-    public static Grade of(Integer intValue){
-        return VALUES.get(intValue);
+    public static Optional<Grade> of(Integer intValue){
+        return Optional.ofNullable(VALUES.get(intValue));
+    }
+
+    public static Optional<Grade> of(String intValue){
+        if (StringUtils.isInteger(intValue)){
+            int i = Integer.parseInt(intValue);
+            return Optional.ofNullable(VALUES.get(i));
+        }
+        return Optional.empty();
     }
 }

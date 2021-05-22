@@ -21,6 +21,10 @@ public class VersionedList<T> {
         return versionedList;
     }
 
+    public boolean isEmpty(){
+        return values.isEmpty();
+    }
+
     public T getNewest(){
         return values.get(values.size()-1);
     }
