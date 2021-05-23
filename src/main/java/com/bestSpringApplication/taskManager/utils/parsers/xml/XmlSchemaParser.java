@@ -25,6 +25,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 import static java.util.stream.Collectors.toList;
@@ -36,10 +37,14 @@ import static java.util.stream.Collectors.toList;
 public class XmlSchemaParser implements SchemaParser {
 
     @Override
+    // FIXME: 5/23/21
     public AbstractStudySchema parse(Object parsable) throws ParseException {
         try {
             SAXBuilder saxBuilder = new SAXBuilder();
-            if (parsable instanceof File){
+            if (parsable instanceof InputStream){
+                Document document = saxBuilder.build((InputStream) parsable);
+                return parseSchemaXml(document);
+            }else if (parsable instanceof File){
                 File file = (File) parsable;
                 Document fileDocument = saxBuilder.build(file);
                 return parseSchemaXml(fileDocument);

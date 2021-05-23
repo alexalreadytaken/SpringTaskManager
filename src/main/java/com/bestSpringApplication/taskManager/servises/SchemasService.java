@@ -6,7 +6,6 @@ import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider
 import com.bestSpringApplication.taskManager.utils.VersionedList;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ServerException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.PostConstructInitializationException;
 import com.bestSpringApplication.taskManager.utils.parsers.SchemaParser;
@@ -14,6 +13,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -43,7 +44,13 @@ public class SchemasService implements SchemasProvider {
     @PostConstruct
     private void init(){
         masterSchemas = new HashMap<>();
-        initFromXml();
+        try {
+            AbstractStudySchema schema = this.schemaParser.parse(new ClassPathResource("EXAMPLE_SCHEME.mrp").getInputStream());
+            this.put(schema);
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+//        initFromXml();
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored","ConstantConditions"})

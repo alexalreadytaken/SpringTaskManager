@@ -13,6 +13,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,19 @@ public class UserServiceImpl implements UserService {
 
     @NonNull private final UserRepo userRepo;
     @NonNull private final PasswordEncoder encoder;
+
+    @PostConstruct
+    private void bad(){
+        this.saveUser(User.builder().name("1")
+                .mail("1").password("1")
+                .role(Role.ADMIN).build());
+        this.saveUser(User.builder().name("2")
+                .mail("2").password("2")
+                .role(Role.STUDENT).build());
+        this.saveUser(User.builder().name("3")
+                .mail("3").password("3")
+                .role(Role.STUDENT).build());
+    }
 
     @Override
     public UserDetails loadUserByUsername(String str) throws UsernameNotFoundException {

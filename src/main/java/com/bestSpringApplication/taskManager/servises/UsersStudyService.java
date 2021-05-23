@@ -10,12 +10,14 @@ import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
+import com.bestSpringApplication.taskManager.servises.interfaces.UserService;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +32,13 @@ public class UsersStudyService implements StudyService {
 
     @NonNull private final SchemasProvider schemasProvider;
     @NonNull private final StudyStateService studyStateService;
+    @NonNull private final UserService userService;
 
-    @NonNull private final UserServiceImpl userServiceImpl;
+    @PostConstruct
+    private void bad(){
+        this.setSchemaToUser("2","1");
+        this.setSchemaToUser("3","1");
+    }
 
     public void setSchemaToUser(String userId,String schemaId){
         log.trace("trying prepare schema '{}' to user '{}'",schemaId,userId);
