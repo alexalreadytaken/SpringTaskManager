@@ -28,19 +28,6 @@ public class UserServiceImpl implements UserService {
     @NonNull private final UserRepo userRepo;
     @NonNull private final PasswordEncoder encoder;
 
-    @PostConstruct
-    private void bad(){
-        this.saveUser(User.builder().name("1")
-                .mail("1").password("1")
-                .role(Role.ADMIN).build());
-        this.saveUser(User.builder().name("2")
-                .mail("2").password("2")
-                .role(Role.STUDENT).build());
-        this.saveUser(User.builder().name("3")
-                .mail("3").password("3")
-                .role(Role.STUDENT).build());
-    }
-
     @Override
     public UserDetails loadUserByUsername(String str) throws UsernameNotFoundException {
         final Optional<User> user = userRepo.findByMail(str);// it should/так надо

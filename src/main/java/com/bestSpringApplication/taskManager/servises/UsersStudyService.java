@@ -32,13 +32,6 @@ public class UsersStudyService implements StudyService {
 
     @NonNull private final SchemasProvider schemasProvider;
     @NonNull private final StudyStateService studyStateService;
-    @NonNull private final UserService userService;
-
-    @PostConstruct
-    private void bad(){
-        this.setSchemaToUser("2","1");
-        this.setSchemaToUser("3","1");
-    }
 
     public void setSchemaToUser(String userId,String schemaId){
         log.trace("trying prepare schema '{}' to user '{}'",schemaId,userId);
