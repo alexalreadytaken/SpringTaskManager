@@ -15,7 +15,7 @@ function multiFetch (url) {
                 makeUserList(result)
             break
             
-            case 'http://10.3.0.87:2000/schemas/master/Предмет_1':
+            case 'http://localhost:2000/admin/schema/1':
                 makeGraph(result)
             break
 
