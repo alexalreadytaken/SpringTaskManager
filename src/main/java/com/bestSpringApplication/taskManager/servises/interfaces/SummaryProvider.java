@@ -11,6 +11,4 @@ public interface SummaryProvider {
     Summary getSummaryBySchemaIdAndTaskId(String schemaId, String taskId);
 
     Summary getUserSchemaSummary(String schemaId,String userId);
-
-    List<UserTaskRelation> getUserTasksState(String schemaId, String userId);
 }

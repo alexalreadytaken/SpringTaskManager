@@ -4,7 +4,6 @@ import com.bestSpringApplication.taskManager.models.classes.Summary;
 import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.Status;
-import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
 import com.bestSpringApplication.taskManager.servises.interfaces.SummaryProvider;
 import lombok.NonNull;
@@ -42,7 +41,7 @@ public class SummaryService implements SummaryProvider {
 
     public Summary getSummaryBySchemaIdAndTaskId(String schemaId, String taskId){
         log.trace("trying get summary of schema '{}' and task '{}'",schemaId,taskId);
-        List<UserTaskRelation> relations = studyStateService.getRelationsBySchemaIdAndTaskId(schemaId, taskId);
+        List<UserTaskRelation> relations = studyStateService.getTaskStateInSchema(schemaId, taskId);
         return getSummaryUniversal(taskId, relations);
     }
 
@@ -50,11 +49,6 @@ public class SummaryService implements SummaryProvider {
         log.trace("trying get schema '{}' summary of user '{}'",schemaId,userId);
         List<UserTaskRelation> schemaStateByUserId = studyStateService.getSchemaStateByUserId(userId, schemaId);
         return getSummaryUniversal(schemaId, schemaStateByUserId);
-    }
-
-    public List<UserTaskRelation> getUserTasksState(String schemaId, String userId){
-        log.trace("trying get schema '{}' state of user '{}'",schemaId,userId);
-        return studyStateService.getSchemaStateByUserId(userId,schemaId);
     }
 
     private Summary getSummaryUniversal(String entityId, List<UserTaskRelation> relations) {

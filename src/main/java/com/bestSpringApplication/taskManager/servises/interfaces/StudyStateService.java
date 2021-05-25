@@ -41,5 +41,5 @@ public interface StudyStateService {
 
     List<UserTaskRelation> getSchemaStateByUserId(String userId, String schemaId);
 
-    List<UserTaskRelation> getRelationsBySchemaIdAndTaskId(String schemaId, String taskId);
+    List<UserTaskRelation> getTaskStateInSchema(String schemaId, String taskId);
 }
