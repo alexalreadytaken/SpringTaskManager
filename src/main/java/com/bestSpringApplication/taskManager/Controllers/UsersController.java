@@ -18,6 +18,7 @@ import java.util.Map;
 @Deprecated
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 public class UsersController{
 
     @NonNull
