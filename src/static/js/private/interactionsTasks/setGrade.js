@@ -18,18 +18,19 @@ function setGrade(schemaId) {
     fetch(`http://10.3.0.87:2000/admin/schema/${schemaId}/task/${taskId}/state`).then(res => res.json())
     .then(res => {
         studentList = res
-        res.forEach((el, x) => {
+        res.forEach((elem, x) => {
             document.getElementById('statusCase').insertAdjacentHTML('beforeend', `
                 <select id = 'status${x}'></select>
             `)
             
             document.getElementById('gradeCase').insertAdjacentHTML('beforeend', `
-                    <input id = 'grade${x}' value = '${el.grade}' type = 'number' min = '2' max = '5'/>
+                    <input id = 'grade${x}' value = '${elem.grade}' type = 'number' min = '2' max = '5'/>
             `)
 
             status.forEach(el => {
+                const checked = () => (el === elem.status) ? 'selected' : ''
                 document.getElementById(`status${x}`).insertAdjacentHTML('beforeend', `
-                        <option>${el}</option>
+                        <option ${checked()}>${el}</option>
                 `)
             })
         })        
