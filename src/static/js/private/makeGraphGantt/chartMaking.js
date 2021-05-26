@@ -5,12 +5,11 @@ let chart = anychart.ganttProject()
 function chartMaking (data, rootTask) {
     var treeData = anychart.data.tree (data, 'as-tree')
 
-    
 // ------------------------ title and font-settings
     var title = chart.title()
 
     title.enabled (true)
-    title.text (rootTask)
+    title.text (rootTask.name)
     
     title.fontColor("#64b5f6");
     title.fontSize(20);
@@ -29,7 +28,7 @@ function chartMaking (data, rootTask) {
     column_1.labels().format("{%linearIndex}.");
 
 
-    eventChart(chart)
+    eventChart(chart, rootTask.id)
 
 // =========================
     
@@ -39,7 +38,6 @@ function chartMaking (data, rootTask) {
     chart.draw()
     chart.fitAll()
     
-    document.getElementsByClassName('anychart-credits')[0].remove() // удаление информации о библиотеке
     console.log('%c we are using open source library https://www.anychart.com', 'color: yellow; background:black;font-size:15px')
 }
 
