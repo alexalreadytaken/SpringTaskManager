@@ -1,7 +1,7 @@
-import {makeGraph} from '../parsingData/making.js';
 import {makePercent} from '../parsingData/percentForTasks.js';
 import {parsTask} from '../parsingData/parsFields.js';
 
+<<<<<<< HEAD
 function multiFetch (url) {
     fetch( url )
     .then(response => response.json())
@@ -23,13 +23,15 @@ function multiFetch (url) {
     })
 }
 
+=======
+>>>>>>> 51d214d66448011b039f513c98ffa7528b8e453d
 async function getSummary ({url, tasks}) {
-   const response = await fetch(url);
-    const result_1 = await response.json();
+    const response = await fetch(url);
+    const summary = await response.json();
     return makePercent({
         data: parsTask(tasks),
-        summary: result_1
-    });
+        summary: summary
+    })
 }
 
-export {multiFetch, getSummary}
+export {getSummary}

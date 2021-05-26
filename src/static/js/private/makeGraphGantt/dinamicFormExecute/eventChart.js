@@ -1,25 +1,25 @@
 import { showFormExecute } from './executeTask.js'
 import { createModalForm } from './createModalForm.js'
-import { addNotesForTask } from './addNotesForTask.js'
+// import { addNotesForTask } from './addNotesForTask.js'
 import { acceptTask } from './acceptTask.js'
+import { setGrade } from '../../interactionsTasks/setGrade.js'
 
+let themeTask, notesTask, taskId
 
-function eventChart (chart) {
+function eventChart (chart, schemaId) {
     let oneComplete = false
-    chart.listen ("rowClick", e => {
-        const taskId = e.item.get( 'id' ) // name, id, notes === any get item for obj
-        const themeTask = e.item.get( 'theme' )
-        const notesTask = e.item.get( 'notes' )
+    chart.listen ("rowDblClick", e => {
+        // name, id, notes === any get item for obj
+        taskId = e.item.get( 'id' ) 
+        themeTask = e.item.get( 'theme' )
+        notesTask = e.item.get( 'notes' )
 
-        if ( !oneComplete ) {oneComplete = true; createModalForm()}
-
-        showFormExecute( themeTask )
-        if (!themeTask) {addNotesForTask( notesTask )}
         
-        acceptTask({
-            taskId: taskId
-        })
+        if ( !oneComplete ) {oneComplete = true; createModalForm()}
+        
+        setGrade(schemaId)
+        showFormExecute( themeTask )
     })
 }
 
-export { eventChart }
+export { eventChart, taskId, notesTask, themeTask }

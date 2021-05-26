@@ -8,7 +8,6 @@ function showFormExecute ( themeTask ) {
         let elemForStyle = document.getElementById('body').style 
 
         elemForStyle.opacity = .7
-        elemForStyle.position = 'flex'
         elemForStyle.filter = 'grayscale(70%)'
     }
 

@@ -16,4 +16,13 @@ const list = [
 ]
 
 const pair = [2,3,4,5]
-export {list, pair}
+
+const status = [
+    'debt',
+    'closed',
+    'in_work',
+    'finished',
+    'not_confirmed',
+    'reopened'
+]
+export {list, pair, status}
