@@ -34,6 +34,7 @@ public class AdminController {
     private final String SCHEMA_BY_ID =                         "/schema/{schemaId}";
     private final String SCHEMA_SUMMARY =                       "/schema/{schemaId}/summary";
     private final String ADD_SCHEMA_TO_USER =                   "/schema/{schemaId}/addTo/user/{userId}";
+    private final String STATE_OF_TASK_IN_SCHEMA =              "/schema/{schemaId}/task/{taskId}/state";
 
     private final String INTERACTIONS_WITH_USER_TASK =          "/user/{userId}/schema/{schemaId}/task/{taskId}";
     private final String OPEN_USER_TASK =                       "/user/{userId}/schema/{schemaId}/task/{taskId}/open";
@@ -63,7 +64,15 @@ public class AdminController {
         log.trace("request for state of schema '{}' by user '{}'",schemaId,userId);
         schemasProvider.validateSchemaExistsOrThrow(schemaId);
         userService.validateUserExistsOrThrow(userId);
-        return summaryProvider.getUserTasksState(schemaId,userId);
+        return studyStateService.getSchemaStateByUserId(userId,schemaId);
+    }
+
+    @GetMapping(STATE_OF_TASK_IN_SCHEMA)
+    public List<UserTaskRelation> stateOfTaskInSchema(@PathVariable String taskId, @PathVariable String schemaId){
+        log.trace("request for state of task '{}' in schema '{}' ",taskId,schemaId);
+        schemasProvider.validateSchemaExistsOrThrow(schemaId);
+        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
+        return studyStateService.getTaskStateInSchema(schemaId,taskId);
     }
 
     @GetMapping(SCHEMA_SUMMARY)

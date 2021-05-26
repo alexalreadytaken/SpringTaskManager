@@ -93,7 +93,7 @@ public class UsersStudyStateService implements StudyStateService {
         return openedSchemasIdOfUser;
     }
 
-    public List<UserTaskRelation> getRelationsBySchemaIdAndTaskId(String schemaId,String taskId){
+    public List<UserTaskRelation> getTaskStateInSchema(String schemaId, String taskId){
         List<UserTaskRelation> taskOfSchemaState = utrRepo.getAllBySchemaIdAndTaskId(schemaId, taskId);
         throwIfListEmpty(taskOfSchemaState,"данное задание никому не назначено");
         return taskOfSchemaState;
