@@ -28,12 +28,18 @@ function setGrade(schemaId) {
                     <input id = 'grade${x}' value = '${elem.grade}' type = 'number' min = '2' max = '5'/>
             `)
 
-            status.forEach(el => {
-                const checked = () => (el === elem.status) ? 'selected' : ''
-                document.getElementById(`status${x}`).insertAdjacentHTML('beforeend', `
-                        <option ${checked()}>${el}</option>
-                `)
-            })
+
+            fetch(`http://${config.url}/admin/status/ru`).then(res=>res.json())
+                .then(status => {
+                    console.log(elem);
+                    status.forEach(el => {
+                        const checked = () => (el === elem.status) ? 'selected' : ''
+                        document.getElementById(`status${x}`).insertAdjacentHTML('beforeend', `
+                                <option ${checked()}>${el}</option>
+                        `)
+                    })
+                })
+
         })        
     })
 

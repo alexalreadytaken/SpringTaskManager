@@ -16,8 +16,9 @@ function eventChart (chart, schemaId) {
 
         
         if ( !oneComplete ) {oneComplete = true; createModalForm()}
-        
-        setGrade(schemaId)
+
+        !themeTask ? setGrade(schemaId) : null
+
         showFormExecute( themeTask )
     })
 }

@@ -18,11 +18,11 @@ const list = [
 const pair = [2,3,4,5]
 
 const status = [
-    'debt',
-    'closed',
-    'in_work',
-    'finished',
-    'not_confirmed',
-    'reopened'
+    "долг",
+    "закрыт",
+    "в работе",
+    "завершен",
+    "не подтвержден",
+    "открыт повторно"
 ]
 export {list, pair, status}
