@@ -9,7 +9,7 @@ import javax.persistence.Converter;
 public class StatusConverter implements AttributeConverter<Status,String> {
     @Override
     public String convertToDatabaseColumn(Status status) {
-        return status==null?null:status.getName();
+        return status==null?null:status.getEnValue();
     }
 
     @Override
