@@ -1,3 +1,4 @@
+import { config } from "../config.js";
 import { status } from "../local-JSON/studentList.js";
 import { getSummary } from "../makeGraphGantt/additionalModules/helpers_Module.js";
 import { refreshChart } from "../makeGraphGantt/chartMaking.js";
@@ -15,7 +16,7 @@ function setGrade(schemaId) {
     document.getElementById('flex_Form').insertAdjacentHTML('beforeend', `<div id = 'gradeCase'><h1>Оценка</h1></div>`)
 
 
-    fetch(`http://10.3.0.87:2000/admin/schema/${schemaId}/task/${taskId}/state`).then(res => res.json())
+    fetch(`http://${config.url}/admin/schema/${schemaId}/task/${taskId}/state`).then(res => res.json())
     .then(res => {
         studentList = res
         res.forEach((elem, x) => {
@@ -36,7 +37,7 @@ function setGrade(schemaId) {
         })        
     })
 
-    fetch('http://10.3.0.87:2000/admin/users').then(res => res.json())
+    fetch(`http://${config.url}/admin/users`).then(res => res.json())
         .then(response => {
             response.forEach( el => {
                 document.getElementById('userId').insertAdjacentHTML('beforeend', `
@@ -58,8 +59,8 @@ function setGrade(schemaId) {
             })
 
 
-            fetch(`http://10.3.0.87:2000/admin/user/${st.userId}/schema/${schemaId}/task/${taskId}?setGrade=${tel[i].grade}&setStatus=${tel[i].status}`).then(res => {
-                fetch(`http://10.3.0.87:2000/admin/schema/${schemaId}`).then(res => res.json())
+            fetch(`http://${config.url}/admin/user/${st.userId}/schema/${schemaId}/task/${taskId}?setGrade=${tel[i].grade}&setStatus=${tel[i].status}`).then(res => {
+                fetch(`http://${config.url}/admin/schema/${schemaId}`).then(res => res.json())
                 .then(data => {
                     let tasks = parsTask(data)
     
@@ -70,7 +71,7 @@ function setGrade(schemaId) {
                     makeChildren(thee, parsDepen(data), tasks)
     
                     getSummary({
-                        url: 'http://10.3.0.87:2000/admin/schema/1/summary',
+                        url: `http://${config.url}/admin/schema/1/summary`,
                         tasks: data
                     }).then(res => {
                         tasks = res            

@@ -1,5 +1,5 @@
 const config = {
-    url: 'someUrl'
+    url: '127.0.0.1:2000'
 }
 
 export {config}

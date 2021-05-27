@@ -6,6 +6,7 @@ import { makeWeakDepen } from './makeWeakDepen.js';
 import { getSummary } from '../additionalModules/helpers_Module.js'
 
 import { refreshChart } from '../chartMaking.js'
+import { config } from '../../config.js';
 
 function makeGraph (response) {
     console.log(response)
@@ -15,7 +16,7 @@ function makeGraph (response) {
 
 // для обновления процентов, с дальнейшей возможностью расшерения до обновления каждого куска схемы в percentForTask
     getSummary({
-        url: 'http://10.3.0.87:2000/admin/schema/1/summary',
+        url: `http://${config.url}/admin/schema/1/summary`,
         tasks: response
     }).then(res => {
         tasks = res            
@@ -33,20 +34,8 @@ function makeGraph (response) {
     makeChildren(data, depen, tasks) // make HIERARCHICAL depen in data
     
     console.log('Data elem', data)
-<<<<<<< HEAD
     console.log(depen)
-
-// для обновления процентов, с дальнейшей возможностью расшерения до обновления каждого куска схемы в percentForTask
-    getSummary({
-        url: 'http://localhost:2000/admin/schema/1/summary',
-        tasks: response
-    }).then(res => {
-        tasks = res            
-        refreshChart(data)
-    }) 
-=======
     
->>>>>>> 51d214d66448011b039f513c98ffa7528b8e453d
     chartMaking(data, rootTask)
 }
 
