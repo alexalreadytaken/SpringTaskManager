@@ -83,10 +83,11 @@ function setGrade(schemaId) {
 
         console.log(studentList)
 
-        console.log(tel)
+        // console.log(tel)
+        
         tel = null
-
     })
+    studentList = null
 }
 
 export {setGrade}
