@@ -26,6 +26,7 @@ import java.util.Optional;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/admin")
+// TODO: 5/27/21 split
 public class AdminController {
 
     private final String SCHEMAS =                              "/schemas";
@@ -35,6 +36,8 @@ public class AdminController {
     private final String SCHEMA_SUMMARY =                       "/schema/{schemaId}/summary";
     private final String ADD_SCHEMA_TO_USER =                   "/schema/{schemaId}/addTo/user/{userId}";
     private final String STATE_OF_TASK_IN_SCHEMA =              "/schema/{schemaId}/task/{taskId}/state";
+
+    private final String RU_STATUS_VALUES =                     "/status/ru";
 
     private final String INTERACTIONS_WITH_USER_TASK =          "/user/{userId}/schema/{schemaId}/task/{taskId}";
     private final String OPEN_USER_TASK =                       "/user/{userId}/schema/{schemaId}/task/{taskId}/open";
@@ -150,6 +153,11 @@ public class AdminController {
         log.trace("request for opened schemas for user '{}'",userId);
         userService.validateUserExistsOrThrow(userId);
         return usersStudyService.getUserSchemasRootTasks(userId);
+    }
+
+    @GetMapping(RU_STATUS_VALUES)
+    public List<String> getRuStatusValues(){
+        return Status.ruValues();
     }
 
 
