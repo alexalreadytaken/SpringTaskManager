@@ -17,7 +17,8 @@ import java.util.Collections;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "user_entity")
+@Entity
+@Table(name = "user_entity")
 @ToString(exclude = "password")
 public class User implements UserDetails {
 
@@ -31,6 +32,7 @@ public class User implements UserDetails {
     @Convert(converter = RoleConverter.class)
     private Role role;
 
+    @JsonIgnore
     public String getStringId() {
         return id.toString();
     }

@@ -2,8 +2,9 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.User;
+import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Status;
-import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
+import com.bestSpringApplication.taskManager.servises.interfaces.SchemasService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
 import com.bestSpringApplication.taskManager.servises.interfaces.UserService;
@@ -24,6 +25,8 @@ import java.util.List;
 public class StudentController {
 
     private final String OPENED_SCHEMAS =       "/schemas/opened";
+    private final String OPENED_TASKS =         "/tasks/opened";
+    private final String SCHEMA_STATE =         "/schema/{schemaId}/state";
     private final String OPENED_SCHEMAS_TASKS = "/schema/{schemaId}/tasks/opened";
     private final String FINISH_TASK =          "/schema/{schemaId}/task/{taskId}/finish";
     private final String START_TASK =           "/schema/{schemaId}/task/{taskId}/start";
@@ -31,14 +34,32 @@ public class StudentController {
     @NonNull private final StudyService studyService;
     @NonNull private final StudyStateService studyStateService;
     @NonNull private final UserService userService;
-    @NonNull private final SchemasProvider schemasProvider;
+    @NonNull private final SchemasService schemasService;
+
+
+    @GetMapping(OPENED_TASKS)
+    public List<AbstractTask> openedTasks(@AuthenticationPrincipal User user){
+        log.trace("request for all opened user tasks");
+        String userId = user.getStringId();
+        userService.validateUserExistsOrThrow(userId);
+        return studyService.getAllOpenedUserTasks(userId);
+    }
+
+    @GetMapping(SCHEMA_STATE)
+    public List<UserTaskState> stateOfUserSchema(@AuthenticationPrincipal User user, @PathVariable String schemaId){
+        String userId = user.getStringId();
+        log.trace("request for state of schema '{}' by user '{}'",schemaId, userId);
+        schemasService.validateSchemaExistsOrThrow(schemaId);
+        userService.validateUserExistsOrThrow(userId);
+        return studyStateService.getSchemaStateByUserId(userId,schemaId);
+    }
 
     @GetMapping(START_TASK)
     @ResponseStatus(HttpStatus.OK)
     public void startTask(@AuthenticationPrincipal User user,@PathVariable String schemaId, @PathVariable String taskId){
         log.trace("user '{}' try start task '{}' in schema '{}'",user,taskId,schemaId);
-        schemasProvider.validateSchemaExistsOrThrow(schemaId);
-        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
+        schemasService.validateSchemaExistsOrThrow(schemaId);
+        schemasService.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
         userService.validateUserExistsOrThrow(user.getStringId());
         studyService.startTaskWithValidation(schemaId, user.getStringId(),taskId);
     }
@@ -47,8 +68,8 @@ public class StudentController {
     @ResponseStatus(HttpStatus.OK)
     public void finishTask(@AuthenticationPrincipal User user,@PathVariable String schemaId, @PathVariable String taskId){
         log.trace("user '{}' try finish task '{}' in schema '{}'",user,taskId,schemaId);
-        schemasProvider.validateSchemaExistsOrThrow(schemaId);
-        schemasProvider.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
+        schemasService.validateSchemaExistsOrThrow(schemaId);
+        schemasService.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
         userService.validateUserExistsOrThrow(user.getStringId());
         studyStateService.setStatusForUserTask(schemaId,user.getStringId(),taskId,Status.NOT_CONFIRMED);
     }
@@ -63,7 +84,7 @@ public class StudentController {
     @GetMapping(OPENED_SCHEMAS_TASKS)
     public List<AbstractTask> openedSchemasTasks(@PathVariable String schemaId, @AuthenticationPrincipal User user){
         log.trace("request for opened tasks for user '{}' in schema '{}'",user,schemaId);
-        schemasProvider.validateSchemaExistsOrThrow(schemaId);
+        schemasService.validateSchemaExistsOrThrow(schemaId);
         userService.validateUserExistsOrThrow(user.getStringId());
         return studyService.getOpenedUserTasksOfSchema(user.getStringId(),schemaId);
     }

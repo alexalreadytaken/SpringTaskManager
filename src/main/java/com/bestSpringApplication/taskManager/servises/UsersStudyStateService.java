@@ -3,20 +3,18 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
+import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
-import com.bestSpringApplication.taskManager.repos.UserTaskRelationRepo;
+import com.bestSpringApplication.taskManager.repos.UserTaskStateRepo;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.BadRequestException;
-import com.bestSpringApplication.taskManager.utils.exceptions.forClient.TaskInWorkException;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +23,7 @@ import java.util.Map;
 @Slf4j
 public class UsersStudyStateService implements StudyStateService {
 
-    @NonNull private final UserTaskRelationRepo utrRepo;
+    @NonNull private final UserTaskStateRepo utrRepo;
 
     public void prepareSchema(AbstractStudySchema schema, String userId){
         log.trace("start prepare schema '{}' to student '{}'",schema.getId(),userId);
@@ -38,14 +36,14 @@ public class UsersStudyStateService implements StudyStateService {
     }
 
     public void prepareTask(AbstractStudySchema schema,AbstractTask task,String userId){
-        UserTaskRelation userTaskRelation = UserTaskRelation.builder()
+        UserTaskState userTaskState = UserTaskState.builder()
                 .schemaId(schema.getId())
                 .status(Status.CLOSED)
                 .taskId(task.getId())
                 .userId(userId)
                 .grade(Grade.ONE)
                 .build();
-        utrRepo.save(userTaskRelation);
+        utrRepo.save(userTaskState);
     }
 
     public void openTask(String schemaId, String userId, String taskId){
@@ -64,7 +62,6 @@ public class UsersStudyStateService implements StudyStateService {
         utrRepo.setStatusAndGradeForTask(schemaId, userId, taskId, grade, status);
     }
 
-    @Override
     public boolean schemaOfUserExists(String schemaId, String userId) {
         return utrRepo.existsBySchemaIdAndUserId(schemaId, userId);
     }
@@ -75,14 +72,14 @@ public class UsersStudyStateService implements StudyStateService {
         return ids;
     }
 
-    public List<UserTaskRelation> getAllRelationsBySchemaId(String schemaId){
-        List<UserTaskRelation> schemaRelations = utrRepo.getAllBySchemaId(schemaId);
+    public List<UserTaskState> getAllStateBySchemaId(String schemaId){
+        List<UserTaskState> schemaRelations = utrRepo.getAllBySchemaId(schemaId);
         throwIfListEmpty(schemaRelations,"курс не назначен ни одному человеку");
         return schemaRelations;
     }
 
-    public List<UserTaskRelation> getSchemaStateByUserId(String userId,String schemaId){
-        List<UserTaskRelation> userSchemaState = utrRepo.getAllBySchemaIdAndUserId(schemaId, userId);
+    public List<UserTaskState> getSchemaStateByUserId(String userId, String schemaId){
+        List<UserTaskState> userSchemaState = utrRepo.getAllBySchemaIdAndUserId(schemaId, userId);
         throwIfListEmpty(userSchemaState,"курс не назначен данному человеку");
         return userSchemaState;
     }
@@ -93,8 +90,21 @@ public class UsersStudyStateService implements StudyStateService {
         return openedSchemasIdOfUser;
     }
 
-    public List<UserTaskRelation> getTaskStateInSchema(String schemaId, String taskId){
-        List<UserTaskRelation> taskOfSchemaState = utrRepo.getAllBySchemaIdAndTaskId(schemaId, taskId);
+    public List<UserTaskState> getAllUserStates(String userId) {
+        List<UserTaskState> allUserState = utrRepo.getAllByUserId(userId);
+        throwIfListEmpty(allUserState,"человеку не назначен ни один курс");
+        return allUserState;
+    }
+
+    @Override
+    public List<UserTaskState> getAllUserStatesByStatus(String userId,Status status) {
+        List<UserTaskState> allUserState = utrRepo.getAllByUserIdAndStatus(userId,status);
+        throwIfListEmpty(allUserState,"у человека нет заданий с таким статусом");
+        return allUserState;
+    }
+
+    public List<UserTaskState> getTaskStateInSchema(String schemaId, String taskId){
+        List<UserTaskState> taskOfSchemaState = utrRepo.getAllBySchemaIdAndTaskId(schemaId, taskId);
         throwIfListEmpty(taskOfSchemaState,"данное задание никому не назначено");
         return taskOfSchemaState;
     }

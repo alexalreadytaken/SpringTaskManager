@@ -2,7 +2,6 @@ package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
 import com.bestSpringApplication.taskManager.utils.VersionedList;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,7 +27,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SchemasService implements SchemasProvider {
+public class SchemasServiceImpl implements com.bestSpringApplication.taskManager.servises.interfaces.SchemasService {
 
     @Value("${xml.task.pool.path}")
     private String xmlTaskPoolPath;
@@ -147,7 +145,7 @@ public class SchemasService implements SchemasProvider {
         }
     }
 
-    public void putAndSaveFile(MultipartFile file)  {
+    public void putAndSaveFileWithValidation(MultipartFile file)  {
         String filename = file.getOriginalFilename();
         if (containsFilenameInTasksPool(filename)) {
             throw new IllegalFileFormatException("Имя файла занято");

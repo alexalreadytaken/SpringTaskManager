@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.configurations;
 
 
-import com.bestSpringApplication.taskManager.servises.UserServiceImpl;
+import com.bestSpringApplication.taskManager.models.enums.Role;
 import com.bestSpringApplication.taskManager.servises.interfaces.UserService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -30,9 +30,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .csrf().disable()
                     .authorizeRequests()
                     .antMatchers(permittedMappings).permitAll()
-//                    .antMatchers("/schemas/**","/js/private/**","/v/admin.html")
+//                    .antMatchers("/schemas/files/add","/js/private/**","/v/admin.html")
 //                        .hasAnyAuthority(Role.ADMIN.getStrValue(),Role.TEACHER.getStrValue())
-//                    .antMatchers("/study/**")
+//                    .antMatchers("/study/**","/schemas/**")
 //                        .hasAuthority(Role.STUDENT.getStrValue())
                     .anyRequest()
                     .authenticated()
@@ -43,15 +43,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .defaultSuccessUrl("/v/home.html", true)
                 .and()
                     .rememberMe()
-                    .tokenValiditySeconds((int) TimeUnit.DAYS.toSeconds(31))
+                    .tokenValiditySeconds((int)TimeUnit.DAYS.toSeconds(31))
                     .key("superKey")
                 .and()
                     .logout().logoutUrl("/logout")
-                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))//need?
+                    .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"))
                     .clearAuthentication(true)
                     .invalidateHttpSession(true)
                     .deleteCookies("JSESSIONID","remember-me")
-                    .logoutSuccessUrl("/login");
+                    .logoutSuccessUrl("/v/login.html");
     }
 
     @Override

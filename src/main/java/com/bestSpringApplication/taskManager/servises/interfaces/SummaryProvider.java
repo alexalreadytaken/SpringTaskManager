@@ -1,7 +1,6 @@
 package com.bestSpringApplication.taskManager.servises.interfaces;
 
 import com.bestSpringApplication.taskManager.models.classes.Summary;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
 
 import java.util.List;
 

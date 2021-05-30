@@ -24,4 +24,6 @@ public interface StudyService {
     List<AbstractTask> getUserSchemasRootTasks(String userId);
 
     List<AbstractTask> getOpenedUserTasksOfSchema(String userId, String schemaId);
+
+    List<AbstractTask> getAllOpenedUserTasks(String userId);
 }

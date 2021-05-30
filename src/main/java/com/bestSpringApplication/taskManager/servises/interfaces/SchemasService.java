@@ -7,7 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-public interface SchemasProvider {
+public interface SchemasService {
     List<String> schemasFilenamesList();
 
     List<AbstractTask> getSchemasRootTasks();
@@ -24,7 +24,7 @@ public interface SchemasProvider {
 
     void validateTaskInSchemaExistsOrThrow(String schemaId,String taskId);
 
-    void putAndSaveFile(MultipartFile file);
+    void putAndSaveFileWithValidation(MultipartFile file);
 
     void put(AbstractStudySchema studySchema);
 

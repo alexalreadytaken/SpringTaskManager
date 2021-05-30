@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.classes.Summary;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
+import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
@@ -27,12 +27,12 @@ public class SummaryService implements SummaryProvider {
 
     public List<Summary> getTasksSummaryBySchema(String schemaId){
         log.trace("trying get summary of schema '{}'",schemaId);
-        List<UserTaskRelation> relations = studyStateService.getAllRelationsBySchemaId(schemaId);
+        List<UserTaskState> relations = studyStateService.getAllStateBySchemaId(schemaId);
         return relations.stream()
-                .map(UserTaskRelation::getTaskId)
+                .map(UserTaskState::getTaskId)
                 .distinct()
                 .map(id->{
-                    List<UserTaskRelation> taskRelations = relations.stream()
+                    List<UserTaskState> taskRelations = relations.stream()
                             .filter(utr -> utr.getTaskId().equals(id))
                             .collect(toList());
                     return getSummaryUniversal(id, taskRelations);
@@ -41,43 +41,43 @@ public class SummaryService implements SummaryProvider {
 
     public Summary getSummaryBySchemaIdAndTaskId(String schemaId, String taskId){
         log.trace("trying get summary of schema '{}' and task '{}'",schemaId,taskId);
-        List<UserTaskRelation> relations = studyStateService.getTaskStateInSchema(schemaId, taskId);
+        List<UserTaskState> relations = studyStateService.getTaskStateInSchema(schemaId, taskId);
         return getSummaryUniversal(taskId, relations);
     }
 
     public Summary getUserSchemaSummary(String schemaId,String userId){
         log.trace("trying get schema '{}' summary of user '{}'",schemaId,userId);
-        List<UserTaskRelation> schemaStateByUserId = studyStateService.getSchemaStateByUserId(userId, schemaId);
+        List<UserTaskState> schemaStateByUserId = studyStateService.getSchemaStateByUserId(userId, schemaId);
         return getSummaryUniversal(schemaId, schemaStateByUserId);
     }
 
-    private Summary getSummaryUniversal(String entityId, List<UserTaskRelation> relations) {
+    private Summary getSummaryUniversal(String entityId, List<UserTaskState> relations) {
         return new Summary(entityId,
                 getPercentCompleteTasks(relations),
                 getAverageTasksGrade(relations),
                 getCountByTasksGrade(relations));
     }
 
-    private double getPercentCompleteTasks(List<UserTaskRelation> taskRelations) {
+    private double getPercentCompleteTasks(List<UserTaskState> taskRelations) {
         long finishedCount = taskRelations.stream()
-                .map(UserTaskRelation::getStatus)
+                .map(UserTaskState::getStatus)
                 .filter(Status.FINISHED::isInstance)
                 .count();
         return (double)finishedCount/(double)taskRelations.size();
     }
 
-    private double getAverageTasksGrade(List<UserTaskRelation> taskRelations) {
+    private double getAverageTasksGrade(List<UserTaskState> taskRelations) {
         return taskRelations.stream()
-                .map(UserTaskRelation::getGrade)
+                .map(UserTaskState::getGrade)
                 .map(Grade::getIntValue)
                 .mapToDouble(Integer::doubleValue)
                 .average()
                 .orElse(0.0);
     }
 
-    private Map<Grade, Long> getCountByTasksGrade(List<UserTaskRelation> taskRelations) {
+    private Map<Grade, Long> getCountByTasksGrade(List<UserTaskState> taskRelations) {
         return taskRelations.stream()
-                .map(UserTaskRelation::getGrade)
+                .map(UserTaskState::getGrade)
                 .collect(Collectors.groupingBy(
                         Function.identity(),
                         Collectors.counting()));

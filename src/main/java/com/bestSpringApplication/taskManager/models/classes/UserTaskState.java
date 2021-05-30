@@ -9,12 +9,13 @@ import lombok.*;
 
 import javax.persistence.*;
 
-@Entity(name = "user_task_relation")
+@Entity
+@Table(name = "user_task_state")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserTaskRelation {
+public class UserTaskState {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonIgnore

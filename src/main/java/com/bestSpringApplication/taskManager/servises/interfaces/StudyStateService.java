@@ -2,7 +2,7 @@ package com.bestSpringApplication.taskManager.servises.interfaces;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskRelation;
+import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 
@@ -37,9 +37,13 @@ public interface StudyStateService {
 
     List<String> getOpenedTasksIdBySchemaOfUser(String userId, String schemaId);
 
-    List<UserTaskRelation> getAllRelationsBySchemaId(String schemaId);
+    List<UserTaskState> getAllStateBySchemaId(String schemaId);
 
-    List<UserTaskRelation> getSchemaStateByUserId(String userId, String schemaId);
+    List<UserTaskState> getSchemaStateByUserId(String userId, String schemaId);
 
-    List<UserTaskRelation> getTaskStateInSchema(String schemaId, String taskId);
+    List<UserTaskState> getTaskStateInSchema(String schemaId, String taskId);
+
+    List<UserTaskState> getAllUserStates(String userId);
+
+    List<UserTaskState> getAllUserStatesByStatus(String userId,Status status);
 }

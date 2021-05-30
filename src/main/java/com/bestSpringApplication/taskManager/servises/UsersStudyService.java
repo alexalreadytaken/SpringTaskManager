@@ -3,21 +3,18 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
-import com.bestSpringApplication.taskManager.models.enums.Grade;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.servises.interfaces.SchemasProvider;
+import com.bestSpringApplication.taskManager.servises.interfaces.SchemasService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
-import com.bestSpringApplication.taskManager.servises.interfaces.UserService;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -30,19 +27,19 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class UsersStudyService implements StudyService {
 
-    @NonNull private final SchemasProvider schemasProvider;
+    @NonNull private final SchemasService schemasService;
     @NonNull private final StudyStateService studyStateService;
 
     public void setSchemaToUser(String userId,String schemaId){
         log.trace("trying prepare schema '{}' to user '{}'",schemaId,userId);
-        AbstractStudySchema schema = schemasProvider.getSchemaById(schemaId);
+        AbstractStudySchema schema = schemasService.getSchemaById(schemaId);
         studyStateService.prepareSchema(schema,userId);
     }
 
     public boolean canStartTask(String schemaId, String userId, String taskId){
         log.trace("check possibility starting task '{}' in schema '{}' for user '{}'",taskId,schemaId,userId);
-        AbstractStudySchema schema = schemasProvider.getSchemaById(schemaId);
-        AbstractTask task = schemasProvider.getTaskByIdInSchema(taskId, schemaId);
+        AbstractStudySchema schema = schemasService.getSchemaById(schemaId);
+        AbstractTask task = schemasService.getTaskByIdInSchema(taskId, schemaId);
         validateTaskCondition(schemaId, userId, taskId, task);
         Map<String, AbstractTask> tasksMap = schema.getTasksMap();
         List<DependencyWithRelationType> dependencies = schema.getDependenciesWithRelationType();
@@ -77,8 +74,8 @@ public class UsersStudyService implements StudyService {
         List<AbstractStudySchema> schemas = studyStateService
                 .getOpenedSchemasIdOfUser(userId)
                 .stream()
-                .filter(schemasProvider::schemaExists)
-                .map(schemasProvider::getSchemaById)
+                .filter(schemasService::schemaExists)
+                .map(schemasService::getSchemaById)
                 .collect(toList());
         log.trace("request for all schemas of user '{}',return = {} ",userId,schemas);
         return schemas;
@@ -90,9 +87,16 @@ public class UsersStudyService implements StudyService {
                 .collect(toList());
     }
 
+    @Override
+    public List<AbstractTask> getAllOpenedUserTasks(String userId) {
+        return studyStateService.getAllUserStatesByStatus(userId,Status.IN_WORK).stream()
+                .map(state->schemasService.getTaskByIdInSchema(state.getTaskId(),state.getSchemaId()))
+                .collect(toList());
+    }
+
     public List<AbstractTask> getOpenedUserTasksOfSchema(String userId, String schemaId){
         List<String> tasksId = studyStateService.getOpenedTasksIdBySchemaOfUser(userId, schemaId);
-        Map<String, AbstractTask> tasksMap = schemasProvider.getSchemaById(schemaId).getTasksMap();
+        Map<String, AbstractTask> tasksMap = schemasService.getSchemaById(schemaId).getTasksMap();
         return tasksId.stream()
                 .map(tasksMap::get)
                 .collect(toList());
