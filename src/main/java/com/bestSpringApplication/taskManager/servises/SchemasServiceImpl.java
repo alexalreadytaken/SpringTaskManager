@@ -42,13 +42,7 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
     @PostConstruct
     private void init(){
         masterSchemas = new HashMap<>();
-        try {
-            AbstractStudySchema schema = this.schemaParser.parse(new ClassPathResource("EXAMPLE_SCHEME.mrp").getInputStream());
-            this.put(schema);
-        } catch (IOException e) {
-            log.error(e.getMessage());
-        }
-//        initFromXml();
+        initFromXml();
     }
 
     @SuppressWarnings({"ResultOfMethodCallIgnored","ConstantConditions"})

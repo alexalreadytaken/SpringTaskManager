@@ -36,7 +36,7 @@ public class StaticResolver implements WebMvcConfigurer {
                 .peek(file->log.trace("file '{}' exists = {}",file.getPath(),file.exists()))
                 .allMatch(File::exists);
         if (!filesValid){
-//            throw new PostConstructInitializationException("One of the directories was not found");
+            throw new PostConstructInitializationException("One of the directories was not found");
         }
     }
 
