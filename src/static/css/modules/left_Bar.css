@@ -1,0 +1,29 @@
+.text-logo {
+    font-size: 20px;
+}
+
+.header-main {
+    background-color: var(--navigationBackground);
+    height: 96vh;
+    width: 250px;
+}
+
+.nav-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.nav-menu a {
+    color: var(--textColor) ;
+}
+
+.site-navigation {
+    list-style: none;
+    padding: 30px;
+}
+
+.navigation-item {
+    padding-top: 40px;
+}
