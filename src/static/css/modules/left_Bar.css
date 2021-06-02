@@ -1,29 +1,13 @@
-.text-logo {
-    font-size: 20px;
+.navigation-item {
+    list-style: none;
 }
 
-.header-main {
-    background-color: var(--navigationBackground);
-    height: 96vh;
-    width: 250px;
+.navigation-item a {
+    color: var(--textColor);
+    text-decoration: none;
 }
 
-.nav-menu {
+.left-bar {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: 0 auto;
-}
-
-.nav-menu a {
-    color: var(--textColor) ;
-}
-
-.site-navigation {
-    list-style: none;
-    padding: 30px;
-}
-
-.navigation-item {
-    padding-top: 40px;
 }
