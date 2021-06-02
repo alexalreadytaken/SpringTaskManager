@@ -21,11 +21,10 @@ public class SchemasController {
     private final String SCHEMAS_ROOT_TASKS =                   "/schemas";
     private final String SCHEMAS_FILES =                        "/schemas/files";
     private final String SCHEMA_BY_ID =                         "/schema/{schemaId}";
-    private final String ADD_SCHEMA_FILE =                      "/admin/schemas/files/add";
 
     @NonNull private final SchemasService schemasService;
 
-    @PostMapping(ADD_SCHEMA_FILE)
+    @PostMapping(SCHEMAS_FILES)
     @ResponseStatus(HttpStatus.OK)
     public void newSchema(@RequestParam("file") MultipartFile file){
         log.trace("Receive file:'{}' trying parse", file.getOriginalFilename());
