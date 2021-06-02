@@ -54,18 +54,18 @@ function setGrade(schemaId) {
 
     document.getElementById('modalBtnSave').addEventListener('click', e => {
 
-        let tel = []
+        let oldValue = []
             
         studentList.forEach((st, i) => {
 
-            tel.push({
+            oldValue.push({
                 userId: st.userId,
                 grade: document.getElementById(`grade${i}`).value,
                 status: document.getElementById(`status${i}`).value
             })
 
 
-            fetch(`http://${config.url}/admin/user/${st.userId}/schema/${schemaId}/task/${taskId}?setGrade=${tel[i].grade}&setStatus=${tel[i].status}`).then(res => {
+            fetch(`http://${config.url}/admin/user/${st.userId}/schema/${schemaId}/task/${taskId}?setGrade=${oldValue[i].grade}&setStatus=${oldValue[i].status}`).then(res => {
                 fetch(`http://${config.url}/schema/${schemaId}`).then(res => res.json())
                 .then(data => {
                     let tasks = parsTask(data)
@@ -91,7 +91,7 @@ function setGrade(schemaId) {
 
         // console.log(tel)
         
-        tel = null
+        oldValue = null
     })
     studentList = null
 }
