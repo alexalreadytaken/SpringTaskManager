@@ -66,7 +66,7 @@ function setGrade(schemaId) {
 
 
             fetch(`http://${config.url}/admin/user/${st.userId}/schema/${schemaId}/task/${taskId}?setGrade=${tel[i].grade}&setStatus=${tel[i].status}`).then(res => {
-                fetch(`http://${config.url}/admin/schema/${schemaId}`).then(res => res.json())
+                fetch(`http://${config.url}/schema/${schemaId}`).then(res => res.json())
                 .then(data => {
                     let tasks = parsTask(data)
     
