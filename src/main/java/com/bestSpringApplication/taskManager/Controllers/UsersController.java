@@ -19,7 +19,6 @@ import java.util.Map;
 @CrossOrigin
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin
 public class UsersController{
 
     @NonNull
