@@ -4,8 +4,8 @@ RUN mkdir -p /home/stm/invalid/
 RUN mkdir -p /home/stm/js/
 RUN mkdir -p /home/stm/pages/
 RUN mkdir -p /home/stm/css/
-RUN touch /home/stmSTM_FOLDERS/favicon.ico
-RUN apk add postgresql
+RUN touch /home/stm/favicon.ico
+RUN apk add postgresqlS
 RUN mkdir /run/postgresql
 RUN chown postgres:postgres /run/postgresql
 USER postgres
