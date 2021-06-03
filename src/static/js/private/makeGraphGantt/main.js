@@ -1,5 +1,5 @@
 import { config } from '../config.js';
-import {makeGraph} from './parsingData/making.js';
+import { makeGraph } from './parsingData/making.js';
 
 // makeGraph(scheme1)
 fetch(`http://${config.url}/schema/1`)
