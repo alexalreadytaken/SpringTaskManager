@@ -1,13 +1,36 @@
+.left-bar h1 {
+    text-align: center;
+}
+
 .navigation-item {
     list-style: none;
+    background-color: var(--bacground-button-color);
+    border-radius: 20px;
+    text-align: center;
+    min-width: 40px;
+}
+
+.navigation-item:hover {
+    background-color: var(--hover-button);
 }
 
 .navigation-item a {
-    color: var(--textColor);
+    color: var(--text-color);
     text-decoration: none;
 }
 
 .left-bar {
     display: flex;
     flex-direction: column;
+    background-color: var(--background);
+    height: 100%;
+    width: 200px;
+}
+
+.nav-list {
+    margin: 0 auto;
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
 }

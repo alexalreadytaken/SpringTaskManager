@@ -7,11 +7,11 @@
     <link rel="stylesheet" href="../static/css/main.css">
     <title>Учебный план</title>
 </head>
-<body>
+<body class="body">
     <main>
         <section class="left-bar">
             <h1>Учебный план</h1>
-            <li class="nav-list">
+            <ul class="nav-list">
                 <li class="navigation-item">
                     <a href="#">Загрузить</a>
                 </li>
@@ -21,24 +21,45 @@
                 <li class="navigation-item">
                     <a href="#">Отчеты</a>
                 </li>
-            </li>
+            </ul>
         </section>
         
-        <section class="top-menu">
-            <ul>
-                <li>
+        <section class="main-content-page">
+            <section class="top-menu">
+            <ul class="menu-list">
+                <li class="menu-item">
                     <a href="#">Результаты группы</a>
                 </li>
-                <li>
+                <li class="menu-item">
                     <a href="#">Что-то будет</a>
                 </li>
             </ul>
         </section>
 
         <section class="content">
-
+            <div id="graph-Gantt"></div>
+        </section>
         </section>
     </main>
+
+    
+        <div hidden id="modalWin" class="modal-win">
+            <h1 id="headerText">Some text</h1>
+            <div id="modalContent" class="content-win">
+                <div id="area-1" class="some-info">
+                    <p>Имя1</p>
+                    <p>Имя2</p>
+                </div>
+                <div id="area-2">
+                    <p>Status-1</p>
+                    <p>Status-2</p>
+                </div>
+                <div id="area-3">
+                    <p>Percent-1</p>
+                    <p>Percent-2</p>
+                </div>
+            </div>
+        </div>
     
 </body>
 </html>

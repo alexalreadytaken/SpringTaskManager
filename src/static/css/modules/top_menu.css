@@ -1,0 +1,18 @@
+.top-menu {
+    margin-top: 30px;
+    margin-left: 30px;
+}
+
+.menu-list {
+    list-style: none;
+    display: flex;
+    min-width: 150px;
+    max-width: 33%;
+    gap: 30px;
+    border-bottom: 2px solid blue;
+}
+
+.menu-item a{
+    color: var(--text-color);
+    text-decoration: none;
+}
