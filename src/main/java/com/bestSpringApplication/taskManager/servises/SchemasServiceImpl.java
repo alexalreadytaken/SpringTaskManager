@@ -5,6 +5,7 @@ import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.utils.VersionedList;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ServerException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.PostConstructInitializationException;
 import com.bestSpringApplication.taskManager.utils.parsers.SchemaParser;
@@ -163,6 +164,7 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
                     masterSchemas.remove(schemaId);
                 }
             }
+            throw new ServerException("неизвестная ошибка сервера");
         }
     }
 
