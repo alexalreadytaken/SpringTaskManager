@@ -4,3 +4,10 @@
     height: 80%;
     outline: 3px solid gray;
 }
+
+.content h1 {
+    text-align: center;
+    margin-top: 20%;
+    color: gray;
+    font-size: 90px;
+}
