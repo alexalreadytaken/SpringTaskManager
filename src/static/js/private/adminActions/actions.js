@@ -7,5 +7,6 @@ uploadSchemaListener()
 
 document.getElementById('listOfSchemas').addEventListener('click', () => {
     createSchemas()
+    document.getElementById('listSchemas').innerHTML = null
 })
 

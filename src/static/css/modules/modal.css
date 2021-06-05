@@ -9,10 +9,10 @@
 }
 
 .content-win {
-    height: 100%;
-    width: 100%;
     display: flex;
-    justify-content: space-around;
+    height: 80%;
+    width: 70%;
     align-items: center;
-    margin-left: 26px;
+    justify-content: center;
+    margin: 0 auto;
 }
