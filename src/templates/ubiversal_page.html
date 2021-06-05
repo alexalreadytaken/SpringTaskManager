@@ -25,10 +25,10 @@
             <h1>Учебный план</h1>
             <ul class="nav-list">
                 <li class="navigation-item">
-                    <a href="#modalWin" rel="modal:open">Загрузить</a>
+                    <a href="#upload" rel="modal:open">Загрузить</a>
                 </li>
                 <li class="navigation-item">
-                    <a href="#">Список схем</a>
+                    <a href="#list" id="listOfSchemas" rel="modal:open">Список схем</a>
                 </li>
                 <li class="navigation-item">
                     <a href="#">Отчеты</a>
@@ -56,15 +56,21 @@
         </section>
     </main>
 
-    <div id="modalWin" class="modal-win modal">
+    <div id="upload" class="modal-win modal">
         <h1 id="headerText">Загрузка схемы</h1>
         <div id="modalContent" class="content-win">
             <input type="file" name="schema" id="uploadSchema">
         </div>
     </div>
 
+    <div id="list" class="modal-win modal">
+        <h1 id="headerText">Схемы</h1>
+        <div id="modalContent" class="content-win">
+            <select name="" id="listSchemas"></select>
+        </div>
+    </div>
 
-    <script type="module" src="../static/js/private/rest_Post/upload_schema.js"></script>
+    <script type="module" src="../static/js/private/adminActions/actions.js"></script>
 
 </body>
 
