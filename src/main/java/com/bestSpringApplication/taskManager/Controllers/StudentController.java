@@ -1,8 +1,8 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.User;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
+import com.bestSpringApplication.taskManager.models.entities.User;
+import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.servises.interfaces.SchemasService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;

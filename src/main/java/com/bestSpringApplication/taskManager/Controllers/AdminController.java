@@ -3,8 +3,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.Summary;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
-import com.bestSpringApplication.taskManager.models.enums.Grade;
+import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.servises.interfaces.*;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.BadRequestException;
@@ -78,7 +77,7 @@ public class AdminController {
 
     @GetMapping(INTERACTIONS_WITH_USER_TASK)
     @ResponseStatus(HttpStatus.OK)
-    public void interactionsWithUserTask(@RequestParam(name = "setGrade",required = false) Optional<String> grade,
+    public void interactionsWithUserTask(@RequestParam(name = "setPercentComplete",required = false) Optional<Double> percent,
                                          @RequestParam(name = "setStatus",required = false) Optional<String> status,
                                          @PathVariable String schemaId,
                                          @PathVariable String userId,
@@ -88,11 +87,10 @@ public class AdminController {
         schemasService.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
         userService.validateUserExistsOrThrow(userId);
         if (!studyStateService.schemaOfUserExists(schemaId,userId))throw new BadRequestException("схема не назначена");
-        grade.ifPresent(gr->{
-            Grade grade1 = Grade.of(gr).orElseThrow(() ->
-                    new InvalidRequestParamException(String.format("оценки со значением %s не существует", gr)));
-            log.trace("set grade '{}' for task '{}' of schema '{}' for user '{}'",grade1,taskId,schemaId,userId);
-            studyStateService.setGradeForUserTask(schemaId,userId,taskId,grade1);
+        percent.ifPresent(p->{
+            if (0>p||p>1)throw new InvalidRequestParamException("некоректное значение процента завершенности");
+            log.trace("set percent complete '{}' for task '{}' of schema '{}' for user '{}'",p,taskId,schemaId,userId);
+            studyStateService.setPercentCompleteForUserTask(schemaId,userId,taskId,p);
         });
         status.ifPresent(st->{
             Status status1 = Status.of(st).orElseThrow(() ->

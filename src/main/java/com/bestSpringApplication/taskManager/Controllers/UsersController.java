@@ -4,7 +4,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.EmailExistsException;
 import com.bestSpringApplication.taskManager.models.enums.Role;
-import com.bestSpringApplication.taskManager.models.User;
+import com.bestSpringApplication.taskManager.models.entities.User;
 import com.bestSpringApplication.taskManager.servises.UserServiceImpl;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;

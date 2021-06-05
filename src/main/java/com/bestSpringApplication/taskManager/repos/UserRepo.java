@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.repos;
 
-import com.bestSpringApplication.taskManager.models.User;
+import com.bestSpringApplication.taskManager.models.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

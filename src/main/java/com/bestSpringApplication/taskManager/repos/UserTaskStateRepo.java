@@ -1,7 +1,6 @@
 package com.bestSpringApplication.taskManager.repos;
 
-import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
-import com.bestSpringApplication.taskManager.models.enums.Grade;
+import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -33,22 +32,22 @@ public interface UserTaskStateRepo extends JpaRepository<UserTaskState,Integer> 
 
     @Transactional
     @Modifying
-    @Query("update UserTaskState set grade=:grade,status=:status where taskId=:taskId "+
+    @Query("update UserTaskState set percentComplete=:percent,status=:status where taskId=:taskId "+
             "and schemaId=:schemaId and userId=:userId")
-    void setStatusAndGradeForTask(@Param("schemaId")String schemaId,
-                                  @Param("userId")String userId,
-                                  @Param("taskId")String taskId,
-                                  @Param("grade") Grade grade,
-                                  @Param("status")Status status);
+    void setStatusAndPercentCompleteForTask(@Param("schemaId")String schemaId,
+                                            @Param("userId")String userId,
+                                            @Param("taskId")String taskId,
+                                            @Param("percent") double percent,
+                                            @Param("status")Status status);
 
     @Transactional
     @Modifying
-    @Query("update UserTaskState set grade=:grade where taskId=:taskId "+
+    @Query("update UserTaskState set percentComplete=:percent where taskId=:taskId "+
             "and schemaId=:schemaId and userId=:userId")
-    void setGradeForTask(@Param("schemaId")String schemaId,
-                         @Param("userId")String userId,
-                         @Param("taskId")String taskId,
-                         @Param("grade") Grade grade);
+    void setPercentCompleteForTask(@Param("schemaId")String schemaId,
+                                   @Param("userId")String userId,
+                                   @Param("taskId")String taskId,
+                                   @Param("percent") double percentComplete);
 
     @Transactional
     @Modifying
@@ -65,7 +64,7 @@ public interface UserTaskStateRepo extends JpaRepository<UserTaskState,Integer> 
                                                         @Param("status") Status status);
 
     @Query("select taskId from UserTaskState where userId=:userId and schemaId=:schemaId " +
-            "and status='finished' and grade>=3")
+            "and status='finished' and percentComplete=1")
     List<String> getCompletedTasksIdOfSchemaIdAndUserId(@Param("userId") String userId,
                                                         @Param("schemaId") String schemaId);
 }

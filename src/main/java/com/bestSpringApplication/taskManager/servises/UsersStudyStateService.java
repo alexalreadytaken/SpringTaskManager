@@ -3,8 +3,7 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
-import com.bestSpringApplication.taskManager.models.enums.Grade;
+import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.repos.UserTaskStateRepo;
@@ -41,7 +40,7 @@ public class UsersStudyStateService implements StudyStateService {
                 .status(Status.CLOSED)
                 .taskId(task.getId())
                 .userId(userId)
-                .grade(Grade.ONE)
+                .percentComplete(0.0)
                 .build();
         utrRepo.save(userTaskState);
     }
@@ -54,12 +53,14 @@ public class UsersStudyStateService implements StudyStateService {
         utrRepo.setStatusForTask(schemaId, userId, taskId, status);
     }
 
-    public void setGradeForUserTask(String schemaId, String userId, String taskId, Grade grade) {
-        utrRepo.setGradeForTask(schemaId, userId, taskId, grade);
+    @Override
+    public void setPercentCompleteForUserTask(String schemaId, String userId, String taskId, double percent) {
+        utrRepo.setPercentCompleteForTask(schemaId, userId, taskId, percent);
     }
 
-    public void setStatusAndGradeForUserTask(String schemaId, String userId, String taskId, Status status, Grade grade) {
-        utrRepo.setStatusAndGradeForTask(schemaId, userId, taskId, grade, status);
+    @Override
+    public void setStatusAndPercentCompleteForUserTask(String schemaId, String userId, String taskId, Status status, double percent) {
+        utrRepo.setStatusAndPercentCompleteForTask(schemaId, userId, taskId, percent, status);
     }
 
     public boolean schemaOfUserExists(String schemaId, String userId) {

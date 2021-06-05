@@ -1,8 +1,7 @@
 package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.classes.Summary;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
-import com.bestSpringApplication.taskManager.models.enums.Grade;
+import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
 import com.bestSpringApplication.taskManager.servises.interfaces.SummaryProvider;
@@ -12,9 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -51,35 +47,46 @@ public class SummaryService implements SummaryProvider {
         return getSummaryUniversal(schemaId, schemaStateByUserId);
     }
 
-    private Summary getSummaryUniversal(String entityId, List<UserTaskState> relations) {
+    private Summary getSummaryUniversal(String entityId, List<UserTaskState> states) {
         return new Summary(entityId,
-                getPercentCompleteTasks(relations),
-                getAverageTasksGrade(relations),
-                getCountByTasksGrade(relations));
+                "TODO",
+                getPercentFinishedTasks(states),
+                getAverageTasksGrade(states),
+                getMinPercentComplete(states),
+                getMaxPercentComplete(states));
     }
 
-    private double getPercentCompleteTasks(List<UserTaskState> taskRelations) {
-        long finishedCount = taskRelations.stream()
-                .map(UserTaskState::getStatus)
-                .filter(Status.FINISHED::isInstance)
+    private double getMinPercentComplete(List<UserTaskState> taskStates){
+        return taskStates.stream()
+                .map(UserTaskState::getPercentComplete)
+                .mapToDouble(Double::valueOf)
+                .min()
+                .orElse(0.0);
+    }
+
+    private double getMaxPercentComplete(List<UserTaskState> taskStates){
+        return taskStates.stream()
+                .map(UserTaskState::getPercentComplete)
+                .mapToDouble(Double::valueOf)
+                .max()
+                .orElse(0.0);
+    }
+
+    private double getPercentFinishedTasks(List<UserTaskState> taskStates) {
+        long finishedCount = taskStates.stream()
+                .filter(uts->uts.getPercentComplete()==100)
+                .filter(uts->uts.getStatus()==Status.FINISHED)
                 .count();
-        return (double)finishedCount/(double)taskRelations.size();
+        return (double)finishedCount/(double)taskStates.size();
     }
 
-    private double getAverageTasksGrade(List<UserTaskState> taskRelations) {
-        return taskRelations.stream()
-                .map(UserTaskState::getGrade)
-                .map(Grade::getIntValue)
-                .mapToDouble(Integer::doubleValue)
+    private double getAverageTasksGrade(List<UserTaskState> taskStates) {
+        return taskStates.stream()
+                .map(UserTaskState::getPercentComplete)
+                .mapToDouble(Double::valueOf)
                 .average()
                 .orElse(0.0);
     }
 
-    private Map<Grade, Long> getCountByTasksGrade(List<UserTaskState> taskRelations) {
-        return taskRelations.stream()
-                .map(UserTaskState::getGrade)
-                .collect(Collectors.groupingBy(
-                        Function.identity(),
-                        Collectors.counting()));
-    }
+
 }

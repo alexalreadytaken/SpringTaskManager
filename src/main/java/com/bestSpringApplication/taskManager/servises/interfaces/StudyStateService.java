@@ -2,8 +2,7 @@ package com.bestSpringApplication.taskManager.servises.interfaces;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.classes.UserTaskState;
-import com.bestSpringApplication.taskManager.models.enums.Grade;
+import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 
 import java.util.List;
@@ -17,9 +16,9 @@ public interface StudyStateService {
 
     void setStatusForUserTask(String schemaId, String userId, String taskId,Status status);
 
-    void setGradeForUserTask(String schemaId, String userId, String taskId,Grade grade);
+    void setPercentCompleteForUserTask(String schemaId, String userId, String taskId, double percent);
 
-    void setStatusAndGradeForUserTask(String schemaId, String userId, String taskId,Status status,Grade grade);
+    void setStatusAndPercentCompleteForUserTask(String schemaId, String userId, String taskId, Status status, double percent);
 
     boolean schemaOfUserExists(String schemaId, String userId);
 
