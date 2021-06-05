@@ -26,10 +26,14 @@ import java.util.Optional;
 public class AdminController {
 
     private final String SCHEMA_SUMMARY =                       "/schema/{schemaId}/summary";
-    private final String ADD_SCHEMA_TO_USER =                   "/schema/{schemaId}/addTo/user/{userId}";
     private final String STATE_OF_TASK_IN_SCHEMA =              "/schema/{schemaId}/task/{taskId}/state";
 
+    private final String ADD_SCHEMA_TO_GROUP =                  "/schema/{schemaId}/addTo/group/{groupId}";
+    private final String ADD_SCHEMA_TO_USER =                   "/schema/{schemaId}/addTo/user/{userId}";
+
     private final String STATUS_VALUES_RU =                     "/status/ru";
+
+    private final String UNCONFIRMED_TASKS =                    "/tasks/unconfirmed";
 
     private final String INTERACTIONS_WITH_USER_TASK =          "/user/{userId}/schema/{schemaId}/task/{taskId}";
 
@@ -43,6 +47,14 @@ public class AdminController {
     @NonNull private final SummaryProvider summaryProvider;
     @NonNull private final UserService userService;
     @NonNull private final StudyStateService studyStateService;
+    @NonNull private final GroupService groupService;
+
+
+    @GetMapping(UNCONFIRMED_TASKS)
+    public List<UserTaskState> unconfirmedUsersTasks(){
+        log.trace("request for unconfirmed tasks");
+        return studyStateService.getUnconfirmedTasks();
+    }
 
     @GetMapping(SUMMARY_OF_USER_SCHEMA)
     public Summary summaryOfUserSchema(@PathVariable String schemaId, @PathVariable String userId){
@@ -119,6 +131,14 @@ public class AdminController {
     @GetMapping(STATUS_VALUES_RU)
     public List<String> getRuStatusValues(){
         return Status.ruValues();
+    }
+
+    @GetMapping(ADD_SCHEMA_TO_GROUP)
+    @ResponseStatus(HttpStatus.OK)
+    public void addSchemaToGroup(@PathVariable String groupId, @PathVariable String schemaId){
+        schemasService.validateSchemaExistsOrThrow(schemaId);
+        groupService.validateGroupExistsOrThrow(groupId);
+        usersStudyService.setSchemaToGroup(groupId, schemaId);
     }
 
     @GetMapping(ADD_SCHEMA_TO_USER)

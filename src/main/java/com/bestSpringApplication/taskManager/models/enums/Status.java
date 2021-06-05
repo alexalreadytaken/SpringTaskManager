@@ -16,7 +16,7 @@ public enum Status {
     CLOSED("closed","закрыт"),
     IN_WORK("in_work","в работе"),
     FINISHED("finished","завершен"),
-    NOT_CONFIRMED("not_confirmed","не подтвержден"),
+    UNCONFIRMED("unconfirmed","не подтвержден"),
     REOPENED("reopened","открыт повторно");
 
     private static final Map<String,Status> VALUES = new HashMap<>(Status.values().length);

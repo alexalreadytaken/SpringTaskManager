@@ -53,12 +53,10 @@ public class UsersStudyStateService implements StudyStateService {
         utrRepo.setStatusForTask(schemaId, userId, taskId, status);
     }
 
-    @Override
     public void setPercentCompleteForUserTask(String schemaId, String userId, String taskId, double percent) {
         utrRepo.setPercentCompleteForTask(schemaId, userId, taskId, percent);
     }
 
-    @Override
     public void setStatusAndPercentCompleteForUserTask(String schemaId, String userId, String taskId, Status status, double percent) {
         utrRepo.setStatusAndPercentCompleteForTask(schemaId, userId, taskId, percent, status);
     }
@@ -73,6 +71,19 @@ public class UsersStudyStateService implements StudyStateService {
         return ids;
     }
 
+    public List<String> getOpenedSchemasIdOfUser(String userId){
+        List<String> openedSchemasIdOfUser = utrRepo.getOpenedSchemasIdOfUser(userId);
+        throwIfListEmpty(openedSchemasIdOfUser,"человеку не назначен ни один курс");
+        return openedSchemasIdOfUser;
+    }
+
+    @Override
+    public List<UserTaskState> getUnconfirmedTasks() {
+        List<UserTaskState> unconfirmedTasks = utrRepo.getAllByStatus(Status.UNCONFIRMED);
+        throwIfListEmpty(unconfirmedTasks,"рапортов о готовности нет");
+        return unconfirmedTasks;
+    }
+
     public List<UserTaskState> getAllStateBySchemaId(String schemaId){
         List<UserTaskState> schemaRelations = utrRepo.getAllBySchemaId(schemaId);
         throwIfListEmpty(schemaRelations,"курс не назначен ни одному человеку");
@@ -85,19 +96,12 @@ public class UsersStudyStateService implements StudyStateService {
         return userSchemaState;
     }
 
-    public List<String> getOpenedSchemasIdOfUser(String userId){
-        List<String> openedSchemasIdOfUser = utrRepo.getOpenedSchemasIdOfUser(userId);
-        throwIfListEmpty(openedSchemasIdOfUser,"человеку не назначен ни один курс");
-        return openedSchemasIdOfUser;
-    }
-
     public List<UserTaskState> getAllUserStates(String userId) {
         List<UserTaskState> allUserState = utrRepo.getAllByUserId(userId);
         throwIfListEmpty(allUserState,"человеку не назначен ни один курс");
         return allUserState;
     }
 
-    @Override
     public List<UserTaskState> getAllUserStatesByStatus(String userId,Status status) {
         List<UserTaskState> allUserState = utrRepo.getAllByUserIdAndStatus(userId,status);
         throwIfListEmpty(allUserState,"у человека нет заданий с таким статусом");

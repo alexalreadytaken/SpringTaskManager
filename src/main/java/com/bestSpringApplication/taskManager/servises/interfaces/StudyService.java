@@ -2,13 +2,13 @@ package com.bestSpringApplication.taskManager.servises.interfaces;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.enums.Status;
 
 import java.util.List;
-import java.util.Map;
 
 public interface StudyService {
     void setSchemaToUser(String userId,String schemaId);
+
+    void setSchemaToGroup(String groupId,String schemaId);
 
     void reopenTask(String schemaId, String userId, String taskId);
 

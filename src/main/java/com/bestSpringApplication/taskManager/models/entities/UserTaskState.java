@@ -10,7 +10,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 @Entity
-@Table(name = "user_task_state")
+@Table(name = "user_task_states")
 @Data
 @Builder
 @NoArgsConstructor

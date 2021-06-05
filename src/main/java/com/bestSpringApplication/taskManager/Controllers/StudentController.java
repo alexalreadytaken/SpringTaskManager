@@ -71,7 +71,7 @@ public class StudentController {
         schemasService.validateSchemaExistsOrThrow(schemaId);
         schemasService.validateTaskInSchemaExistsOrThrow(schemaId,taskId);
         userService.validateUserExistsOrThrow(user.getStringId());
-        studyStateService.setStatusForUserTask(schemaId,user.getStringId(),taskId,Status.NOT_CONFIRMED);
+        studyStateService.setStatusForUserTask(schemaId,user.getStringId(),taskId,Status.UNCONFIRMED);
     }
 
     @GetMapping(OPENED_SCHEMAS)

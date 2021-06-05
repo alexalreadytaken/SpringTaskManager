@@ -3,9 +3,11 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
+import com.bestSpringApplication.taskManager.models.entities.User;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
+import com.bestSpringApplication.taskManager.servises.interfaces.GroupService;
 import com.bestSpringApplication.taskManager.servises.interfaces.SchemasService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
@@ -29,11 +31,22 @@ public class UsersStudyService implements StudyService {
 
     @NonNull private final SchemasService schemasService;
     @NonNull private final StudyStateService studyStateService;
+    @NonNull private final GroupService groupService;
 
     public void setSchemaToUser(String userId,String schemaId){
         log.trace("trying prepare schema '{}' to user '{}'",schemaId,userId);
         AbstractStudySchema schema = schemasService.getSchemaById(schemaId);
         studyStateService.prepareSchema(schema,userId);
+    }
+
+    @Override
+    public void setSchemaToGroup(String groupId, String schemaId) {
+        log.trace("trying prepare schema '{}' to group '{}'",schemaId,groupId);
+        // TODO: 6/5/21 if schema already added
+        groupService.getGroupById(groupId)
+                .getUsers().stream()
+                .map(User::getStringId)
+                .forEach(userId->setSchemaToUser(userId,schemaId));
     }
 
     public boolean canStartTask(String schemaId, String userId, String taskId){

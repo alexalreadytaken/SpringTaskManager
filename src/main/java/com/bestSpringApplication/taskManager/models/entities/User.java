@@ -18,7 +18,7 @@ import java.util.Collections;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "user_entity")
+@Table(name = "users_entities")
 @ToString(exclude = "password")
 public class User implements UserDetails {
 
