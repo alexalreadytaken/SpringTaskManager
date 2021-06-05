@@ -6,7 +6,7 @@ public class StringUtils {
 
     public final static Pattern intPattern = Pattern.compile("\\d+");
 
-    public static boolean isInteger(String str){
+    public static boolean isDigit(String str){
         return intPattern.matcher(str).matches();
     }
 

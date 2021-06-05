@@ -17,7 +17,7 @@ import javax.validation.constraints.Min;
 @AllArgsConstructor
 public class UserTaskState {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @JsonIgnore
     private Integer db_id;
     private String userId;
