@@ -1,6 +1,6 @@
 .modal-win {
     height: 230px;
-    width: 330px;
+    min-width: 330px;
     background-color: var(--background);
 }
 
@@ -13,6 +13,21 @@
     height: 80%;
     width: 70%;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
+    flex-direction: column;
     margin: 0 auto;
+}
+
+.content-win a {
+    color: var(--text-color);
+    text-decoration: none;
+}
+
+.user {
+    display: flex;
+    gap: 50px;
+}
+
+.user input {
+    margin-top: 5px;
 }

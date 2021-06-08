@@ -1,14 +1,11 @@
 import { config } from "../config.js";
 
-function createSchemas () {
-    fetch (`http://${config.url}/schemas`).then(response => response.json())
-        .then(response => {
-            response.forEach(schema => {
-                document.getElementById('listSchemas').insertAdjacentHTML('beforeend', `
-                    <option id = 'nameSchema'>${schema.name}</option>
-                `)
-            })
-        })
+async function createSchemas () {
+
+    const response = await fetch(`http://${config.url}/schemas`)
+    const schemas = await response.json()
+    
+    return schemas
 }
 
 export { createSchemas }

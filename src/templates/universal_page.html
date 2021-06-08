@@ -66,9 +66,20 @@
     <div id="list" class="modal-win modal">
         <h1 id="headerText">Схемы</h1>
         <div id="modalContent" class="content-win">
-            <select name="" id="listSchemas"></select>
+            <select id="listSchemas"></select>
+            <a href="#secontSteplist" id = 'saveUserToSchema'>Отобразить</a>
         </div>
+
+        
     </div>
+        <div id="secontSteplist" class="modal-win modal">
+            <h1 id="headerText">Выбор Студентов</h1>
+            <div id="modalContent" class="content-win">
+                <div id="extra-content"></div>
+                <a href="#list" id="modalBtnBack" rel = 'modal:open'>Назад</a>
+                <button id="addUserToSchema">Назначить</button>
+            </div>
+        </div>
 
     <script type="module" src="../static/js/private/adminActions/actions.js"></script>
 
