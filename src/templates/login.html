@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
@@ -12,44 +13,55 @@
         flex-direction: column;
         margin: 0 auto;
     }
+
     h1 {
         text-align: center;
     }
 </style>
+
 <body>
-<h1>login</h1>
-<form action="http://10.3.0.87:2000/v/login.html" method="post">
-    <label for="username">Mail</label>
-    <input type="text" id="username" name="username">
+    <h1>login</h1>
+    <form action="http://10.3.0.87:2000/v/login.html" method="post">
+        <label for="username">Mail</label>
+        <input type="text" id="username" name="username">
 
-    <label for="password">Password</label>
-    <input type="password" id="password" name="password">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password">
 
-    <input type="submit">
-</form>
-
-
-<!-- <button id="reg">Зарегаться</button>
-<fieldset>
-    <legend>Регистрация</legend>
-    <form action="" method="post">
-        <input type="text" name="username">
-        <input type="email" name="email">
-        <input type="password" name="password">
-        <button type="submit">Registr</button>
+        <input type="submit">
     </form>
-</fieldset>
-<script>
-    document.getElementById('reg').onclick = () => {
-        fetch('http://10.3.0.87:2000/register/new', {
-            method: 'POST',
-             headers: {
-                'Content-Type': 'application/json;charset=utf-8'
-            },
-            body: JSON.stringify({name: 'Egor' , password: '12345', mail: 'egor@mail.com'})
-        }).then(e => e.json())
-        .then(response => console.log(response))
-    } -->
-</script>
+
+
+    <!-- <button id="reg">Зарегаться</button>
+    <fieldset>
+        <legend>Регистрация</legend>
+        <form id="regNew">
+            <input type="text" name="name">
+            <input type="email" name="mail">
+            <input type="password" name="password">
+            <button type="submit">Registr</button>
+        </form>
+    </fieldset>
+    <script>
+        document.getElementById('regNew').addEventListener('submit', submitForm);
+
+        let obj = {}
+        function submitForm(event) {
+            event.preventDefault();
+
+            let formdata = new FormData(event.target)
+
+            formdata.forEach((value, key) => obj[key] = value)
+            fetch('http://localhost:2000/register/new', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json;charset=utf-8'
+                    },
+                    body: JSON.stringify(obj)
+                }).then(e => e.json())
+                .then(response => console.log(response))
+        }
+    </script> -->
 </body>
+
 </html>
