@@ -39,7 +39,6 @@ public class UsersStudyService implements StudyService {
         studyStateService.prepareSchema(schema,userId);
     }
 
-    @Override
     public void setSchemaToGroup(String groupId, String schemaId) {
         log.trace("trying prepare schema '{}' to group '{}'",schemaId,groupId);
         // TODO: 6/5/21 if schema already added
@@ -100,7 +99,6 @@ public class UsersStudyService implements StudyService {
                 .collect(toList());
     }
 
-    @Override
     public List<AbstractTask> getAllOpenedUserTasks(String userId) {
         return studyStateService.getAllUserStatesByStatus(userId,Status.IN_WORK).stream()
                 .map(state->schemasService.getTaskByIdInSchema(state.getTaskId(),state.getSchemaId()))
