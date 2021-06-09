@@ -27,7 +27,7 @@ public class StudentController {
     private final String OPENED_SCHEMAS =       "/schemas/opened";
     private final String OPENED_TASKS =         "/tasks/opened";
     private final String SCHEMA_STATE =         "/schema/{schemaId}/state";
-    private final String OPENED_SCHEMAS_TASKS = "/schema/{schemaId}/tasks/opened";
+    private final String OPENED_SCHEMA_TASKS =  "/schema/{schemaId}/tasks/opened";
     private final String FINISH_TASK =          "/schema/{schemaId}/task/{taskId}/finish";
     private final String START_TASK =           "/schema/{schemaId}/task/{taskId}/start";
 
@@ -81,7 +81,7 @@ public class StudentController {
         return studyService.getUserSchemasRootTasks(user.getStringId());
     }
 
-    @GetMapping(OPENED_SCHEMAS_TASKS)
+    @GetMapping(OPENED_SCHEMA_TASKS)
     public List<AbstractTask> openedSchemasTasks(@PathVariable String schemaId, @AuthenticationPrincipal User user){
         log.trace("request for opened tasks for user '{}' in schema '{}'",user,schemaId);
         schemasService.validateSchemaExistsOrThrow(schemaId);

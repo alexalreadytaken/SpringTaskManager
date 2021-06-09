@@ -3,10 +3,12 @@ package com.bestSpringApplication.taskManager.servises;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
+import com.bestSpringApplication.taskManager.models.entities.User;
 import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.repos.UserTaskStateRepo;
+import com.bestSpringApplication.taskManager.servises.interfaces.GroupService;
 import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.BadRequestException;
 import lombok.NonNull;
@@ -23,6 +25,7 @@ import java.util.Map;
 public class UsersStudyStateService implements StudyStateService {
 
     @NonNull private final UserTaskStateRepo utrRepo;
+    @NonNull private final GroupService groupService;
 
     public void prepareSchema(AbstractStudySchema schema, String userId){
         log.trace("start prepare schema '{}' to student '{}'",schema.getId(),userId);
@@ -63,6 +66,15 @@ public class UsersStudyStateService implements StudyStateService {
 
     public boolean schemaOfUserExists(String schemaId, String userId) {
         return utrRepo.existsBySchemaIdAndUserId(schemaId, userId);
+    }
+
+    public boolean schemaOfGroupExists(String groupId, String schemaId) {
+        return groupService.getGroupById(groupId)
+                .getUsers()
+                .stream()
+                .map(User::getId)
+                .map(String::valueOf)
+                .anyMatch(usrId->schemaOfUserExists(schemaId,usrId));
     }
 
     public List<String> getCompletedTasksIdOfSchemaForUser(String schemaId, String userId) {

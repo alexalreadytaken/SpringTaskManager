@@ -22,6 +22,8 @@ public interface StudyStateService {
 
     boolean schemaOfUserExists(String schemaId, String userId);
 
+    boolean schemaOfGroupExists(String groupId, String schemaId);
+
     boolean taskExists(String schemaId, String userId, String taskId);
 
     boolean taskFinished(String schemaId,String userId,String taskId);

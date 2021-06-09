@@ -41,7 +41,6 @@ public class UsersStudyService implements StudyService {
 
     public void setSchemaToGroup(String groupId, String schemaId) {
         log.trace("trying prepare schema '{}' to group '{}'",schemaId,groupId);
-        // TODO: 6/5/21 if schema already added
         groupService.getGroupById(groupId)
                 .getUsers().stream()
                 .map(User::getStringId)

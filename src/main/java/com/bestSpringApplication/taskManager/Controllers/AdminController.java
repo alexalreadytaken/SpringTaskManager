@@ -136,8 +136,12 @@ public class AdminController {
     @GetMapping(ADD_SCHEMA_TO_GROUP)
     @ResponseStatus(HttpStatus.OK)
     public void addSchemaToGroup(@PathVariable String groupId, @PathVariable String schemaId){
+        log.trace("request for adding schema '{}' for group '{}'",schemaId,groupId);
         schemasService.validateSchemaExistsOrThrow(schemaId);
         groupService.validateGroupExistsOrThrow(groupId);
+        if (studyStateService.schemaOfGroupExists(groupId,schemaId)) {
+            throw new TaskInWorkException("курс уже назначен некоторым студентам или всей группе");
+        }
         usersStudyService.setSchemaToGroup(groupId, schemaId);
     }
 
