@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(permittedMappings)
                 .permitAll()
-//                        .antMatchers("/schemas/**","/js/private/**","/v/admin.html")
+//                        .antMatchers("/schemas/**","/js/private/**","/v/admin.html","/admin/**")
 //                            .hasAnyAuthority(Role.ADMIN.getStrValue(),Role.TEACHER.getStrValue())
 //                        .antMatchers("/study/**")
 //                            .hasAuthority(Role.STUDENT.getStrValue())

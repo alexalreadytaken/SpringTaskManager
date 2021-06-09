@@ -37,7 +37,6 @@ import static java.util.stream.Collectors.toList;
 public class XmlSchemaParser implements SchemaParser {
 
     @Override
-    // FIXME: 5/23/21
     public AbstractStudySchema parse(Object parsable) throws ParseException {
         try {
             SAXBuilder saxBuilder = new SAXBuilder();
