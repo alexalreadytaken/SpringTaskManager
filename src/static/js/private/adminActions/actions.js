@@ -26,7 +26,7 @@ document.getElementById('listOfSchemas').onclick = () => {
         if (e.target.value !== 'Выберите схему') {
             document.getElementById('saveUserToSchema').setAttribute('rel','modal:open')    
         } else {
-                document.getElementById('saveUserToSchema').setAttribute('rel','')
+            document.getElementById('saveUserToSchema').setAttribute('rel','')
         }
     })
 

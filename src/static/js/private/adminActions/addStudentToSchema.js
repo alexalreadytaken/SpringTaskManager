@@ -10,6 +10,7 @@ function validateStudent (schema) {
             response.forEach(el => {
                 if (el.name === schema) {
                     makeUsers('extra-content')
+                    addUserToSchema(el.id)
                 } else {
                     alert('Схема не выбрана!')
                     clearing('extra-content')
@@ -18,8 +19,28 @@ function validateStudent (schema) {
         })
 }
 
-function addUserToSchema () {
-    
+function addUserToSchema (schemaId) {
+    document.getElementById('extra-content').addEventListener('submit', submitForm);
+
+    function submitForm (event) {
+        event.preventDefault()
+        
+        let formdata = new FormData(event.target)
+        let obj
+        let listOfDataStudents = []
+
+        formdata.forEach((value, key) => {
+            obj = {}
+            obj[key] = value
+            listOfDataStudents.push(obj)
+        })
+
+        listOfDataStudents.map(el => {
+            fetch(`http://${config.url}/admin/schema/${schemaId}/addTo/user/${Object.keys(el)}`)
+        })
+
+        console.log(listOfDataStudents)
+    }
 }
 
 export { validateStudent, addUserToSchema }
