@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.StudySchema;
+import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.servises.interfaces.SchemasService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -32,14 +32,14 @@ public class SchemasController {
     }
 
     @GetMapping(SCHEMA_BY_ID)
-    public AbstractStudySchema masterSchemaById(@PathVariable String schemaId){
+    public StudySchema masterSchemaById(@PathVariable String schemaId){
         log.trace("request for schema '{}' information",schemaId);
         schemasService.validateSchemaExistsOrThrow(schemaId);
         return schemasService.getSchemaById(schemaId);
     }
 
     @GetMapping(SCHEMAS_ROOT_TASKS)
-    public List<AbstractTask> masterSchemasOverview(){
+    public List<StudyTask> masterSchemasOverview(){
         return schemasService.getSchemasRootTasks();
     }
 

@@ -1,6 +1,6 @@
 package com.bestSpringApplication.taskManager.servises.interfaces;
 
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 
 import java.util.List;
 
@@ -17,13 +17,13 @@ public interface StudyService {
 
     void startTaskWithValidation(String schemaId, String userId, String taskId);
 
-    List<AbstractTask> getAvailableToStartUserTasks(String userId);
+    List<StudyTask> getAvailableToStartUserTasks(String userId);
 
-    List<AbstractTask> getAvailableToStartUserTasks(String userId, String schemaId);
+    List<StudyTask> getAvailableToStartUserTasks(String userId, String schemaId);
 
-    List<AbstractTask> getUserSchemasRootTasks(String userId);
+    List<StudyTask> getUserSchemasRootTasks(String userId);
 
-    List<AbstractTask> getOpenedUserTasks(String userId, String schemaId);
+    List<StudyTask> getOpenedUserTasks(String userId, String schemaId);
 
-    List<AbstractTask> getOpenedUserTasks(String userId);
+    List<StudyTask> getOpenedUserTasks(String userId);
 }

@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.StudySchema;
+import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.entities.User;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
@@ -35,7 +35,7 @@ public class UsersStudyService implements StudyService {
 
     public void setSchemaToUser(String userId,String schemaId){
         log.trace("trying prepare schema '{}' to user '{}'",schemaId,userId);
-        AbstractStudySchema schema = schemasService.getSchemaById(schemaId);
+        StudySchema schema = schemasService.getSchemaById(schemaId);
         studyStateService.prepareSchema(schema,userId);
     }
 
@@ -49,10 +49,10 @@ public class UsersStudyService implements StudyService {
 
     public boolean canStartTask(String schemaId, String userId, String taskId){
         log.trace("check possibility starting task '{}' in schema '{}' for user '{}'",taskId,schemaId,userId);
-        AbstractStudySchema schema = schemasService.getSchemaById(schemaId);
-        AbstractTask task = schemasService.getTaskByIdInSchema(taskId, schemaId);
+        StudySchema schema = schemasService.getSchemaById(schemaId);
+        StudyTask task = schemasService.getTaskByIdInSchema(taskId, schemaId);
         validateTaskCondition(schemaId, userId, taskId, task);
-        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
+        Map<String, StudyTask> tasksMap = schema.getTasksMap();
         List<DependencyWithRelationType> dependencies = schema.getDependenciesWithRelationType();
         List<String> ids = studyStateService.getCompletedTasksIdOfSchemaForUser(schemaId, userId);
         Set<String> finishedTasksId = new HashSet<>(ids);
@@ -82,7 +82,7 @@ public class UsersStudyService implements StudyService {
         }
     }
 
-    public List<AbstractTask> getAvailableToStartUserTasks(String userId) {
+    public List<StudyTask> getAvailableToStartUserTasks(String userId) {
         return studyStateService.getAllUserStatesByStatus(userId,Status.CLOSED)
                 .stream()
                 .filter(state->canStartTask(state.getSchemaId(),state.getUserId(),state.getTaskId()))
@@ -90,7 +90,7 @@ public class UsersStudyService implements StudyService {
                 .collect(toList());
     }
 
-    public List<AbstractTask> getAvailableToStartUserTasks(String userId, String schemaId) {
+    public List<StudyTask> getAvailableToStartUserTasks(String userId, String schemaId) {
         return studyStateService.getAllUserStatesBySchemaAndStatus(userId,schemaId,Status.CLOSED)
                 .stream()
                 .filter(state->canStartTask(state.getSchemaId(),state.getUserId(),state.getTaskId()))
@@ -98,21 +98,21 @@ public class UsersStudyService implements StudyService {
                 .collect(toList());
     }
 
-    public List<AbstractTask> getUserSchemasRootTasks(String userId){
+    public List<StudyTask> getUserSchemasRootTasks(String userId){
         return getUserSchemas(userId).stream()
-                .map(AbstractStudySchema::getRootTask)
+                .map(StudySchema::getRootTask)
                 .collect(toList());
     }
 
-    public List<AbstractTask> getOpenedUserTasks(String userId) {
+    public List<StudyTask> getOpenedUserTasks(String userId) {
         return studyStateService.getAllUserStatesByStatus(userId,Status.IN_WORK).stream()
                 .map(state->schemasService.getTaskByIdInSchema(state.getTaskId(),state.getSchemaId()))
                 .collect(toList());
     }
 
-    public List<AbstractTask> getOpenedUserTasks(String userId, String schemaId){
+    public List<StudyTask> getOpenedUserTasks(String userId, String schemaId){
         List<String> tasksId = studyStateService.getOpenedTasksIdBySchemaOfUser(userId, schemaId);
-        Map<String, AbstractTask> tasksMap = schemasService.getSchemaById(schemaId).getTasksMap();
+        Map<String, StudyTask> tasksMap = schemasService.getSchemaById(schemaId).getTasksMap();
         return tasksId.stream()
                 .map(tasksMap::get)
                 .collect(toList());
@@ -123,7 +123,7 @@ public class UsersStudyService implements StudyService {
         studyStateService.openTask(schemaId, userId, taskId);
     }
 
-    private List<AbstractStudySchema> getUserSchemas(String userId) {
+    private List<StudySchema> getUserSchemas(String userId) {
         return studyStateService
                 .getOpenedSchemasIdOfUser(userId)
                 .stream()
@@ -140,7 +140,7 @@ public class UsersStudyService implements StudyService {
                 .noneMatch(dep -> dep.getId1().equals(taskId));
     }
 
-    private boolean deepCheck(String taskId, Map<String, AbstractTask> tasksMap,
+    private boolean deepCheck(String taskId, Map<String, StudyTask> tasksMap,
                               List<DependencyWithRelationType> dependencies,
                               Set<String> finishedTasksId) {
         //may bug in future if task in root theme
@@ -157,7 +157,7 @@ public class UsersStudyService implements StudyService {
                 .allMatch(finishedTasksId::contains);
     }
 
-    private void validateTaskCondition(String schemaId, String userId, String taskId, AbstractTask task) {
+    private void validateTaskCondition(String schemaId, String userId, String taskId, StudyTask task) {
         if (task.isTheme()){
             throw new TaskIsThemeException("Тему начать невозможно!");
         }else if (studyStateService.taskInWork(schemaId, userId, taskId)){

@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.servises.interfaces;
 
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.StudySchema;
+import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 
@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface StudyStateService {
 
-    void prepareSchema(AbstractStudySchema schema, String userId);
+    void prepareSchema(StudySchema schema, String userId);
 
-    void prepareTask(AbstractStudySchema schema, AbstractTask task, String userId);
+    void prepareTask(StudySchema schema, StudyTask task, String userId);
 
     void openTask(String schemaId, String userId, String taskId);
 

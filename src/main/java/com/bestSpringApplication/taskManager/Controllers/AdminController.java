@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.Controllers;
 
 
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.models.classes.Summary;
 import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Status;
@@ -112,8 +112,8 @@ public class AdminController {
     }
 
     @GetMapping(OPENED_TASKS_OF_SCHEMA_FOR_USER)
-    public List<AbstractTask> openedStudentTasks(@PathVariable String schemaId,
-                                                 @PathVariable String userId){
+    public List<StudyTask> openedStudentTasks(@PathVariable String schemaId,
+                                              @PathVariable String userId){
         log.trace("request for opened tasks of schema '{}' for user '{}'",schemaId,userId);
         schemasService.validateSchemaExistsOrThrow(schemaId);
         userService.validateUserExistsOrThrow(userId);
@@ -121,7 +121,7 @@ public class AdminController {
     }
 
     @GetMapping(USER_SCHEMAS)
-    public List<AbstractTask> userSchemas(@PathVariable String userId){
+    public List<StudyTask> userSchemas(@PathVariable String userId){
         log.trace("request for opened schemas for user '{}'",userId);
         userService.validateUserExistsOrThrow(userId);
         return usersStudyService.getUserSchemasRootTasks(userId);

@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.StudySchema;
+import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.utils.VersionedList;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
@@ -13,7 +13,6 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,7 +37,7 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
     @NonNull private final SchemaParser schemaParser;
 
     // TODO: 4/6/21 really version control
-    private Map<String, VersionedList<AbstractStudySchema>> masterSchemas;
+    private Map<String, VersionedList<StudySchema>> masterSchemas;
 
     @PostConstruct
     private void init(){
@@ -61,7 +60,7 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
                     String fileName = file.getName();
                     try {
                         log.trace("getting file '{}' to parse", fileName);
-                        AbstractStudySchema schemaFromDir = schemaParser.parse(file);
+                        StudySchema schemaFromDir = schemaParser.parse(file);
                         log.trace("putting schema to map,file:{}", fileName);
                         put(schemaFromDir);
                     }  catch (ParseException e) {
@@ -81,15 +80,15 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
                 .collect(toList());
     }
 
-    public List<AbstractTask> getSchemasRootTasks(){
+    public List<StudyTask> getSchemasRootTasks(){
         return masterSchemas
                 .values().stream()
                 .map(VersionedList::getNewest)
-                .map(AbstractStudySchema::getRootTask)
+                .map(StudySchema::getRootTask)
                 .collect(toList());
     }
 
-    public AbstractStudySchema getSchemaById(String schemaId) {
+    public StudySchema getSchemaById(String schemaId) {
         return Optional.ofNullable(masterSchemas.get(schemaId))
                 .map(VersionedList::getNewest)
                 .orElseThrow(()->{
@@ -98,8 +97,8 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
                 });
     }
 
-    public AbstractTask getTaskByIdInSchema(String taskId, String schemaId){
-        AbstractStudySchema schema = getSchemaById(schemaId);
+    public StudyTask getTaskByIdInSchema(String taskId, String schemaId){
+        StudySchema schema = getSchemaById(schemaId);
         return Optional.ofNullable(schema.getTasksMap())
                 .map(taskMap->taskMap.get(taskId))
                 .orElseThrow(() -> {
@@ -146,7 +145,7 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
             throw new IllegalFileFormatException("Имя файла занято");
         }
         //костыльно
-        AbstractStudySchema studySchema = null;
+        StudySchema studySchema = null;
         try {
             studySchema = schemaParser.parse(file);
             put(studySchema);
@@ -157,8 +156,8 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
         } catch (IOException ex) {
             String schemaId = studySchema.getId();
             if (masterSchemas.containsKey(schemaId)) {
-                VersionedList<AbstractStudySchema> schemaVersions = masterSchemas.get(schemaId);
-                AbstractStudySchema removed = schemaVersions.removeNewets();
+                VersionedList<StudySchema> schemaVersions = masterSchemas.get(schemaId);
+                StudySchema removed = schemaVersions.removeNewets();
                 log.error("unknown io exception = {}, removing schema '{}'",ex.getMessage(),removed);
                 if (schemaVersions.isEmpty()){
                     masterSchemas.remove(schemaId);
@@ -168,7 +167,7 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
         }
     }
 
-    public void put(AbstractStudySchema studySchema){
+    public void put(StudySchema studySchema){
         String id = studySchema.getId();
         if (masterSchemas.containsKey(id)) {
             masterSchemas

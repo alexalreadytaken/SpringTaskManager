@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.servises.interfaces;
 
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.StudySchema;
+import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -10,11 +10,11 @@ import java.util.List;
 public interface SchemasService {
     List<String> schemasFilenamesList();
 
-    List<AbstractTask> getSchemasRootTasks();
+    List<StudyTask> getSchemasRootTasks();
 
-    AbstractStudySchema getSchemaById(String schemaId);
+    StudySchema getSchemaById(String schemaId);
 
-    AbstractTask getTaskByIdInSchema(String taskId, String schemaId);
+    StudyTask getTaskByIdInSchema(String taskId, String schemaId);
 
     boolean schemaExists(String schemaId);
 
@@ -26,7 +26,7 @@ public interface SchemasService {
 
     void putAndSaveFileWithValidation(MultipartFile file);
 
-    void put(AbstractStudySchema studySchema);
+    void put(StudySchema studySchema);
 
     void saveFile(MultipartFile file) throws IOException;
 }

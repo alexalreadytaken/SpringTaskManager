@@ -1,7 +1,7 @@
 package com.bestSpringApplication.taskManager.servises;
 
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
+import com.bestSpringApplication.taskManager.models.classes.StudySchema;
+import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.entities.User;
 import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
@@ -27,7 +27,7 @@ public class UsersStudyStateService implements StudyStateService {
     @NonNull private final UserTaskStateRepo utrRepo;
     @NonNull private final GroupService groupService;
 
-    public void prepareSchema(AbstractStudySchema schema, String userId){
+    public void prepareSchema(StudySchema schema, String userId){
         log.trace("start prepare schema '{}' to student '{}'",schema.getId(),userId);
         schema.tasksStream()
                 .filter(task -> !task.isTheme())
@@ -37,7 +37,7 @@ public class UsersStudyStateService implements StudyStateService {
                 .forEach(task->openTask(schema.getId(),userId,task.getId()));
     }
 
-    public void prepareTask(AbstractStudySchema schema,AbstractTask task,String userId){
+    public void prepareTask(StudySchema schema, StudyTask task, String userId){
         UserTaskState userTaskState = UserTaskState.builder()
                 .schemaId(schema.getId())
                 .status(Status.CLOSED)
@@ -155,14 +155,14 @@ public class UsersStudyStateService implements StudyStateService {
         return utrRepo.existsBySchemaIdAndUserIdAndTaskId(schemaId, userId, taskId);
     }
 
-    private boolean firstCheckTask(AbstractStudySchema schema,AbstractTask task){
+    private boolean firstCheckTask(StudySchema schema, StudyTask task){
         List<DependencyWithRelationType> dependencies = schema.getDependenciesWithRelationType();
-        Map<String, AbstractTask> tasksMap = schema.getTasksMap();
+        Map<String, StudyTask> tasksMap = schema.getTasksMap();
 
         return dependencies.stream()
                 .filter(dependency -> dependency.getId1().equals(task.getId()))
                 .allMatch(dependency -> {
-                    AbstractTask taskParent = tasksMap.get(dependency.getId0());
+                    StudyTask taskParent = tasksMap.get(dependency.getId0());
                     boolean parentHierarchicalAndTheme = taskParent.isTheme() &&
                             dependency.getRelationType() == RelationType.HIERARCHICAL;
                     boolean parentsOfParentValid = firstCheckTask(schema, taskParent);

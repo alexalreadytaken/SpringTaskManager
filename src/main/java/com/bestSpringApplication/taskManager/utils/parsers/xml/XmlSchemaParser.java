@@ -1,10 +1,8 @@
 package com.bestSpringApplication.taskManager.utils.parsers.xml;
 
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
-import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.classes.DefaultStudySchema;
+import com.bestSpringApplication.taskManager.models.classes.StudySchema;
+import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
-import com.bestSpringApplication.taskManager.models.classes.TimedTask;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
 import com.bestSpringApplication.taskManager.utils.DateHandler;
@@ -37,7 +35,7 @@ import static java.util.stream.Collectors.toList;
 public class XmlSchemaParser implements SchemaParser {
 
     @Override
-    public AbstractStudySchema parse(Object parsable) throws ParseException {
+    public StudySchema parse(Object parsable) throws ParseException {
         try {
             SAXBuilder saxBuilder = new SAXBuilder();
             if (parsable instanceof InputStream){
@@ -59,7 +57,7 @@ public class XmlSchemaParser implements SchemaParser {
         }
     }
 
-    private AbstractStudySchema parseSchemaXml(Document mainDocument){
+    private StudySchema parseSchemaXml(Document mainDocument){
         Element rootElement = mainDocument.getRootElement();
         log.trace("Starting parse root element:\n{}",rootElement.getContent());
         Element fieldListElem = Optional.ofNullable(rootElement.getChild("task-field-list"))
@@ -70,20 +68,20 @@ public class XmlSchemaParser implements SchemaParser {
                 .orElseThrow(()-> new SchemaParseException("taskElement is empty!"));
         Map<String, String> schemaFieldsMap = xmlFieldToMap(fieldListElem, "no", "name");
         List<Dependency> dependenciesList = parseDependenciesList(dependencyListElem);
-        Map<String, AbstractTask> tasksMap = parseTasksAndAddDependencies(taskElem,dependenciesList);
+        Map<String, StudyTask> tasksMap = parseTasksAndAddDependencies(taskElem,dependenciesList);
         addFieldsToTasks(tasksMap,schemaFieldsMap);
         log.trace("Returning study schema = {}",tasksMap.get("root"));
-        return new DefaultStudySchema(tasksMap,dependenciesList,tasksMap.remove("root"));
+        return new StudySchema(tasksMap,dependenciesList,tasksMap.remove("root"));
     }
 
-    private Map<String,AbstractTask> parseTasksAndAddDependencies(Element element, List<Dependency> dependencies){
+    private Map<String, StudyTask> parseTasksAndAddDependencies(Element element, List<Dependency> dependencies){
         log.trace("Receiving element = {}",element);
         Stack<Element> tasksStack = new Stack<>();
-        List<AbstractTask> taskList = new ArrayList<>();
+        List<StudyTask> taskList = new ArrayList<>();
         tasksStack.push(element);
         while (!tasksStack.empty()) {
             Element taskElemFromStack = tasksStack.pop();
-            TimedTask.TimedTaskBuilder taskBuilder = TimedTask.builder();
+            StudyTask.StudyTaskBuilder taskBuilder = StudyTask.builder();
             String taskName = getImportantElemText(taskElemFromStack, "task-name");
             String taskId = getImportantElemText(taskElemFromStack, "task-id");
             Optional<Element> taskListElem = getChildElemOpt(taskElemFromStack, "task-list");
@@ -107,8 +105,8 @@ public class XmlSchemaParser implements SchemaParser {
             });
             taskList.add(taskBuilder.build());
         }
-        Map<String, AbstractTask> tasksMap = new HashMap<>();
-        AbstractTask rootCourseTask = taskList.get(1);
+        Map<String, StudyTask> tasksMap = new HashMap<>();
+        StudyTask rootCourseTask = taskList.get(1);
         tasksMap.put("root",rootCourseTask);
         taskList.forEach(task->tasksMap.put(task.getId(),task));
         return tasksMap;
@@ -125,21 +123,18 @@ public class XmlSchemaParser implements SchemaParser {
                 }).collect(toList());
     }
 
-    private void addFieldsToTasks(Map<String, AbstractTask> tasks, Map<String, String> schemaFields) {
-        tasks.values().stream()
-                .filter(TimedTask.class::isInstance)
-                .map(TimedTask.class::cast)
-                .forEach(task -> {
-                    Map<String, String> taskFields = task.getFields();
-                    if (taskFields!=null){
-                        for (int i=0;i<taskFields.size();i++) {
-                            String i0 = String.valueOf(i);
-                            String key = schemaFields.get(i0);
-                            String value = taskFields.remove(i0);
-                            taskFields.put(key,value);
-                        }
-                    }
-                });
+    private void addFieldsToTasks(Map<String, StudyTask> tasks, Map<String, String> schemaFields) {
+        tasks.values().forEach(task -> {
+            Map<String, String> taskFields = task.getFields();
+            if (taskFields!=null){
+                for (int i=0;i<taskFields.size();i++) {
+                    String i0 = String.valueOf(i);
+                    String key = schemaFields.get(i0);
+                    String value = taskFields.remove(i0);
+                    taskFields.put(key,value);
+                }
+            }
+        });
     }
 
     private Map<String,String> xmlFieldToMap(Element element, String key, String value){
