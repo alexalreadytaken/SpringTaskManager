@@ -8,6 +8,7 @@ import com.bestSpringApplication.taskManager.models.enums.Status;
 import java.util.List;
 
 public interface StudyStateService {
+
     void prepareSchema(AbstractStudySchema schema, String userId);
 
     void prepareTask(AbstractStudySchema schema, AbstractTask task, String userId);
@@ -49,4 +50,6 @@ public interface StudyStateService {
     List<UserTaskState> getAllUserStates(String userId);
 
     List<UserTaskState> getAllUserStatesByStatus(String userId,Status status);
+
+    List<UserTaskState> getAllUserStatesBySchemaAndStatus(String userId, String schemaId, Status status);
 }

@@ -29,8 +29,7 @@ public abstract class AbstractStudySchema{
 
     @JsonIgnore
     public List<DependencyWithRelationType> getDependenciesWithRelationType(){
-        return this.dependencies
-                .stream()
+        return this.dependencies.stream()
                 .filter(DependencyWithRelationType.class::isInstance)
                 .map(DependencyWithRelationType.class::cast)
                 .collect(Collectors.toList());
@@ -38,7 +37,6 @@ public abstract class AbstractStudySchema{
 
     @JsonIgnore
     public Stream<AbstractTask> tasksStream(){
-        return this.tasksMap
-                .values().stream();
+        return this.tasksMap.values().stream();
     }
 }

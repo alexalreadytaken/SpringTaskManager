@@ -52,7 +52,6 @@ public class AdminController {
 
     @GetMapping(UNCONFIRMED_TASKS)
     public List<UserTaskState> unconfirmedUsersTasks(){
-        log.trace("request for unconfirmed tasks");
         return studyStateService.getUnconfirmedTasks();
     }
 
@@ -118,7 +117,7 @@ public class AdminController {
         log.trace("request for opened tasks of schema '{}' for user '{}'",schemaId,userId);
         schemasService.validateSchemaExistsOrThrow(schemaId);
         userService.validateUserExistsOrThrow(userId);
-        return usersStudyService.getOpenedUserTasksOfSchema(userId,schemaId);
+        return usersStudyService.getOpenedUserTasks(userId,schemaId);
     }
 
     @GetMapping(USER_SCHEMAS)

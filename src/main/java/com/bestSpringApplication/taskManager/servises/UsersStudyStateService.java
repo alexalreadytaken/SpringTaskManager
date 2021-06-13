@@ -114,9 +114,16 @@ public class UsersStudyStateService implements StudyStateService {
         return allUserState;
     }
 
-    public List<UserTaskState> getAllUserStatesByStatus(String userId,Status status) {
+    public List<UserTaskState> getAllUserStatesByStatus(String userId, Status status) {
         List<UserTaskState> allUserState = utrRepo.getAllByUserIdAndStatus(userId,status);
-        throwIfListEmpty(allUserState,"у человека нет заданий с таким статусом");
+        throwIfListEmpty(allUserState,"у человека нет заданий со статусом = "+status.getRuValue());
+        return allUserState;
+    }
+
+    @Override
+    public List<UserTaskState> getAllUserStatesBySchemaAndStatus(String userId, String schemaId, Status status) {
+        List<UserTaskState> allUserState = utrRepo.getAllByUserIdAndSchemaIdAndStatus(userId,schemaId,status);
+        throwIfListEmpty(allUserState,"в этом курсе у человека нет заданий со статусом = "+status.getRuValue());
         return allUserState;
     }
 

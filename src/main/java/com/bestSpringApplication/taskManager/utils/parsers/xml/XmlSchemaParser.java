@@ -2,7 +2,7 @@ package com.bestSpringApplication.taskManager.utils.parsers.xml;
 
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractStudySchema;
 import com.bestSpringApplication.taskManager.models.abstracts.AbstractTask;
-import com.bestSpringApplication.taskManager.models.classes.DefaultStudySchemaImpl;
+import com.bestSpringApplication.taskManager.models.classes.DefaultStudySchema;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.classes.TimedTask;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
@@ -73,7 +73,7 @@ public class XmlSchemaParser implements SchemaParser {
         Map<String, AbstractTask> tasksMap = parseTasksAndAddDependencies(taskElem,dependenciesList);
         addFieldsToTasks(tasksMap,schemaFieldsMap);
         log.trace("Returning study schema = {}",tasksMap.get("root"));
-        return new DefaultStudySchemaImpl(tasksMap,dependenciesList,tasksMap.remove("root"));
+        return new DefaultStudySchema(tasksMap,dependenciesList,tasksMap.remove("root"));
     }
 
     private Map<String,AbstractTask> parseTasksAndAddDependencies(Element element, List<Dependency> dependencies){

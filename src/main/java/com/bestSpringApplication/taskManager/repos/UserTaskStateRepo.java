@@ -29,6 +29,8 @@ public interface UserTaskStateRepo extends JpaRepository<UserTaskState,Integer> 
 
     List<UserTaskState> getAllByUserIdAndStatus(String userId,Status status);
 
+    List<UserTaskState> getAllByUserIdAndSchemaIdAndStatus(String userId,String schemaId,Status status);
+
     @Query("select distinct schemaId from UserTaskState where userId=:userId")
     List<String> getOpenedSchemasIdOfUser(@Param("userId") String userId);
 

@@ -18,5 +18,6 @@ RUN pg_ctl start -D /var/lib/postgresql/data &&\
     psql -U postgres -c "alter user postgres with password 'root';" &&\
     psql -U postgres -c "create database stm;"
 COPY target/taskManager-2.5.0.jar stm.jar
+# TODO: try start app
 CMD pg_ctl start -D /var/lib/postgresql/data && java -jar stm.jar
 EXPOSE 2000
