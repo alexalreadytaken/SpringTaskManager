@@ -35,7 +35,7 @@ import static java.util.stream.Collectors.toList;
 public class XmlSchemaParser implements SchemaParser {
 
     @Override
-    public StudySchema parse(Object parsable) throws ParseException {
+    public StudySchema parse(Object parsable){
         try {
             SAXBuilder saxBuilder = new SAXBuilder();
             if (parsable instanceof InputStream){
@@ -52,8 +52,8 @@ public class XmlSchemaParser implements SchemaParser {
             }else {
                 throw new SchemaParseException("Parsable object is not file or multipart file");
             }
-        } catch (IOException | JDOMException e) {
-            throw new ParseException(String.format("Some error with getting file = %s",e.getMessage()));
+        } catch (IOException | ParseException | JDOMException e) {
+            throw new ParseException("Some error with reading file",e);
         }
     }
 

@@ -2,12 +2,13 @@ package com.bestSpringApplication.taskManager.servises;
 
 import com.bestSpringApplication.taskManager.models.classes.StudySchema;
 import com.bestSpringApplication.taskManager.models.classes.StudyTask;
-import com.bestSpringApplication.taskManager.utils.VersionedList;
+import com.bestSpringApplication.taskManager.servises.interfaces.SchemasService;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ContentNotFoundException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.IllegalFileFormatException;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.ServerException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.ParseException;
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.PostConstructInitializationException;
+import com.bestSpringApplication.taskManager.utils.exceptions.forClient.StudySchemaAlreadyExistsException;
 import com.bestSpringApplication.taskManager.utils.parsers.SchemaParser;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ import static java.util.stream.Collectors.toList;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class SchemasServiceImpl implements com.bestSpringApplication.taskManager.servises.interfaces.SchemasService {
+public class SchemasServiceImpl implements SchemasService {
 
     @Value("${xml.task.pool.path}")
     private String xmlTaskPoolPath;
@@ -36,8 +37,8 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
 
     @NonNull private final SchemaParser schemaParser;
 
-    // TODO: 4/6/21 really version control
-    private Map<String, VersionedList<StudySchema>> masterSchemas;
+    // TODO: 4/6/21 version control
+    private Map<String, StudySchema> masterSchemas;
 
     @PostConstruct
     private void init(){
@@ -64,9 +65,13 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
                         log.trace("putting schema to map,file:{}", fileName);
                         put(schemaFromDir);
                     }  catch (ParseException e) {
-                        log.error("error with parse:{}",e.getMessage());
-                        log.error("moving file to invalid directory'{}' ",fileName);
+                        log.error("error with parse xml");
+                        e.printStackTrace(System.out);
+                        log.error("moving file '{}' to invalid directory ",fileName);
                         file.renameTo(new File(invalidFilesPoolPath+fileName));
+                    } catch (StudySchemaAlreadyExistsException e){
+                        log.error("duplicate schemas detected");
+                        throw new PostConstructInitializationException(e);
                     }
                 });
 
@@ -83,14 +88,12 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
     public List<StudyTask> getSchemasRootTasks(){
         return masterSchemas
                 .values().stream()
-                .map(VersionedList::getNewest)
                 .map(StudySchema::getRootTask)
                 .collect(toList());
     }
 
     public StudySchema getSchemaById(String schemaId) {
         return Optional.ofNullable(masterSchemas.get(schemaId))
-                .map(VersionedList::getNewest)
                 .orElseThrow(()->{
                     log.warn("schema with id = '{}' not found",schemaId);
                     return new ContentNotFoundException("Курс не найден");
@@ -153,15 +156,11 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
         }catch (ParseException ex){
             log.error("error with parse:{} file:{}",ex.getLocalizedMessage(), filename);
             throw new IllegalFileFormatException("загрузка файла не удалась, проверьте структуру своего файла");
-        } catch (IOException ex) {
+        }catch (IOException ex) {
             String schemaId = studySchema.getId();
             if (masterSchemas.containsKey(schemaId)) {
-                VersionedList<StudySchema> schemaVersions = masterSchemas.get(schemaId);
-                StudySchema removed = schemaVersions.removeNewets();
+                StudySchema removed = masterSchemas.remove(schemaId);
                 log.error("unknown io exception = {}, removing schema '{}'",ex.getMessage(),removed);
-                if (schemaVersions.isEmpty()){
-                    masterSchemas.remove(schemaId);
-                }
             }
             throw new ServerException("неизвестная ошибка сервера");
         }
@@ -170,11 +169,10 @@ public class SchemasServiceImpl implements com.bestSpringApplication.taskManager
     public void put(StudySchema studySchema){
         String id = studySchema.getId();
         if (masterSchemas.containsKey(id)) {
-            masterSchemas
-                    .get(id)
-                    .put(studySchema);
+            log.error("schema with id '{}' already exists",id);
+            throw new StudySchemaAlreadyExistsException("курс с идентификатором = "+id+" уже существует");
         } else {
-            masterSchemas.put(id,VersionedList.of(studySchema));
+            masterSchemas.put(id,studySchema);
         }
     }
 
