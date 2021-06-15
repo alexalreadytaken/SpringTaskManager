@@ -25,7 +25,7 @@ function setGrade(schemaId) {
             `)
             
             document.getElementById('gradeCase').insertAdjacentHTML('beforeend', `
-                    <input id = 'grade${x}' value = '${elem.grade}' type = 'number' min = '2' max = '5'/>
+                    <input id = 'grade${x}' value = '${elem.percentComplete}' type = 'number' min = '2' max = '5'/>
             `)
 
 
@@ -65,7 +65,7 @@ function setGrade(schemaId) {
             })
 
 
-            fetch(`http://${config.url}/admin/user/${st.userId}/schema/${schemaId}/task/${taskId}?setGrade=${oldValue[i].grade}&setStatus=${oldValue[i].status}`).then(res => {
+            fetch(`http://${config.url}/admin/user/${st.userId}/schema/${schemaId}/task/${taskId}?setPercentComplete=${oldValue[i].grade}&setStatus=${oldValue[i].status}`).then(res => {
                 fetch(`http://${config.url}/schema/${schemaId}`).then(res => res.json())
                 .then(data => {
                     let tasks = parsTask(data)
