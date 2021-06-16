@@ -78,44 +78,54 @@ public class UsersStudyService implements StudyService {
         if (canStartTask(schemaId, userId, taskId)){
             startTask(schemaId, userId, taskId);
         }else {
-            throw new TaskClosedException("Задание невозможно начать (REWRITE EX TEXT)");
+            throw new TaskClosedException("Задание невозможно начать, не завершены предыдущие задания");
         }
     }
 
     public List<StudyTask> getAvailableToStartUserTasks(String userId) {
-        return studyStateService.getAllUserStatesByStatus(userId,Status.CLOSED)
+        List<StudyTask> availableTasks = studyStateService.getAllUserStatesByStatus(userId, Status.CLOSED)
                 .stream()
-                .filter(state->canStartTask(state.getSchemaId(),state.getUserId(),state.getTaskId()))
-                .map(state->schemasService.getTaskByIdInSchema(state.getTaskId(),state.getSchemaId()))
+                .filter(state -> canStartTask(state.getSchemaId(), state.getUserId(), state.getTaskId()))
+                .map(state -> schemasService.getTaskByIdInSchema(state.getTaskId(), state.getSchemaId()))
                 .collect(toList());
+        throwIfListEmpty(availableTasks,"нет доступных для старта заданий");
+        return availableTasks;
     }
 
     public List<StudyTask> getAvailableToStartUserTasks(String userId, String schemaId) {
-        return studyStateService.getAllUserStatesBySchemaAndStatus(userId,schemaId,Status.CLOSED)
+        List<StudyTask> availableTasks = studyStateService.getAllUserStatesBySchemaAndStatus(userId, schemaId, Status.CLOSED)
                 .stream()
-                .filter(state->canStartTask(state.getSchemaId(),state.getUserId(),state.getTaskId()))
-                .map(state->schemasService.getTaskByIdInSchema(state.getTaskId(),state.getSchemaId()))
+                .filter(state -> canStartTask(state.getSchemaId(), state.getUserId(), state.getTaskId()))
+                .map(state -> schemasService.getTaskByIdInSchema(state.getTaskId(), state.getSchemaId()))
                 .collect(toList());
+        throwIfListEmpty(availableTasks,"нет доступных для старта заданий");
+        return availableTasks;
     }
 
     public List<StudyTask> getUserSchemasRootTasks(String userId){
-        return getUserSchemas(userId).stream()
+        List<StudyTask> rootTasks = getUserSchemas(userId).stream()
                 .map(StudySchema::getRootTask)
                 .collect(toList());
+        throwIfListEmpty(rootTasks,"нет назначенных курсов");
+        return rootTasks;
     }
 
     public List<StudyTask> getOpenedUserTasks(String userId) {
-        return studyStateService.getAllUserStatesByStatus(userId,Status.IN_WORK).stream()
-                .map(state->schemasService.getTaskByIdInSchema(state.getTaskId(),state.getSchemaId()))
+        List<StudyTask> openedTasks = studyStateService.getAllUserStatesByStatus(userId, Status.IN_WORK).stream()
+                .map(state -> schemasService.getTaskByIdInSchema(state.getTaskId(), state.getSchemaId()))
                 .collect(toList());
+        throwIfListEmpty(openedTasks,"нет открытых для выполнения заданий");
+        return openedTasks;
     }
 
     public List<StudyTask> getOpenedUserTasks(String userId, String schemaId){
         List<String> tasksId = studyStateService.getOpenedTasksIdBySchemaOfUser(userId, schemaId);
         Map<String, StudyTask> tasksMap = schemasService.getSchemaById(schemaId).getTasksMap();
-        return tasksId.stream()
+        List<StudyTask> openedTasks = tasksId.stream()
                 .map(tasksMap::get)
                 .collect(toList());
+        throwIfListEmpty(openedTasks,"нет открытых для выполнения заданий");
+        return openedTasks;
     }
 
     private void startTask(String schemaId, String userId, String taskId) {
@@ -155,6 +165,10 @@ public class UsersStudyService implements StudyService {
                         .map(Dependency::getId1))
                 .filter(id -> !tasksMap.get(id).isTheme())
                 .allMatch(finishedTasksId::contains);
+    }
+
+    private void throwIfListEmpty(List<?> list,String exceptionMessage){
+        if (list.isEmpty())throw new BadRequestException(exceptionMessage);
     }
 
     private void validateTaskCondition(String schemaId, String userId, String taskId, StudyTask task) {

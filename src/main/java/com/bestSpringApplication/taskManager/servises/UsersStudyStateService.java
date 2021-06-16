@@ -104,26 +104,26 @@ public class UsersStudyStateService implements StudyStateService {
 
     public List<UserTaskState> getSchemaStateByUserId(String userId, String schemaId){
         List<UserTaskState> userSchemaState = utrRepo.getAllBySchemaIdAndUserId(schemaId, userId);
-        throwIfListEmpty(userSchemaState,"курс не назначен данному человеку");
+        throwIfListEmpty(userSchemaState,"курс не назначен");
         return userSchemaState;
     }
 
     public List<UserTaskState> getAllUserStates(String userId) {
         List<UserTaskState> allUserState = utrRepo.getAllByUserId(userId);
-        throwIfListEmpty(allUserState,"человеку не назначен ни один курс");
+        throwIfListEmpty(allUserState,"ни один курс не назначен");
         return allUserState;
     }
 
     public List<UserTaskState> getAllUserStatesByStatus(String userId, Status status) {
         List<UserTaskState> allUserState = utrRepo.getAllByUserIdAndStatus(userId,status);
-        throwIfListEmpty(allUserState,"у человека нет заданий со статусом = "+status.getRuValue());
+        throwIfListEmpty(allUserState," нет заданий со статусом = "+status.getRuValue());
         return allUserState;
     }
 
     @Override
     public List<UserTaskState> getAllUserStatesBySchemaAndStatus(String userId, String schemaId, Status status) {
         List<UserTaskState> allUserState = utrRepo.getAllByUserIdAndSchemaIdAndStatus(userId,schemaId,status);
-        throwIfListEmpty(allUserState,"в этом курсе у человека нет заданий со статусом = "+status.getRuValue());
+        throwIfListEmpty(allUserState,"в этом курсе нет заданий со статусом = "+status.getRuValue());
         return allUserState;
     }
 
@@ -135,7 +135,7 @@ public class UsersStudyStateService implements StudyStateService {
 
     public List<String> getOpenedTasksIdBySchemaOfUser(String userId, String schemaId){
         List<String> openedSchemaTasks = utrRepo.getTasksIdOfSchemaIdAndUserIdAndStatus(userId, schemaId, Status.IN_WORK);
-        throwIfListEmpty(openedSchemaTasks,"у человека нет активных заданий на текущем курсе");
+        throwIfListEmpty(openedSchemaTasks,"нет активных заданий на текущем курсе");
         return openedSchemaTasks;
     }
 

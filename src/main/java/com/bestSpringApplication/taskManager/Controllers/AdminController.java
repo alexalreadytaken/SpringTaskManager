@@ -31,8 +31,6 @@ public class AdminController {
     private final String ADD_SCHEMA_TO_GROUP =                  "/schema/{schemaId}/addTo/group/{groupId}";
     private final String ADD_SCHEMA_TO_USER =                   "/schema/{schemaId}/addTo/user/{userId}";
 
-    private final String STATUS_VALUES_RU =                     "/status/ru";
-
     private final String UNCONFIRMED_TASKS =                    "/tasks/unconfirmed";
 
     private final String INTERACTIONS_WITH_USER_TASK =          "/user/{userId}/schema/{schemaId}/task/{taskId}";
@@ -125,11 +123,6 @@ public class AdminController {
         log.trace("request for opened schemas for user '{}'",userId);
         userService.validateUserExistsOrThrow(userId);
         return usersStudyService.getUserSchemasRootTasks(userId);
-    }
-
-    @GetMapping(STATUS_VALUES_RU)
-    public List<String> getRuStatusValues(){
-        return Status.ruValues();
     }
 
     @GetMapping(ADD_SCHEMA_TO_GROUP)
