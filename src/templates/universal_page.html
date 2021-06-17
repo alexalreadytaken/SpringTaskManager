@@ -25,13 +25,13 @@
             <h1>Учебный план</h1>
             <ul class="nav-list">
                 <li class="navigation-item">
+                    <a href="#list" id="listOfSchemas" rel="modal:open">Назначить</a>
+                </li>
+                <li class="navigation-item">
+                    <a href="#reports" id="listReports" rel='modal:open'>Отчеты</a>
+                </li>
+                <li class="navigation-item">
                     <a href="#upload" rel="modal:open">Загрузить</a>
-                </li>
-                <li class="navigation-item">
-                    <a href="#list" id="listOfSchemas" rel="modal:open">Список схем</a>
-                </li>
-                <li class="navigation-item">
-                    <a href="#">Отчеты</a>
                 </li>
             </ul>
         </section>
@@ -69,16 +69,36 @@
             <select id="listSchemas"></select>
             <a href="#secontSteplist" id = 'saveUserToSchema'>Отобразить</a>
         </div>
-
-        
     </div>
-        <div id="secontSteplist" class="modal-win modal">
-            <h1 id="headerText">Выбор Студентов</h1>
-            <div id="modalContent" class="content-win">
-                <form id="extra-content"></form>
-                <a href="#list" id="modalBtnBack" rel = 'modal:open'>Назад</a>
+
+    <div id="secontSteplist" class="modal-win modal">
+        <h1 id="headerText">Выбор Студентов</h1>
+        <div id="modalContent" class="content-win">
+            <form class="form-for-appoint" id="extra-content"></form>
+            <a href="#list" id="modalBtnBack" rel = 'modal:open'>Назад</a>
+        </div>
+    </div>
+    
+    <div id="reports" class="modal-win modal">
+        <h1 id="headerText">Отчеты студентов</h1>
+        <div id="modalContent" class="content-win">
+            <div class="content-for-reports">
+                <table id="table-reports">
+                    <tr>
+                        <th>Студент</th>
+                        <th>Схема</th>
+                        <th>Задание</th>
+                        <th>Результат</th>
+                        <th></th>
+                    </tr>
+                    <tbody id="tbody-reports">
+
+                    </tbody>
+                </table>
             </div>
         </div>
+    </div>
+
 
     <script type="module" src="../static/js/private/adminActions/actions.js"></script>
 

@@ -8,6 +8,8 @@
     border-radius: 20px;
     text-align: center;
     min-width: 40px;
+    min-height: 20px;
+    padding: 0 10px;
 }
 
 .navigation-item:hover {

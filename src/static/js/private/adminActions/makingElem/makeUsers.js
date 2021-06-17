@@ -12,7 +12,7 @@ function makeUsers(id) {
                 `)
             })
             document.getElementById(id).insertAdjacentHTML('beforeend', `
-            <button type="submit" id="addUserToSchema">Назначить</button>
+                <button type="submit" id="addUserToSchema">Назначить</button>
             `)
         })
 }

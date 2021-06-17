@@ -26,8 +26,33 @@
 .user {
     display: flex;
     gap: 50px;
+    justify-content: center;
+    align-items: center;
 }
 
 .user input {
     margin-top: 5px;
 }
+
+.form-for-appoint {
+    min-height: 55px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.form-for-appoint button {
+    min-width: 50px;
+}
+
+.content-for-reports table {
+   border-collapse: collapse;
+   text-align: center;
+}
+
+.content-for-reports th, td{
+    padding:0 10px 0 10px;
+    border: 1px solid black;
+}
+
+

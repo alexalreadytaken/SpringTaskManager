@@ -2,8 +2,10 @@ import { clearing } from "../makeGraphGantt/additionalModules/clearing.js";
 import { uploadSchemaListener } from "../rest_Post/upload_schema.js";
 import { validateStudent } from "./addStudentToSchema.js";
 import { createSchemas } from "./createListSchemas.js";
+import { getReports } from "./reports/getReports.js";
 
 uploadSchemaListener()
+document.getElementById('listReports').addEventListener('click', getReports)
 
 document.getElementById('listOfSchemas').onclick = () => {
     let schemas
