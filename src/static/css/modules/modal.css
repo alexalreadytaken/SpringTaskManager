@@ -45,12 +45,12 @@
     min-width: 50px;
 }
 
-.content-for-reports table {
+.content-for-table table {
    border-collapse: collapse;
    text-align: center;
 }
 
-.content-for-reports th, td{
+.content-for-table th, td{
     padding:0 10px 0 10px;
     border: 1px solid black;
 }

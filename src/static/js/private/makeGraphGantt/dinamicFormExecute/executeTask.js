@@ -1,5 +1,3 @@
-import { acceptTask } from './acceptTask.js'
-
 function showFormExecute ( themeTask ) {
 
     if (!themeTask) {

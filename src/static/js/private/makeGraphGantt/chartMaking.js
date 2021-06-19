@@ -28,9 +28,10 @@ function chartMaking (data, rootTask) {
     column_1.labels().format("{%linearIndex}.");
 
 
-    eventChart(chart, rootTask.id)
+    
+    // =========================
 
-// =========================
+    eventChart(chart, rootTask.id)
     
     chart.data(treeData)
     chart.container('graph-Gant')

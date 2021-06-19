@@ -11,3 +11,8 @@
     color: gray;
     font-size: 90px;
 }
+
+.graph {
+    min-width: 100%;
+    height: 100%;
+}
