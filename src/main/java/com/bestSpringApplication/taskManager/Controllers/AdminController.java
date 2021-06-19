@@ -3,6 +3,7 @@ package com.bestSpringApplication.taskManager.Controllers;
 
 import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.models.classes.Summary;
+import com.bestSpringApplication.taskManager.models.entities.User;
 import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.servises.interfaces.*;
@@ -27,14 +28,13 @@ public class AdminController {
 
     private final String SCHEMA_SUMMARY =                       "/schema/{schemaId}/summary";
     private final String STATE_OF_TASK_IN_SCHEMA =              "/schema/{schemaId}/task/{taskId}/state";
-
     private final String ADD_SCHEMA_TO_GROUP =                  "/schema/{schemaId}/addTo/group/{groupId}";
     private final String ADD_SCHEMA_TO_USER =                   "/schema/{schemaId}/addTo/user/{userId}";
+    private final String CANDIDATES_FOR_SCHEMA_ASSIGN =         "/schema/{schemaId}/candidates";
 
     private final String UNCONFIRMED_TASKS =                    "/tasks/unconfirmed";
 
     private final String INTERACTIONS_WITH_USER_TASK =          "/user/{userId}/schema/{schemaId}/task/{taskId}";
-
     private final String USER_SCHEMAS =                         "/user/{userId}/schemas";
     private final String SUMMARY_OF_USER_SCHEMA =               "/user/{userId}/schema/{schemaId}/summary";
     private final String STATE_OF_USER_SCHEMA =                 "/user/{userId}/schema/{schemaId}/state";
@@ -48,9 +48,15 @@ public class AdminController {
     @NonNull private final GroupService groupService;
 
 
+
     @GetMapping(UNCONFIRMED_TASKS)
     public List<UserTaskState> unconfirmedUsersTasks(){
         return studyStateService.getUnconfirmedTasks();
+    }
+
+    @GetMapping(CANDIDATES_FOR_SCHEMA_ASSIGN)
+    public List<User> candidatesToSchema(@PathVariable String schemaId){
+        return usersStudyService.getCandidatesForSchema(schemaId);
     }
 
     @GetMapping(SUMMARY_OF_USER_SCHEMA)

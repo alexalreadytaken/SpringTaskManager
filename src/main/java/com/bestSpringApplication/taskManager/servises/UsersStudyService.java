@@ -4,13 +4,11 @@ import com.bestSpringApplication.taskManager.models.classes.StudySchema;
 import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.models.classes.DependencyWithRelationType;
 import com.bestSpringApplication.taskManager.models.entities.User;
+import com.bestSpringApplication.taskManager.models.entities.UserTaskState;
 import com.bestSpringApplication.taskManager.models.enums.RelationType;
 import com.bestSpringApplication.taskManager.models.enums.Status;
 import com.bestSpringApplication.taskManager.models.interfaces.Dependency;
-import com.bestSpringApplication.taskManager.servises.interfaces.GroupService;
-import com.bestSpringApplication.taskManager.servises.interfaces.SchemasService;
-import com.bestSpringApplication.taskManager.servises.interfaces.StudyService;
-import com.bestSpringApplication.taskManager.servises.interfaces.StudyStateService;
+import com.bestSpringApplication.taskManager.servises.interfaces.*;
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.*;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -32,6 +31,7 @@ public class UsersStudyService implements StudyService {
     @NonNull private final SchemasService schemasService;
     @NonNull private final StudyStateService studyStateService;
     @NonNull private final GroupService groupService;
+    @NonNull private final UserService userService;
 
     public void setSchemaToUser(String userId,String schemaId){
         log.trace("trying prepare schema '{}' to user '{}'",schemaId,userId);
@@ -80,6 +80,17 @@ public class UsersStudyService implements StudyService {
         }else {
             throw new TaskClosedException("Задание невозможно начать, не завершены предыдущие задания");
         }
+    }
+
+    @Override
+    public List<User> getCandidatesForSchema(String schemaId) {
+        Set<String> userIds = studyStateService.getAllStateBySchemaId(schemaId)
+                .stream()
+                .map(UserTaskState::getUserId)
+                .collect(Collectors.toSet());
+        List<User> users = userService.getUsers();
+        users.removeIf(user->userIds.contains(user.getStringId()));
+        return users;
     }
 
     public List<StudyTask> getAvailableToStartUserTasks(String userId) {

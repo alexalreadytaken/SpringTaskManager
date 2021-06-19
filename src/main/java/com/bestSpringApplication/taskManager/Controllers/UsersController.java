@@ -48,7 +48,7 @@ public class UsersController{
 
     @GetMapping(USERS_LIST_MAPPING)
     public List<User> userList(){
-        return userServiceImpl.getAllUsers();
+        return userServiceImpl.getUsers();
     }
 
     @GetMapping(USER_BY_ID_MAPPING)

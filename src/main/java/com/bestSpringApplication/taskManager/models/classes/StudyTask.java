@@ -11,6 +11,7 @@ import java.util.Map;
 @Builder
 public class StudyTask {
     private String id;
+    private String schemaId;
     private String name;
     private int duration;
     private String notes;

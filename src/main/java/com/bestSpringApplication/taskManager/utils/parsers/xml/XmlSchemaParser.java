@@ -71,7 +71,9 @@ public class XmlSchemaParser implements SchemaParser {
         Map<String, StudyTask> tasksMap = parseTasksAndAddDependencies(taskElem,dependenciesList);
         addFieldsToTasks(tasksMap,schemaFieldsMap);
         log.trace("Returning study schema = {}",tasksMap.get("root"));
-        return new StudySchema(tasksMap,dependenciesList,tasksMap.remove("root"));
+        StudyTask rootTask = tasksMap.remove("root");
+        tasksMap.values().forEach(task->task.setSchemaId(rootTask.getId()));
+        return new StudySchema(tasksMap,dependenciesList, rootTask);
     }
 
     private Map<String, StudyTask> parseTasksAndAddDependencies(Element element, List<Dependency> dependencies){

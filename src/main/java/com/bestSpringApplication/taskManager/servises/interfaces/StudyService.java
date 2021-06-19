@@ -1,6 +1,7 @@
 package com.bestSpringApplication.taskManager.servises.interfaces;
 
 import com.bestSpringApplication.taskManager.models.classes.StudyTask;
+import com.bestSpringApplication.taskManager.models.entities.User;
 
 import java.util.List;
 
@@ -16,6 +17,8 @@ public interface StudyService {
     void forceStartTask(String schemaId, String userId, String taskId);
 
     void startTaskWithValidation(String schemaId, String userId, String taskId);
+
+    List<User> getCandidatesForSchema(String schemaId);
 
     List<StudyTask> getAvailableToStartUserTasks(String userId);
 

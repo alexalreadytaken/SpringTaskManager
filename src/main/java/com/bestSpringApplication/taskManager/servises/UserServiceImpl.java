@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
         userRepo.delete(user);
     }
 
-    public List<User> getAllUsers(){
+    public List<User> getUsers(){
         return userRepo.findAll();
     }
 
@@ -87,6 +87,7 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUserById(Long id){
         return userRepo.findById(id);
     }
+
     public Optional<User> getUserById(String id){
         try {
             long id0 = Integer.parseInt(id);
