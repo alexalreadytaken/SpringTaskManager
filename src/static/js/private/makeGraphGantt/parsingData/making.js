@@ -9,34 +9,39 @@ import { refreshChart } from '../chartMaking.js'
 import { config } from '../../config.js';
 
 function makeGraph (response) {
-    console.log(response)
-    const rootTask = response.rootTask
 
-    let tasks = parsTask(response)
+    if (response === null) {
+        console.log(response);
+        $('#graph-Gant').html('<h1>Схемы нет, пожалуйста загрузите ее</h1>')
+    } else {
+        const rootTask = response.rootTask
+        
+        let tasks = parsTask(response)
+        
+        // для обновления процентов, с дальнейшей возможностью расшерения до обновления каждого куска схемы в percentForTask
+        getSummary({
+            url: `http://${config.url}/admin/schema/1/summary`,
+            tasks: response
+        }).then(res => {
+            tasks = res            
+            refreshChart(data)
+        })
 
-// для обновления процентов, с дальнейшей возможностью расшерения до обновления каждого куска схемы в percentForTask
-    getSummary({
-        url: `http://${config.url}/admin/schema/1/summary`,
-        tasks: response
-    }).then(res => {
-        tasks = res            
-        refreshChart(data)
-    })
+        const depen = parsDepen(response)
 
-    const depen = parsDepen(response)
+        console.log(tasks)
 
-    console.log(tasks)
-    
-    const data = tasks.filter(el => el.theme) // filter tasks of themes
+        const data = tasks.filter(el => el.theme) // filter tasks of themes
 
-    makeWeakDepen(tasks, depen) // make WEAK depen in tasks
-    
-    makeChildren(data, depen, tasks) // make HIERARCHICAL depen in data
-    
-    console.log('Data elem', data)
-    console.log(depen)
-    
-    chartMaking(data, rootTask)
+        makeWeakDepen(tasks, depen) // make WEAK depen in tasks
+
+        makeChildren(data, depen, tasks) // make HIERARCHICAL depen in data
+
+        console.log('Data elem', data)
+        console.log(depen)
+
+        chartMaking(data, rootTask)
+}
 }
 
 

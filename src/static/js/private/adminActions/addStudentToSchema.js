@@ -9,7 +9,7 @@ function validateStudent (schema) {
         .then(response => {
             response.forEach(el => {
                 if (el.name === schema) {
-                    makeUsers('extra-content')
+                    makeUsers('extra-content', el.id)
                     addUserToSchema(el.id)
                 } else {
                     alert('Схема не выбрана!')

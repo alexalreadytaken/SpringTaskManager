@@ -1,4 +1,9 @@
 import { config } from "../../config.js"
+import { getSummary } from "../../makeGraphGantt/additionalModules/helpers_Module.js"
+import { refreshChart } from "../../makeGraphGantt/chartMaking.js"
+import { makeChildren } from "../../makeGraphGantt/parsingData/addChildrenToData.js"
+import { makeWeakDepen } from "../../makeGraphGantt/parsingData/makeWeakDepen.js"
+import { parsDepen, parsTask} from '../../makeGraphGantt/parsingData/parsFields.js'
 
 let localUsers
 
@@ -27,7 +32,7 @@ function eventForSchemas (taskId, schemaId) {
                                     <tr>    
                                         <td>${user.name}</td>
                                         <td><select id = 'select${x}'>выберите...</select></td>
-                                        <td><input id = 'grade${x}'></input></td>
+                                        <td><input id = 'grade${x}' value = '${task.percentComplete}'></input></td>
                                     </tr>
                                 `)
 
@@ -62,7 +67,7 @@ function eventForSchemas (taskId, schemaId) {
 
             console.log(infoStudents[x])
     
-            fetch(`http://${config.url}/admin/user/${infoStudents[x].userId}/schema/${schemaId}/task/${taskId}?setPercentComplete=${infoStudents[x].grade}/&setStatus=${infoStudents[x].status}`)
+            fetch(`http://${config.url}/admin/user/${infoStudents[x].userId}/schema/${schemaId}/task/${taskId}?setPercentComplete=${infoStudents[x].grade}&setStatus=${infoStudents[x].status}`)
                 .then(response => {
                     console.log(response.json());
                     fetch(`http://${config.url}/schema/${schemaId}`).then(res => res.json())
@@ -82,14 +87,11 @@ function eventForSchemas (taskId, schemaId) {
                             tasks = res
                             refreshChart(thee)
                         })
-                    }).catch(e => alert( 'schema fetch: ', e))
-              }).catch(e => alert(e))
+                    }).catch(e => console.log('schema fetch: ', e))
+              }).catch(e => console.log(e))
         })
     })
 }
-
-
-
 
 
 
