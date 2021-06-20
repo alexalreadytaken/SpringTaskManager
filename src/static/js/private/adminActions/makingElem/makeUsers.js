@@ -18,7 +18,7 @@ function makeUsers(id, schemaId) {
                 `)
             } else {
                 document.getElementById(id).insertAdjacentHTML('beforeend',`
-                    <h3>Кандидатов на схему нет!</h3>
+                    <h3>Все студенты назначены на выбранный курс</h3>
                 `)
             }
         })

@@ -10,7 +10,7 @@ function uploadSchemaListener() {
             method: 'POST',
             body: formData
         }).then(response =>
-            response.status !== 200 ? response.json() : { result: 'Схема успешно загружена! Перейдите в "список схем" чтобы назначить студентов на схему' }
+            response.status !== 200 ? response.json() : { result: 'Схема успешно загружена! Перейдите в вкладку "Назначить" чтобы назначить студентов на курс' }
         ).then(response => {
             alert(response.result)
         })

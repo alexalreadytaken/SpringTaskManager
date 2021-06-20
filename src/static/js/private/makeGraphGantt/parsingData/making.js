@@ -12,7 +12,7 @@ function makeGraph (response) {
 
     if (response === null) {
         console.log(response);
-        $('#graph-Gant').html('<h1>Схемы нет, пожалуйста загрузите ее</h1>')
+        $('#graph-Gant').html('<h1>Схем нет, пожалуйста загрузите</h1>')
     } else {
         const rootTask = response.rootTask
         

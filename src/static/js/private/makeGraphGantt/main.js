@@ -4,7 +4,9 @@ import { makeGraph } from './parsingData/making.js';
 let SchemasPull = []
 
 // makeGraph(scheme1)
-fetch(`http://${config.url}/schema/1`)
+
+function sratb (schemaId) {
+    fetch(`http://${config.url}/schema/${schemaId}`)
     .then(response => {
         console.log(response)
         if (response.status !== 404) {
@@ -21,5 +23,8 @@ fetch(`http://${config.url}/schema/1`)
     setTimeout(() => {    
         makeGraph(...SchemasPull)
     }, 200);
+}
 
-export {SchemasPull}
+
+
+export {SchemasPull, sratb}

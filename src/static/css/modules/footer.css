@@ -1,0 +1,7 @@
+footer {
+    position: absolute;
+    top: 90%;
+    background-color: lightblue;
+    color: gray;
+    border-radius: 15px;
+}

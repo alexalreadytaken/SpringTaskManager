@@ -4,6 +4,7 @@
 @import url(./modules/left_Bar.css);
 @import url(./modules/content.css);
 @import url(./modules/top_menu.css);
+@import url(./modules/footer.css);
 
 /* Style for modal window */
 @import url(./modules/modal.css);

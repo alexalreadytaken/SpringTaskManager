@@ -45,7 +45,7 @@
                         <a href="#">Результаты группы</a>
                     </li>
                     <li class="menu-item">
-                        <a href="#">Что-то будет</a>
+                        <a id="selectSchema" href="#">Выбрать учебный курс</a>
                     </li>
                 </ul>
             </section>
@@ -59,14 +59,14 @@
     </main>
 
     <div id="upload" class="modal-win modal">
-        <h1 id="headerText">Загрузка схемы</h1>
+        <h1 id="headerText">Загрузка курса</h1>
         <div id="modalContent" class="content-win">
             <input type="file" name="schema" id="uploadSchema">
         </div>
     </div>
 
     <div id="list" class="modal-win modal">
-        <h1 id="headerText">Схемы</h1>
+        <h1 id="headerText">Курсы</h1>
         <div id="modalContent" class="content-win">
             <select id="listSchemas"></select>
             <a href="#secontSteplist" id = 'saveUserToSchema'>Отобразить</a>
@@ -88,7 +88,7 @@
                 <table id="table-reports">
                     <tr>
                         <th>Студент</th>
-                        <th>Схема</th>
+                        <th>Курс</th>
                         <th>Задание</th>
                         <th>Результат</th>
                         <th></th>
@@ -121,6 +121,17 @@
 
         </div>
     </div>
+
+    <div id="modal-select-schema" class="modal-win modal">
+        <h1>Выбор Учебного курса</h1>
+        <div id="showSchemaContent" class="content-win">
+            <select id="select-schema">
+
+            </select>
+        </div>
+    </div>
+
+    <footer><h1>Проект: Учебный план<br> Выполнили: Устинов Кирилл, Шмелев Александр</h1></footer>
 
     <script type='module' src="../static/js/private/makeGraphGantt/main.js"></script>
 
