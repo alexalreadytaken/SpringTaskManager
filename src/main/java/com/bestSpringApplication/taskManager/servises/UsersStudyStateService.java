@@ -89,7 +89,10 @@ public class UsersStudyStateService implements StudyStateService {
         return openedSchemasIdOfUser;
     }
 
-    @Override
+    public List<String> getUsersIdBySchemaId(String schemaId) {
+        return utrRepo.getUsersIdBySchemaId(schemaId);
+    }
+
     public List<UserTaskState> getUnconfirmedTasks() {
         List<UserTaskState> unconfirmedTasks = utrRepo.getAllByStatus(Status.UNCONFIRMED);
         throwIfListEmpty(unconfirmedTasks,"рапортов о готовности нет");
@@ -120,7 +123,6 @@ public class UsersStudyStateService implements StudyStateService {
         return allUserState;
     }
 
-    @Override
     public List<UserTaskState> getAllUserStatesBySchemaAndStatus(String userId, String schemaId, Status status) {
         List<UserTaskState> allUserState = utrRepo.getAllByUserIdAndSchemaIdAndStatus(userId,schemaId,status);
         throwIfListEmpty(allUserState,"в этом курсе нет заданий со статусом = "+status.getRuValue());

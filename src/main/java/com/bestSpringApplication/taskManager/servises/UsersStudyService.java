@@ -84,10 +84,7 @@ public class UsersStudyService implements StudyService {
 
     @Override
     public List<User> getCandidatesForSchema(String schemaId) {
-        Set<String> userIds = studyStateService.getAllStateBySchemaId(schemaId)
-                .stream()
-                .map(UserTaskState::getUserId)
-                .collect(Collectors.toSet());
+        Set<String> userIds = new HashSet<>(studyStateService.getUsersIdBySchemaId(schemaId));
         List<User> users = userService.getUsers();
         users.removeIf(user->userIds.contains(user.getStringId()));
         return users;

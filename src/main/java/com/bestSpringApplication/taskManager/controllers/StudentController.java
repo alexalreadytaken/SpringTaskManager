@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.Controllers;
+package com.bestSpringApplication.taskManager.controllers;
 
 import com.bestSpringApplication.taskManager.models.classes.StudyTask;
 import com.bestSpringApplication.taskManager.models.entities.User;

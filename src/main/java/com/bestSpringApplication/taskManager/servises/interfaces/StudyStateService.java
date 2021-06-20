@@ -39,6 +39,8 @@ public interface StudyStateService {
 
     List<String> getOpenedTasksIdBySchemaOfUser(String userId, String schemaId);
 
+    List<String> getUsersIdBySchemaId(String id);
+
     List<UserTaskState> getUnconfirmedTasks();
 
     List<UserTaskState> getAllStateBySchemaId(String schemaId);

@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.Controllers;
+package com.bestSpringApplication.taskManager.controllers;
 
 import com.bestSpringApplication.taskManager.utils.exceptions.internal.PostConstructInitializationException;
 import lombok.extern.slf4j.Slf4j;

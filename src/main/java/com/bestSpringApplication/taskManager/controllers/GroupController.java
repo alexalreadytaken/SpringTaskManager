@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.Controllers;
+package com.bestSpringApplication.taskManager.controllers;
 
 
 import com.bestSpringApplication.taskManager.models.entities.Group;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/admin")
 public class GroupController {
 
-    private static final String GROUP_LIST = "/groups";
+    private static final String GROUP_LIST =  "/groups";
     private static final String GROUP_BY_ID = "/group/{groupId}";
     private static final String GROUP_USERS = "/group/{groupId}/users";
 

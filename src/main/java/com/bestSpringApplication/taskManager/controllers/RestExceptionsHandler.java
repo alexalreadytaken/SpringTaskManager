@@ -1,4 +1,4 @@
-package com.bestSpringApplication.taskManager.Controllers;
+package com.bestSpringApplication.taskManager.controllers;
 
 
 import com.bestSpringApplication.taskManager.utils.exceptions.forClient.*;
@@ -24,6 +24,7 @@ public class RestExceptionsHandler{
     public static ErrorMessage contentNotFound(HttpServletRequest request, ContentNotFoundException ex){
         return ErrorMessageFactory.newErrorMsg(ex,request);
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public static ErrorMessage taskIsTheme(HttpServletRequest request, BadRequestException ex){
